@@ -1,0 +1,15 @@
+.chattext p {
+    color: white;
+    font-weight: bolder;
+    font-size: 30px;
+    line-height: 1.2em;
+    text-shadow: -2px 0px black, 0px 2px black, 2px 0px black, 0px -2px black;
+}
+
+.chattext mark[risu-mark=quote2]{
+    color: skyblue;
+}
+
+.chattext mark[risu-mark=quote1]{
+    color: orange;
+}
