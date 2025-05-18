@@ -15,6 +15,11 @@ class VoiceGenerateInterface {
     }
     
     static async generateVoice(voiceModel) {
+        if(!Config.VOICE_GENERATION_SERVER_URL) {
+            Utils.logToFile('Voice Generation Server url is not set. Please set it in the config.js file.', 'error');
+            return null;
+        }
+
         if(Config.IS_USE_GLOBAL_QUEUE) {
             GlobalQueueUtil.addRequest({
                 type: 'voice',

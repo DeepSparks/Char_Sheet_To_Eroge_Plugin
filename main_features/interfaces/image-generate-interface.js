@@ -16,6 +16,11 @@ class ImageGenerateInterface {
     }
     
     static async generateImage(imageModel) {
+        if(!Config.IMAGE_GENERATION_SERVER_URL) {
+            Utils.logToFile('Image Generation Server url is not set. Please set it in the config.js file.', 'error');
+            return null;
+        }
+
         if(!fs.existsSync(imageModel.toFilePath())) {
             fs.copyFileSync(Config.IMAGE_WAITING_FILE_PATH, imageModel.toFilePath());
         }

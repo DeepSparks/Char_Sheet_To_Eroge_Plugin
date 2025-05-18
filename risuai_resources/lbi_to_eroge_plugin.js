@@ -8,7 +8,15 @@ const CONFIG = {
     START_OF_CONTENT_TAG: "<Start/>",
     END_OF_CONTENT_TAG: "<End/>",
     NO_RANDOM_SEED: "0",
-    URL_UPDATE_FREQUENCY: 50
+    URL_UPDATE_FREQUENCY: 50,
+    NSFW_PROMPT_MAP: {
+        "none": "",
+        "masturbation": "masturbation, female masturbation, pussy juice",
+        "fellatio": "fellatio, invisible man, disembodied penis, cum in mouth",
+        "sex": "sex, vaginal, invisible man, disembodied penis, cum in pussy",
+        "anal": "anal, invisible man, disembodied penis, cum in pussy",
+        "etc": ""
+    }
 };
 
 const IMAGE_CONTAINER_STYLES = `
@@ -102,6 +110,10 @@ class CharacterModel extends BaseModel {
         this.skin_color = attributes.skin_color || '';
         this.clothes = attributes.clothes || '';
         this.clothes_color = attributes.clothes_color || '';
+        this.bra = attributes.bra || '';
+        this.bra_color = attributes.bra_color || '';
+        this.panties = attributes.panties || '';
+        this.panties_color = attributes.panties_color || '';
         this.etc = attributes.etc || '';
     }
 
@@ -113,6 +125,17 @@ class CharacterModel extends BaseModel {
 class ImageModel extends BaseModel {
     constructor(attributes) {
         super(attributes);
+
+        this.common_prompt = "";
+        this.character_prompts = [];
+
+        if(attributes.common)
+            this._setUsingMultipleCharactersStyle(attributes);
+        else
+            this._setUsingSingleCharacterStyle(attributes);
+    }
+
+    _setUsingMultipleCharactersStyle(attributes) {
         this.common_prompt = attributes.common || '';
 
         this.character_prompts = [];
@@ -130,6 +153,15 @@ class ImageModel extends BaseModel {
             });
         }
         this.character_prompts = this.character_prompts.slice(0, 3);
+    }
+
+    _setUsingSingleCharacterStyle(attributes) {
+        this.common_prompt = [attributes.view, attributes.background, attributes.etc_other].filter(attr => attr).join(', ');
+        this.character_prompts = [{
+            name: attributes.name || '',
+            style_id: attributes.style_id || '',
+            prompt: [CONFIG.NSFW_PROMPT_MAP[attributes.nsfw], attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || ''
+        }];
     }
 
     toJsonDict() {

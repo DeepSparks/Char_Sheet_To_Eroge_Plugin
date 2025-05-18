@@ -1,6 +1,6 @@
 class Config {
     static get IMAGE_GENERATION_SERVER_URL() { 
-        return process.env.IMAGE_GENERATION_SERVER_URL || 'http://127.0.0.1:7860';
+        return process.env.IMAGE_GENERATION_SERVER_URL || '';
     }
     static get IMAGE_GENERATION_MODE() { 
         return process.env.IMAGE_GENERATION_MODE || 'stable-diffusion-web-ui';
@@ -16,7 +16,7 @@ class Config {
     }
 
     static get VOICE_GENERATION_SERVER_URL() { 
-        return process.env.VOICE_GENERATION_SERVER_URL || 'http://127.0.0.1:50021';
+        return process.env.VOICE_GENERATION_SERVER_URL || '';
     }
     static get VOICE_GENERATION_MODE() { 
         return process.env.VOICE_GENERATION_MODE || 'voice-vox';

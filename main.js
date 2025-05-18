@@ -31,7 +31,13 @@ if(Config.IS_CLEAR_SERVER_AT_STARTUP) {
 
 
 async function checkServerStatus(url, name) {
+    if(!url) {
+        Utils.logToFile(`${name} Server url is not set.`, 'info');
+        return true;
+    }
+
     if(url.includes('novelai')) {
+        Utils.logToFile(`${name} Server is using NovelAI.`, 'info');
         return true;
     }
 

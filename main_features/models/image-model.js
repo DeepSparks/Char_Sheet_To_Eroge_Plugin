@@ -21,7 +21,10 @@ class ImageModel {
         if(characters.length > 0) {
             const charactersInfos = CharacterMemoryInterface.getCharacters(characters).filter(character => character !== null);
             for(let charactersInfo of charactersInfos) {
-                name_prompt_map[charactersInfo.name] = charactersInfo.toPrompt();
+                name_prompt_map[charactersInfo.name] = {
+                    gender: charactersInfo.gender,
+                    prompt: charactersInfo.toPrompt()
+                }
             }
         }
         this.character_prompts = this.character_prompts.filter(prompt => {
@@ -34,13 +37,14 @@ class ImageModel {
                 name: prompt.name,
                 style_id: prompt.style_id,
                 prompt: prompt.prompt,
-                concat_prompt: name_prompt_map[prompt.name] + ', ' + prompt.prompt
+                gender: name_prompt_map[prompt.name].gender,
+                concat_prompt: name_prompt_map[prompt.name].prompt + ', ' + prompt.prompt
             }
         });
 
 
-        this.girl_count = this.character_prompts.filter(character_prompt => character_prompt.concat_prompt.includes('girl')).length;
-        this.boy_count = this.character_prompts.filter(character_prompt => character_prompt.concat_prompt.includes('boy')).length;
+        this.girl_count = this.character_prompts.filter(character_prompt => character_prompt.gender.includes('girl')).length;
+        this.boy_count = this.character_prompts.filter(character_prompt => character_prompt.gender.includes('boy')).length;
 
         this.person_keywords = []
 
