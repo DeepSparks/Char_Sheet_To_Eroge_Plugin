@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v1.1
+//@display-name LBI to Eroge Plugin v1.1.1
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -156,11 +156,20 @@ class ImageModel extends BaseModel {
     }
 
     _setUsingSingleCharacterStyle(attributes) {
-        this.common_prompt = [attributes.view, attributes.background, attributes.etc_other].filter(attr => attr).join(', ');
+        this.common_prompt = [attributes.background, attributes.etc_other].filter(attr => attr).join(', '); // attributes.view는 퀄리티 이슈로 제외
+
+        let nsfw_prompt = attributes.nsfw || 'none';
+        if(nsfw_prompt === 'none') {
+            this.common_negative_prompt = 'nsfw';
+            nsfw_prompt = '';
+        }
+        else if(CONFIG.NSFW_PROMPT_MAP[nsfw_prompt])
+            nsfw_prompt = CONFIG.NSFW_PROMPT_MAP[nsfw_prompt];
+
         this.character_prompts = [{
             name: attributes.name || '',
             style_id: attributes.style_id || '',
-            prompt: [CONFIG.NSFW_PROMPT_MAP[attributes.nsfw], attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || ''
+            prompt: [nsfw_prompt, attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || ''
         }];
     }
 

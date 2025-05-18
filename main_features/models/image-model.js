@@ -8,6 +8,7 @@ class ImageModel {
     constructor(req_body) {
         this.common_prompt = req_body.common_prompt || '';
         this.character_prompts = req_body.character_prompts || [];
+        this.common_negative_prompt = req_body.common_negative_prompt || '';
 
 
         const characters = this.character_prompts.map(prompt => {

@@ -17,7 +17,7 @@ class StableDiffusionWebUIKeywordProcessor {
         }
 
         imageModel.prompt = keywords.join(', ');
-        imageModel.negative_prompt = NEGATIVE_KEYWORDS.join(', ');
+        imageModel.negative_prompt = [...NEGATIVE_KEYWORDS, imageModel.common_negative_prompt].join(', ');
     }
 }
 
