@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v1.0
+//@display-name LBI to Eroge Plugin v1.1
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
