@@ -27,7 +27,7 @@ const CONFIG = {
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
     START_OF_CONTENT_TAG: "<Definitions>",
     END_OF_CONTENT_TAG: "</Scenes>",
-    IS_USE_RANDOM_EVENT_SELECTION: true
+    IS_USE_RANDOM_EVENT_SELECTION: false
 };
 
 const IMAGE_CONTAINER_STYLES = `
