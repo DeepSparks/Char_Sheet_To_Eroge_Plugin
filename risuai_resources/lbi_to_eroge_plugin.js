@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v2.0.0
+//@display-name LBI to Eroge Plugin v2.1.0
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -26,7 +26,8 @@ const CONFIG = {
     },
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
     START_OF_CONTENT_TAG: "<Definitions>",
-    END_OF_CONTENT_TAG: "</Scenes>"
+    END_OF_CONTENT_TAG: "</Scenes>",
+    IS_USE_RANDOM_EVENT_SELECTION: true
 };
 
 const IMAGE_CONTAINER_STYLES = `
@@ -663,7 +664,13 @@ function handleEventOptionsTag(content) {
     const eventOptionsJsonDict = eventOptionsModel.toJsonDict();
     let content_for_event_options = ""
     if(eventOptionsJsonDict.first && eventOptionsJsonDict.second && eventOptionsJsonDict.third) {
-        content_for_event_options = `${CONFIG.EVENT_OPTIONS_HEADER}\n1. ${eventOptionsJsonDict.first}\n2. ${eventOptionsJsonDict.second}\n3. ${eventOptionsJsonDict.third}`;
+        if(CONFIG.IS_USE_RANDOM_EVENT_SELECTION) {
+            const event_options = [eventOptionsJsonDict.first, eventOptionsJsonDict.second, eventOptionsJsonDict.third];
+            const randomEvent = Math.floor(Math.random() * 3);
+            content_for_event_options = `## Random Event Selection\nNEXT EVENT: ${event_options[randomEvent]}`;
+        } else {
+            content_for_event_options = `${CONFIG.EVENT_OPTIONS_HEADER}\n1. ${eventOptionsJsonDict.first}\n2. ${eventOptionsJsonDict.second}\n3. ${eventOptionsJsonDict.third}`;
+        }
     }
     return { content, content_for_event_options };
 }
