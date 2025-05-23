@@ -33,6 +33,7 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
 - Scene tags should only exist within <Scenes> tags.
 - If you decide that the story isn't about a specific character scene, you can put it in an attribute-less Scene-Other tag.
+- You can use any character name or style that you previously defined in Definitions. If you have defined them before, do not duplicate them.
 - **All story content must be contained within the Scene tag. Anything not in the tag will be ignored, so be careful.**
 
 #### 3. Example Format
