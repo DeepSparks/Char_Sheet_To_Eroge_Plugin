@@ -27,7 +27,8 @@ const CONFIG = {
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
     START_OF_CONTENT_TAG: "<Definitions>",
     END_OF_CONTENT_TAG: "</Scenes>",
-    IS_USE_RANDOM_EVENT_SELECTION: false
+    IS_USE_RANDOM_EVENT_SELECTION: false,
+    IS_ONLY_ALLOW_GIRL_CHARACTER: true
 };
 
 const IMAGE_CONTAINER_STYLES = `
@@ -720,6 +721,15 @@ async function handleCharacterTag(content) {
     for(let tagIndex = 0; tagIndex < Object.keys(characterTagModelMap).length; tagIndex++) {
         const currentFullTag = Object.keys(characterTagModelMap)[tagIndex];
         content = content.replace(currentFullTag, "");
+    }
+
+    if(CONFIG.IS_ONLY_ALLOW_GIRL_CHARACTER) {
+        for(let characterKey of Object.keys(characterTagModelMap)) {
+            const character = characterTagModelMap[characterKey];
+            if(character.gender !== 'girl') {
+                delete characterTagModelMap[characterKey];
+            }
+        }
     }
 
     await PluginBackend.addCharacters(Object.values(characterTagModelMap));
