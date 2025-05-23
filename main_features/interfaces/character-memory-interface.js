@@ -84,7 +84,7 @@ class CharacterMemoryInterface {
     }
 
     static getCharacterMapKey(character) {
-        return character.name + '_' + character.style_id;
+        return character.name
     }
 }
 

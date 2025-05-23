@@ -1,12 +1,19 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v1.1.1
+//@display-name LBI to Eroge Plugin v2.0.0
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
     IMAGE_WIDTH: 1248,
     IMAGE_HEIGHT: 832,
-    START_OF_CONTENT_TAG: "<Start/>",
-    END_OF_CONTENT_TAG: "<End/>",
+    TAG_NAMES: {
+        STATUS: "Status",
+        DEFINITIONS: "Definitions",
+        CHARACTER: "Character",
+        STYLE: "Style",
+        SCENES: "Scenes",
+        SCENE: "Scene",
+        EVENT_OPTIONS: "Event-Options",
+    },
     NO_RANDOM_SEED: "0",
     URL_UPDATE_FREQUENCY: 50,
     NSFW_PROMPT_MAP: {
@@ -16,7 +23,10 @@ const CONFIG = {
         "sex": "sex, vaginal, invisible man, disembodied penis, cum in pussy",
         "anal": "anal, invisible man, disembodied penis, cum in pussy",
         "etc": ""
-    }
+    },
+    EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
+    START_OF_CONTENT_TAG: "<Definitions>",
+    END_OF_CONTENT_TAG: "</Scenes>"
 };
 
 const IMAGE_CONTAINER_STYLES = `
@@ -94,13 +104,22 @@ class BaseModel {
     }
 }
 
+class StatusModel extends BaseModel {
+    constructor(attributes) {
+        super(attributes);
+    }
+}
+
+class EventOptionsModel extends BaseModel {
+    constructor(attributes) {
+        super(attributes);
+    }
+}
+
 class CharacterModel extends BaseModel {
     constructor(attributes) {
         super(attributes);
         this.name = attributes.name || '';
-        this.style_id = attributes.style_id || '';
-        this.copy_style_id = attributes.copy_style_id || '';
-
         this.gender = attributes.gender || '';
         this.age = attributes.age || '';
         this.hair_style = attributes.hair_style || '';
@@ -108,6 +127,18 @@ class CharacterModel extends BaseModel {
         this.eye_color = attributes.eye_color || '';
         this.breast_size = attributes.breast_size || '';
         this.skin_color = attributes.skin_color || '';
+        this.etc = attributes.etc || '';
+    }
+
+    toJsonDict() {
+        return { ...this };
+    }
+}
+
+class StyleModel extends BaseModel {
+    constructor(attributes) {
+        super(attributes);
+        this.style_id = attributes.style_id || '';
         this.clothes = attributes.clothes || '';
         this.clothes_color = attributes.clothes_color || '';
         this.bra = attributes.bra || '';
@@ -126,36 +157,22 @@ class ImageModel extends BaseModel {
     constructor(attributes) {
         super(attributes);
 
-        this.common_prompt = "";
-        this.character_prompts = [];
+        this.name = attributes.name || '';
+        this.style_id = attributes.style_id || '';
 
-        if(attributes.common)
-            this._setUsingMultipleCharactersStyle(attributes);
-        else
-            this._setUsingSingleCharacterStyle(attributes);
-    }
+        this.view = attributes.view || '';
+        this.pose = attributes.pose || '';
+        this.expression = attributes.expression || '';
+        this.background = attributes.background || '';
+        this.nsfw = attributes.nsfw || 'none';
+        this.etc_char = attributes.etc_char || '';
+        this.etc_other = attributes.etc_other || '';
 
-    _setUsingMultipleCharactersStyle(attributes) {
-        this.common_prompt = attributes.common || '';
+        this.common_prompt = attributes.common_prompt || '';
+        this.common_negative_prompt = attributes.common_negative_prompt || '';
+        this.character_prompt = attributes.character_prompt || '';
 
-        this.character_prompts = [];
-        for(let characterKey of Object.keys(attributes)) {
-            if(characterKey === 'common')
-                continue;
 
-            const characterName = characterKey.split('-')[0];
-            const styleId = characterKey.split('-')[1];
-
-            this.character_prompts.push({
-                name: characterName,
-                style_id: styleId,
-                prompt: attributes[characterKey] || ''
-            });
-        }
-        this.character_prompts = this.character_prompts.slice(0, 3);
-    }
-
-    _setUsingSingleCharacterStyle(attributes) {
         this.common_prompt = [attributes.background, attributes.etc_other].filter(attr => attr).join(', '); // attributes.view는 퀄리티 이슈로 제외
 
         let nsfw_prompt = attributes.nsfw || 'none';
@@ -163,14 +180,11 @@ class ImageModel extends BaseModel {
             this.common_negative_prompt = 'nsfw';
             nsfw_prompt = '';
         }
-        else if(CONFIG.NSFW_PROMPT_MAP[nsfw_prompt])
+        else if(CONFIG.NSFW_PROMPT_MAP[nsfw_prompt]) {
+            this.common_prompt = "nsfw, explicit, open clothes, " + this.common_prompt;
             nsfw_prompt = CONFIG.NSFW_PROMPT_MAP[nsfw_prompt];
-
-        this.character_prompts = [{
-            name: attributes.name || '',
-            style_id: attributes.style_id || '',
-            prompt: [nsfw_prompt, attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || ''
-        }];
+        }
+        this.character_prompt = [nsfw_prompt, attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || '';
     }
 
     toJsonDict() {
@@ -215,6 +229,12 @@ class PluginBackend {
     static async addCharacters(characterModels) {
         return this.jsonPostRequest("addCharacters", {
             characters: characterModels.map(characterModel => characterModel.toJsonDict())
+        });
+    }
+
+    static async addStyles(styleModels) {
+        return this.jsonPostRequest("addStyles", {
+            styles: styleModels.map(styleModel => styleModel.toJsonDict())
         });
     }
 
@@ -301,26 +321,127 @@ class TagParser {
     }
 }
 
+class StatusTagParser extends TagParser {
+    static parseTagsFromContent(content) {
+        return super.parseTagsFromContent(content, CONFIG.TAG_NAMES.STATUS, StatusModel);
+    }
+}
+
+class EventOptionsTagParser extends TagParser {
+    static parseTagsFromContent(content) {
+        return super.parseTagsFromContent(content, CONFIG.TAG_NAMES.EVENT_OPTIONS, EventOptionsModel);
+    }
+}
+
 class CharacterTagParser extends TagParser {
     static parseTagsFromContent(content) {
-        return super.parseTagsFromContent(content, "Character", CharacterModel);
+        return super.parseTagsFromContent(content, CONFIG.TAG_NAMES.CHARACTER, CharacterModel);
+    }
+}
+
+class StyleTagParser extends TagParser {
+    static parseTagsFromContent(content) {
+        return super.parseTagsFromContent(content, CONFIG.TAG_NAMES.STYLE, StyleModel);
     }
 }
 
 class ImageTagParser extends TagParser {
-    static parseTagsFromContent(content) {
-        return super.parseTagsFromContent(content, "StableDiffusion", ImageModel);
+    static parseTagsFromContent(content, front_contents, back_contents) {
+        const OTHER_TAG_NAME = "Othe";
+    
+        const fullTagModelsMap = {};
+        let fullTagInnerTexts= [];
+        const TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.SCENE}\-([^\\s]+)\\s*([^>]+)>([^\<]+)\<\/${CONFIG.TAG_NAMES.SCENE}\-[^\\s]+>`, 'g');
+        const matches = [...content.matchAll(TAG_REGEX)];
+    
+        for (const match of matches) {
+            const fullTag = match[0];
+            const name = match[1];
+            const attributesStr = match[2];
+            const innerText = match[3];
+    
+            if(name === OTHER_TAG_NAME) {
+                fullTagInnerTexts.push({name: name, text: innerText, fullTag: fullTag});
+                continue;
+            }
+            
+            const attributes = {};
+            const attrRegex = /([^\s="']+)\s*=\s*["']([^"']*)["']/g;
+            let attrMatch;
+            
+            while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
+                const [, name, value] = attrMatch;
+                attributes[name] = value;
+            }
+            
+            const model = new ImageModel(attributes);
+            fullTagModelsMap[fullTag] = model;
+            fullTagInnerTexts.push({name: name, text: innerText, fullTag: fullTag});
+        }
+
+        fullTagInnerTexts = [{
+            name: OTHER_TAG_NAME,
+            text: front_contents.join("\n"),
+            fullTag: ""
+        }, ...fullTagInnerTexts, {
+            name: OTHER_TAG_NAME,
+            text: back_contents.join("\n"),
+            fullTag: ""
+        }]
+    
+        
+        const processedFullTagInnerTexts = {};
+        
+        const realNameIndices = [];
+        fullTagInnerTexts.forEach((item, index) => {
+            if (item.name !== OTHER_TAG_NAME) {
+                realNameIndices.push(index);
+            }
+        });
+    
+        realNameIndices.forEach((currentIndex, i) => {
+            const current = fullTagInnerTexts[currentIndex];
+            const textParts = [];
+            const fullTagParts = [];
+    
+            // 앞쪽 Other 텍스트들 수집 (이전 실제 name 다음부터 현재까지)
+            const startIndex = i === 0 ? 0 : realNameIndices[i - 1] + 1;
+            for (let j = startIndex; j < currentIndex; j++) {
+                if (fullTagInnerTexts[j].name === OTHER_TAG_NAME) {
+                    textParts.push(fullTagInnerTexts[j].text);
+                    fullTagParts.push(fullTagInnerTexts[j].fullTag);
+                }
+            }
+            
+            // 현재 텍스트 추가
+            textParts.push(current.text);
+            fullTagParts.push(current.fullTag);
+    
+            // 뒤쪽 Other 텍스트들 수집 (현재 다음부터 다음 실제 name 전까지)
+            const endIndex = i === realNameIndices.length - 1 ? fullTagInnerTexts.length : realNameIndices[i + 1];
+            for (let j = currentIndex + 1; j < endIndex; j++) {
+                if (fullTagInnerTexts[j].name === OTHER_TAG_NAME) {
+                    textParts.push(fullTagInnerTexts[j].text);
+                    fullTagParts.push(fullTagInnerTexts[j].fullTag);
+                }
+            }
+            
+            processedFullTagInnerTexts[current.fullTag] = {
+                name: current.name,
+                text: textParts.join("\n"),
+                fullTagParts: fullTagParts
+            }
+        });
+    
+    
+        return { fullTagModelsMap, processedFullTagInnerTexts };
     }
 }
 
 class VoiceTagParser extends TagParser {
     static parseTagsFromContent(content) {
-        if (!content || !content.includes(`<Voice`)) {
-            return {};
-        }
-
         const fullTagWithTextModelsMap = {};
-        const TAG_REGEX = new RegExp(`"(.*)".*(\<Voice name="(.*)"\/>)`, 'g');
+        const TAG_REGEX = new RegExp(`"(.*)".*(\<${CONFIG.TAG_NAMES.VOICE} name="(.*)"\/>)`, 'g');
         const matches = [...content.matchAll(TAG_REGEX)];
 
         for (const match of matches) {
@@ -464,51 +585,95 @@ class VoiceRenderer extends ContentRenderer {
 
 let displayCount = 0
 async function handleDisplay(content) {
+    const raw_content = content;
     try {
 
+        if(!content.includes(CONFIG.START_OF_CONTENT_TAG)) {
+            return raw_content
+        }
+
+
         displayCount += 1
-        if(!content.includes(CONFIG.START_OF_CONTENT_TAG)) 
-            return content;
 
-        const isEndOfContent = content.includes(CONFIG.END_OF_CONTENT_TAG);
+        const status_parse_info = handleStatusTag(content);
+        content = status_parse_info.content
+        const content_for_status = status_parse_info.content_for_status
+
+        const event_options_parse_info = handleEventOptionsTag(content);
+        content = event_options_parse_info.content
+        const content_for_event_options = event_options_parse_info.content_for_event_options
+
+        const styles_for_content = getStylesForContent();
 
 
-        content = sliceContent(content);
-        
         content = await handleCharacterTag(content);
-        content = await handleImageTag(content);
+        content = await handleStyleTag(content);
         content = await handleVoiceTag(content);
 
-        content = addStyles(content);
 
-        
-        // if(isEndOfContent)
-        //     PluginBackend.addToLog("[PLUGIN] Displayed content: " + content, "info");
+        const image_tag_parse_info = await handleImageTag(content, [content_for_status], [content_for_event_options]);
+        content = image_tag_parse_info.result
+        const is_image_tag_processed = image_tag_parse_info.is_processed
 
-        return content;
+        if(!is_image_tag_processed) {
+            return `Content is processing... Please wait a moment. (${raw_content.length} characters generated) `
+        }
+
+
+        return content + styles_for_content;
 
     } catch (error) {
         PluginBackend.addToLog("[PLUGIN] Error while displaying content: " + error.message + '\n' + error.stack, "error");
-        return content;
+        return raw_content;
     }
 }
 
-function sliceContent(content) {
-    if(content.includes(CONFIG.START_OF_CONTENT_TAG) && !content.includes(CONFIG.END_OF_CONTENT_TAG)) {
-        return content.slice(content.indexOf(CONFIG.START_OF_CONTENT_TAG), content.length);
+function handleStatusTag(content) {
+    const statusTagModelMap = StatusTagParser.parseTagsFromContent(content);
+    for(let tagIndex = 0; tagIndex < Object.keys(statusTagModelMap).length; tagIndex++) {
+        const currentFullTag = Object.keys(statusTagModelMap)[tagIndex];
+        content = content.replace(currentFullTag, "");
     }
-    if(content.includes(CONFIG.START_OF_CONTENT_TAG) && content.includes(CONFIG.END_OF_CONTENT_TAG)) {
-        return content.slice(content.indexOf(CONFIG.START_OF_CONTENT_TAG), content.indexOf(CONFIG.END_OF_CONTENT_TAG) + CONFIG.END_OF_CONTENT_TAG.length);
+    const statusModel = statusTagModelMap[Object.keys(statusTagModelMap)[0]];
+    if(!statusModel) {
+        return { content, content_for_status: "" };
     }
-    return content;
+
+    const statusJsonDict = statusModel.toJsonDict();
+    let content_for_status = ""
+    for(let attribute of Object.keys(statusJsonDict)) {
+        const attribute_name = attribute.charAt(0).toUpperCase() + attribute.slice(1);
+        content_for_status += `${attribute_name}: ${statusJsonDict[attribute]}\n`;
+    }
+    return { content, content_for_status };
 }
 
-function addStyles(content) {
-    return IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES + content;
+function handleEventOptionsTag(content) {
+    const eventOptionsTagModelMap = EventOptionsTagParser.parseTagsFromContent(content);
+    for(let tagIndex = 0; tagIndex < Object.keys(eventOptionsTagModelMap).length; tagIndex++) {
+        const currentFullTag = Object.keys(eventOptionsTagModelMap)[tagIndex];
+        content = content.replace(currentFullTag, "");
+    }
+
+    const eventOptionsModel = eventOptionsTagModelMap[Object.keys(eventOptionsTagModelMap)[0]];
+    if(!eventOptionsModel) {
+        return { content, content_for_event_options: "" };
+    }
+
+    const eventOptionsJsonDict = eventOptionsModel.toJsonDict();
+    let content_for_event_options = ""
+    if(eventOptionsJsonDict.first && eventOptionsJsonDict.second && eventOptionsJsonDict.third) {
+        content_for_event_options = `${CONFIG.EVENT_OPTIONS_HEADER}\n1. ${eventOptionsJsonDict.first}\n2. ${eventOptionsJsonDict.second}\n3. ${eventOptionsJsonDict.third}`;
+    }
+    return { content, content_for_event_options };
+}
+
+function getStylesForContent() {
+    return IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES
 }
 
 async function handleCharacterTag(content) {
-    if (!content || !content.includes("<Character")) {
+    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.CHARACTER}`)) {
         return content;
     }
 
@@ -523,43 +688,65 @@ async function handleCharacterTag(content) {
     return content;
 }
 
-async function handleImageTag(content) {
-    if (!content || !content.includes("<StableDiffusion")) {
+async function handleStyleTag(content) {
+    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.STYLE}`)) {
         return content;
     }
 
-    const imageTagModelMap = ImageTagParser.parseTagsFromContent(content);
-    if(Object.keys(imageTagModelMap).length === 0) {
-        return content;
+    const styleTagModelMap = StyleTagParser.parseTagsFromContent(content);
+    for(let tagIndex = 0; tagIndex < Object.keys(styleTagModelMap).length; tagIndex++) {
+        const currentFullTag = Object.keys(styleTagModelMap)[tagIndex];
+        content = content.replace(currentFullTag, "");
     }
+
+    await PluginBackend.addStyles(Object.values(styleTagModelMap));
+
+    return content;
+}
+
+async function handleImageTag(content, front_contents, back_contents) {
+    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.SCENE}`)) {
+        return {
+            result: content,
+            is_processed: false
+        };
+    }
+
+    const { fullTagModelsMap, processedFullTagInnerTexts } = ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
+    if(Object.keys(fullTagModelsMap).length === 0) {
+        return {
+            result: content,
+            is_processed: false
+        };
+    }
+    
 
     const { urls, randomSeed: randomImageSeed } = await ImageProcessor.fetchOrGenerateImages(
-        imageTagModelMap, content
+        fullTagModelsMap, content
     );
 
-    let result = content;
-    for(let tagIndex = 0; tagIndex < Object.keys(imageTagModelMap).length; tagIndex++) {
-        const currentFullTag = Object.keys(imageTagModelMap)[tagIndex];
-        const nextFullTag = (tagIndex + 1 < Object.keys(imageTagModelMap).length) 
-            ? Object.keys(imageTagModelMap)[tagIndex + 1] 
-            : null;
 
-        let currentSlideContext = content.slice(
-            (tagIndex === 0) ? 0 : content.match(currentFullTag).index, 
-            nextFullTag ? content.match(nextFullTag).index : content.length
-        );
+    let result = "";
+    for(let tagIndex = 0; tagIndex < Object.keys(fullTagModelsMap).length; tagIndex++) {
+        const currentFullTag = Object.keys(fullTagModelsMap)[tagIndex];
+        const currentSlideContext = processedFullTagInnerTexts[currentFullTag].text;
 
         const currentUrl = ImageRenderer.createImageUrl(urls[tagIndex], randomImageSeed);
-        const slideContent = currentSlideContext.replace(currentFullTag, "");
-        const renderedSlide = ImageRenderer.createSlideContext(currentUrl, slideContent);
-        
-        result = result.replace(currentSlideContext, renderedSlide); 
-    }
+        const renderedSlide = ImageRenderer.createSlideContext(currentUrl, currentSlideContext);
 
-    return result
+        result += renderedSlide;
+    }
+    return {
+        result,
+        is_processed: Object.keys(fullTagModelsMap).length > 0
+    }
 }
 
 async function handleVoiceTag(content) {
+    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.VOICE}`)) {
+        return content;
+    }
+
     const fullTagWithTextModelsMap = VoiceTagParser.parseTagsFromContent(content);
     if(Object.keys(fullTagWithTextModelsMap).length === 0) {
         return content;
@@ -574,7 +761,7 @@ async function handleVoiceTag(content) {
         const currentFullTagWithText = Object.keys(fullTagWithTextModelsMap)[tagIndex];
         const currentVoiceUrl = VoiceRenderer.createVoiceUrl(voiceUrls[tagIndex], voiceRandomSeed);
         const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl);
-        result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(/\<Voice name="(.*)"\/>/, renderedVoicePlayer));
+        result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(/\<${CONFIG.TAG_NAMES.VOICE} name="(.*)"\/>/, renderedVoicePlayer));
     }
     return result;
 }

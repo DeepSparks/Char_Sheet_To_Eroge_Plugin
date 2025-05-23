@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 
 import {
-    CharacterMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, 
+    CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, 
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
     Utils, Config 
 } from './main_features/index.js';
@@ -53,8 +53,15 @@ async function checkServerStatus(url, name) {
 }
 
 async function checkDependencyServers() {
-    const imageGenerationServerOk = await checkServerStatus(Config.IMAGE_GENERATION_SERVER_URL, 'Image Generation Server');
-    const voiceGenerationServerOk = await checkServerStatus(Config.VOICE_GENERATION_SERVER_URL, 'Voice Generation Server');
+    let imageGenerationServerOk = true;
+    let voiceGenerationServerOk = true;
+    
+    if(Config.IS_USE_IMAGE_GENERATION) {
+        imageGenerationServerOk = await checkServerStatus(Config.IMAGE_GENERATION_SERVER_URL, 'Image Generation Server');
+    }
+    if(Config.IS_USE_VOICE_GENERATION) {
+        voiceGenerationServerOk = await checkServerStatus(Config.VOICE_GENERATION_SERVER_URL, 'Voice Generation Server');
+    }
     
     if (!imageGenerationServerOk || !voiceGenerationServerOk) {
         Utils.logToFile('Required servers are not running. Program will be terminated.', 'error');
@@ -68,10 +75,12 @@ checkDependencyServers().then(() => {
 
     app.use(express.json());
 
+    
     app.post('/addToLog', (req, res) => {
         Utils.logToFile(req.body.log, req.body.type);
         res.json({ success: true });
     });
+
 
     app.post('/addCharacters', (req, res) => {
         try {
@@ -96,6 +105,32 @@ checkDependencyServers().then(() => {
             res.json({ error: error.message, stack: error.stack });
         }
     });
+
+
+    app.post('/addStyles', (req, res) => {
+        try {
+
+            const styles = StyleMemoryInterface.addStyles(req.body.styles);
+            res.json({ styles });
+
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
+    app.post('/getStyles', (req, res) => {
+        try {
+
+            const styles = StyleMemoryInterface.getStyles(req.body.styles);
+            res.json({ styles });
+
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
 
     app.post('/generateImages', async (req, res) => {
         try {

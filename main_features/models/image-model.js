@@ -1,62 +1,37 @@
 import md5 from 'md5';
 
-import CharacterMemoryInterface from '../interfaces/character-memory-interface.js';
+import {CharacterMemoryInterface, StyleMemoryInterface} from '../interfaces/index.js';
 import keywordProcessors from '../processors/keyword_processors/index.js';
 import Config from '../config.js';
 
 class ImageModel {
     constructor(req_body) {
+        this.name = req_body.name || '';
+        this.style_id = req_body.style_id || '';
         this.common_prompt = req_body.common_prompt || '';
-        this.character_prompts = req_body.character_prompts || [];
         this.common_negative_prompt = req_body.common_negative_prompt || '';
+        this.character_prompt = req_body.character_prompt || '';
 
-
-        const characters = this.character_prompts.map(prompt => {
-            return {
-                name: prompt.name,
-                style_id: prompt.style_id
-            }
-        });
-
-        const name_prompt_map = {};
-        if(characters.length > 0) {
-            const charactersInfos = CharacterMemoryInterface.getCharacters(characters).filter(character => character !== null);
-            for(let charactersInfo of charactersInfos) {
-                name_prompt_map[charactersInfo.name] = {
-                    gender: charactersInfo.gender,
-                    prompt: charactersInfo.toPrompt()
-                }
-            }
-        }
-        this.character_prompts = this.character_prompts.filter(prompt => {
-            return name_prompt_map[prompt.name] !== undefined;
-        });
-        
-        
-        this.character_prompts = this.character_prompts.map(prompt => {
-            return {
-                name: prompt.name,
-                style_id: prompt.style_id,
-                prompt: prompt.prompt,
-                gender: name_prompt_map[prompt.name].gender,
-                concat_prompt: name_prompt_map[prompt.name].prompt + ', ' + prompt.prompt
-            }
-        });
-
-
-        this.girl_count = this.character_prompts.filter(character_prompt => character_prompt.gender.includes('girl')).length;
-        this.boy_count = this.character_prompts.filter(character_prompt => character_prompt.gender.includes('boy')).length;
-
-        this.person_keywords = []
-
-        if(this.girl_count > 0) {
-            this.person_keywords.push(this.girl_count == 1 ? '1girl' : `${this.girl_count}girls`);
-        }
-        if(this.boy_count > 0) {
-            this.person_keywords.push(this.boy_count == 1 ? '1boy' : `${this.boy_count}boys`);
+        if(Config.ADD_DEFAULT_NSFW_KEYWORD) {
+            this.common_negative_prompt = this.common_negative_prompt.replace("nsfw", "").replace("explicit", "");
+            if(!this.common_prompt.includes("open clothes"))
+                this.common_prompt = 'open clothes, ' + this.common_prompt;
+            if(!this.common_prompt.includes("explicit"))
+                this.common_prompt = 'explicit, ' + this.common_prompt;
+            if(!this.common_prompt.includes("nsfw"))
+                this.common_prompt = 'nsfw, ' + this.common_prompt;
         }
 
+        const characterInfo = CharacterMemoryInterface.getCharacter({name: this.name});
+        const styleInfo = StyleMemoryInterface.getStyle({style_id: this.style_id});
+        this.concat_character_prompt = [characterInfo.toPrompt(), styleInfo.toPrompt(), this.character_prompt].filter(attr => attr).join(', ');
         
+        this.gender = characterInfo.gender;
+        if(this.gender == 'girl')
+            this.person_prompt = "1girl, solo";
+        else if(this.gender == 'boy')
+            this.person_prompt = "1boy, solo";
+
         keywordProcessors[Config.IMAGE_KEYWORD_MODE].process(this)
     }
     

@@ -1,4 +1,7 @@
 class Config {
+    static get IS_USE_IMAGE_GENERATION() {
+        return process.env.IS_USE_IMAGE_GENERATION === 'true';
+    }
     static get IMAGE_GENERATION_SERVER_URL() { 
         return process.env.IMAGE_GENERATION_SERVER_URL || '';
     }
@@ -11,10 +14,16 @@ class Config {
     static get IMAGE_WAITING_FILE_PATH() { 
         return process.env.IMAGE_WAITING_FILE_PATH || './resources/image_waiting.png';
     }
+    static get ADD_DEFAULT_NSFW_KEYWORD() { 
+        return process.env.ADD_DEFAULT_NSFW_KEYWORD === 'true';
+    }
     static get IMAGE_GENERATION_API_KEY() { 
         return process.env.IMAGE_GENERATION_API_KEY || '';
     }
 
+    static get IS_USE_VOICE_GENERATION() {
+        return process.env.IS_USE_VOICE_GENERATION === 'true';
+    }
     static get VOICE_GENERATION_SERVER_URL() { 
         return process.env.VOICE_GENERATION_SERVER_URL || '';
     }
