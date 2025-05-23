@@ -233,6 +233,21 @@ class PluginBackend {
         });
     }
 
+    static async isCharactersExists(characterNames) {
+        const result = await this.jsonPostRequest("getCharacters", {
+            characters: characterNames.map(characterName => ({
+                name: characterName
+            }))
+        });
+
+        const existsCharacters = new Set();
+        result.characters.forEach(character => {
+            existsCharacters.add(character.name);
+        });
+
+        return existsCharacters;
+    }
+
     static async addStyles(styleModels) {
         return this.jsonPostRequest("addStyles", {
             styles: styleModels.map(styleModel => styleModel.toJsonDict())
@@ -347,20 +362,34 @@ class StyleTagParser extends TagParser {
 }
 
 class ImageTagParser extends TagParser {
-    static parseTagsFromContent(content, front_contents, back_contents) {
+    static async parseTagsFromContent(content, front_contents, back_contents) {
         const OTHER_TAG_NAME = "Othe";
     
         const fullTagModelsMap = {};
         let fullTagInnerTexts= [];
         const TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.SCENE}\-([^\\s]+)\\s*([^>]+)>([^\<]+)\<\/${CONFIG.TAG_NAMES.SCENE}\-[^\\s]+>`, 'g');
         const matches = [...content.matchAll(TAG_REGEX)];
-    
+
+
+        let names_to_check = []
+        for (const match of matches) {
+            const name = match[1];
+            if(name !== OTHER_TAG_NAME) {
+                names_to_check.push(name);
+            }
+        }
+        const existsCharacters = await PluginBackend.isCharactersExists(names_to_check);
+
+
         for (const match of matches) {
             const fullTag = match[0];
-            const name = match[1];
+            let name = match[1];
             const attributesStr = match[2];
             const innerText = match[3];
     
+            if(name !== OTHER_TAG_NAME && !existsCharacters.has(name)) {
+                name = OTHER_TAG_NAME;
+            }
             if(name === OTHER_TAG_NAME) {
                 fullTagInnerTexts.push({name: name, text: innerText, fullTag: fullTag});
                 continue;
@@ -400,30 +429,33 @@ class ImageTagParser extends TagParser {
             }
         });
     
+        let usedOtherTagIndexes = new Set();
         realNameIndices.forEach((currentIndex, i) => {
             const current = fullTagInnerTexts[currentIndex];
             const textParts = [];
             const fullTagParts = [];
-    
+      
             // 앞쪽 Other 텍스트들 수집 (이전 실제 name 다음부터 현재까지)
             const startIndex = i === 0 ? 0 : realNameIndices[i - 1] + 1;
             for (let j = startIndex; j < currentIndex; j++) {
-                if (fullTagInnerTexts[j].name === OTHER_TAG_NAME) {
+                if (fullTagInnerTexts[j].name === OTHER_TAG_NAME && !usedOtherTagIndexes.has(j)) {
                     textParts.push(fullTagInnerTexts[j].text);
                     fullTagParts.push(fullTagInnerTexts[j].fullTag);
+                    usedOtherTagIndexes.add(j);
                 }
             }
             
             // 현재 텍스트 추가
             textParts.push(current.text);
             fullTagParts.push(current.fullTag);
-    
+      
             // 뒤쪽 Other 텍스트들 수집 (현재 다음부터 다음 실제 name 전까지)
             const endIndex = i === realNameIndices.length - 1 ? fullTagInnerTexts.length : realNameIndices[i + 1];
             for (let j = currentIndex + 1; j < endIndex; j++) {
-                if (fullTagInnerTexts[j].name === OTHER_TAG_NAME) {
+                if (fullTagInnerTexts[j].name === OTHER_TAG_NAME && !usedOtherTagIndexes.has(j)) {
                     textParts.push(fullTagInnerTexts[j].text);
                     fullTagParts.push(fullTagInnerTexts[j].fullTag);
+                    usedOtherTagIndexes.add(j);
                 }
             }
             
@@ -719,7 +751,7 @@ async function handleImageTag(content, front_contents, back_contents) {
         };
     }
 
-    const { fullTagModelsMap, processedFullTagInnerTexts } = ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
+    const { fullTagModelsMap, processedFullTagInnerTexts } = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
     if(Object.keys(fullTagModelsMap).length === 0) {
         return {
             result: content,
