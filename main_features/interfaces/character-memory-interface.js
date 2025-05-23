@@ -10,16 +10,20 @@ class CharacterMemoryInterface {
     static isUpdating = false;
 
 
-    static addCharacters(characters) {
+    static async addCharacters(characters) {
         const processedCharacters = [];
 
         try{
             CharacterMemoryInterface.isUpdating = true;
             CharacterMemoryInterface.loadCharacterMap();
-            characters.forEach(character => {
-                CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = new CharacterModel(character).toJsonDict();
+
+            for(let character of characters) {
+                const characterModel = new CharacterModel(character);
+                await characterModel.makePrompt();
+                CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
                 processedCharacters.push(CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
-            });
+            }
+            
             CharacterMemoryInterface.saveCharacterMap();
             CharacterMemoryInterface.isUpdating = false;
         } catch (error) {
@@ -30,11 +34,15 @@ class CharacterMemoryInterface {
         return processedCharacters;
     }
 
-    static addCharacter(character) {
+    static async addCharacter(character) {
         try{
             CharacterMemoryInterface.isUpdating = true;
             CharacterMemoryInterface.loadCharacterMap();
-            CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = new CharacterModel(character).toJsonDict();
+
+            const characterModel = new CharacterModel(character);
+            await characterModel.makePrompt();
+            CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
+
             CharacterMemoryInterface.saveCharacterMap();
             CharacterMemoryInterface.isUpdating = false;
         } catch (error) {

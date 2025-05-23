@@ -82,10 +82,10 @@ checkDependencyServers().then(() => {
     });
 
 
-    app.post('/addCharacters', (req, res) => {
+    app.post('/addCharacters', async (req, res) => {
         try {
 
-            const characters = CharacterMemoryInterface.addCharacters(req.body.characters);
+            const characters = await CharacterMemoryInterface.addCharacters(req.body.characters);
             res.json({ characters });
 
         } catch (error) {
