@@ -22,6 +22,13 @@ class ImageModel {
                 this.common_prompt = 'nsfw, ' + this.common_prompt;
         }
 
+        if(Config.ADDITIONAL_COMMON_PROMPT)
+            this.common_prompt =  this.common_prompt + ", " + Config.ADDITIONAL_COMMON_PROMPT;
+        if(Config.ADDITIONAL_COMMON_NEGATIVE_PROMPT)
+            this.common_negative_prompt = this.common_negative_prompt + ", " + Config.ADDITIONAL_COMMON_NEGATIVE_PROMPT;
+        if(Config.ADDITIONAL_CHARACTER_PROMPT)
+            this.character_prompt = this.character_prompt + ", " + Config.ADDITIONAL_CHARACTER_PROMPT;
+
         const characterInfo = CharacterMemoryInterface.getCharacter({name: this.name});
         const styleInfo = StyleMemoryInterface.getStyle({style_id: this.style_id});
         this.concat_character_prompt = [characterInfo.toPrompt(), styleInfo.toPrompt(), this.character_prompt].filter(attr => attr).join(', ');

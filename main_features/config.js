@@ -17,6 +17,15 @@ class Config {
     static get ADD_DEFAULT_NSFW_KEYWORD() { 
         return process.env.ADD_DEFAULT_NSFW_KEYWORD === 'true';
     }
+    static get ADDITIONAL_COMMON_PROMPT() { 
+        return process.env.ADDITIONAL_COMMON_PROMPT || '';
+    }
+    static get ADDITIONAL_COMMON_NEGATIVE_PROMPT() { 
+        return process.env.ADDITIONAL_COMMON_NEGATIVE_PROMPT || '';
+    }
+    static get ADDITIONAL_CHARACTER_PROMPT() { 
+        return process.env.ADDITIONAL_CHARACTER_PROMPT || '';
+    }
     static get IMAGE_GENERATION_API_KEY() { 
         return process.env.IMAGE_GENERATION_API_KEY || '';
     }
