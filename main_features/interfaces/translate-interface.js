@@ -3,21 +3,35 @@ import md5 from 'md5';
 
 import Config from '../config.js';
 import { translateProcessors } from '../processors/index.js';
+import Utils from '../utils.js';
 
 class TranslateInterface {
     static async translateTexts(from, to, texts) {
         return Promise.all(texts.map(async text => await this.translateText(from, to, text)));
     }
 
-    static async translateText(from, to, text) {
-        const cache = TranslateScriptCache.getCache(from, to, text);
-        if(cache) {
-            return cache;
-        }
+    static async translateText(from, to, text, leftRetryCount = 3) {
+        try {
 
-        const result = await translateProcessors[Config.TRANSLATION_MODE].process(from, to, text);
-        TranslateScriptCache.setCache(from, to, text, result);
-        return result;
+            const cache = TranslateScriptCache.getCache(from, to, text);
+            if(cache) {
+                return cache;
+            }
+
+            const result = await translateProcessors[Config.TRANSLATION_MODE].process(from, to, text);
+            TranslateScriptCache.setCache(from, to, text, result);
+            return result;
+
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            
+            if(leftRetryCount > 0) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return await this.translateText(from, to, text, leftRetryCount - 1);
+            }
+
+            throw error;
+        }
     }
 
     static async translateForVoiceScript(text) {
