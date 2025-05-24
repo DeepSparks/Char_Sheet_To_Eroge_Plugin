@@ -375,8 +375,14 @@ class ImageTagParser extends TagParser {
         let names_to_check = []
         for (const match of matches) {
             const name = match[1];
-            if(name !== OTHER_TAG_NAME) {
+            const attributesStr = match[2];
+            const attributes = this._parse_attributes(attributesStr);
+            
+            if(name !== OTHER_TAG_NAME && !names_to_check.includes(name)) {
                 names_to_check.push(name);
+            }
+            if(attributes.name && attributes.name !== OTHER_TAG_NAME && !names_to_check.includes(attributes.name)) {
+                names_to_check.push(attributes.name);
             }
         }
         const existsCharacters = await PluginBackend.isCharactersExists(names_to_check);
@@ -387,24 +393,28 @@ class ImageTagParser extends TagParser {
             let name = match[1];
             const attributesStr = match[2];
             const innerText = match[3];
-    
-            if(name !== OTHER_TAG_NAME && !existsCharacters.has(name)) {
+            const attributes = this._parse_attributes(attributesStr);
+
+
+            if(!attributes.name) {
                 name = OTHER_TAG_NAME;
             }
+
+            if(name !== OTHER_TAG_NAME && !existsCharacters.has(name)) {
+                if(attributes.name && attributes.name !== OTHER_TAG_NAME && existsCharacters.has(attributes.name)) {
+                    name = attributes.name;
+                }
+                else {
+                    name = OTHER_TAG_NAME;
+                }
+            }
+
             if(name === OTHER_TAG_NAME) {
                 fullTagInnerTexts.push({name: name, text: innerText, fullTag: fullTag});
                 continue;
             }
-            
-            const attributes = {};
-            const attrRegex = /([^\s="']+)\s*=\s*["']([^"']*)["']/g;
-            let attrMatch;
-            
-            while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
-                const [, name, value] = attrMatch;
-                attributes[name] = value;
-            }
-            
+
+
             const model = new ImageModel(attributes);
             fullTagModelsMap[fullTag] = model;
             fullTagInnerTexts.push({name: name, text: innerText, fullTag: fullTag});
@@ -469,6 +479,19 @@ class ImageTagParser extends TagParser {
     
     
         return { fullTagModelsMap, processedFullTagInnerTexts };
+    }
+
+    static _parse_attributes(attributesStr) {
+        const attributes = {};
+        const attrRegex = /([^\s="']+)\s*=\s*["']([^"']*)["']/g;
+        let attrMatch;
+        
+        while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
+            const [, name, value] = attrMatch;
+            attributes[name] = value;
+        }
+
+        return attributes;
     }
 }
 
