@@ -45,7 +45,7 @@ class ImageModel {
                     translatedParts.push(part);
                 }
             }
-            reqBody[key] = translatedParts.join(', ');
+            reqBody[key] = translatedParts.join(', ').toLowerCase();
         }
     }
     
