@@ -55,7 +55,7 @@ Conclude with unique 3 suggested story events in English keywords but descriptio
 ...
 </Definitions>
 
-<Scenes/>
+<Scenes>
 <Scene-Other>
 The user was walking along the shoreline.
 </Scene-Other>
@@ -65,7 +65,7 @@ Rily's laughter echoes across the secluded cove as she splashes playfully in the
 <Scene-Rily ...>
 ...
 </Scene-Rily>
-<Scenes/>
+</Scenes>
 
 <Event-Options first="Build a sandcastle together on the beach" second="Explore the mysterious tide pools nearby" third="Share a tropical fruit snack under the palm trees"/>
 ```

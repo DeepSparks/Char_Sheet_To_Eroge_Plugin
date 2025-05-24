@@ -44,7 +44,7 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 ...
 </Definitions>
 
-<Scenes/>
+<Scenes>
 <Scene-Other>
 The user was walking along the shoreline.
 </Scene-Other>
@@ -54,5 +54,5 @@ Rily's laughter echoes across the secluded cove as she splashes playfully in the
 <Scene-Rily ...>
 ...
 </Scene-Rily>
-<Scenes/>
+</Scenes>
 ```
