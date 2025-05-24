@@ -1,3 +1,5 @@
+import { TranslateInterface } from '../interfaces/index.js';
+
 class StyleModel {
     constructor(req_body) {
         this.style_id = req_body.style_id || '';
@@ -9,6 +11,7 @@ class StyleModel {
         this.panties = req_body.panties || this.panties || '';
         this.panties_color = req_body.panties_color || this.panties_color || '';
         this.etc = req_body.etc || this.etc || '';
+        this.prompt = '';
 
         if(this.bra && !this.bra.includes("bra")) this.bra = this.bra + " bra";
         if(this.bra_color && !this.bra_color.includes("bra")) this.bra_color = this.bra_color + " bra";
@@ -25,12 +28,24 @@ class StyleModel {
         }
     }
 
+    async makePrompt() {
+        let promptKeywords = [this.clothes_color + " " + this.clothes, this.bra, this.bra_color, this.panties, this.panties_color, this.etc]
+
+        for(let i = 0; i < promptKeywords.length; i++) {
+            if(/[^\x00-\x7F]/.test(promptKeywords[i])) {
+                promptKeywords[i] = await TranslateInterface.translateText('auto', 'en', promptKeywords[i]);
+            }
+        }
+
+        this.prompt = promptKeywords.filter(attr => attr).join(', ').toLowerCase();
+    }
+
     toJsonDict() {
         return {...this};
     }
 
     toPrompt() {
-        return [this.clothes_color + " " + this.clothes, this.bra, this.bra_color, this.panties, this.panties_color, this.etc].filter(attr => attr).join(', ');
+        return this.prompt;
     }
 }
 

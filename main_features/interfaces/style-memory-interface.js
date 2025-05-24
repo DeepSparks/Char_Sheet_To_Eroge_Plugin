@@ -10,16 +10,20 @@ class StyleMemoryInterface {
     static isUpdating = false;
 
 
-    static addStyles(styles) {
+    static async addStyles(styles) {
         const processedStyles = [];
 
         try{
             StyleMemoryInterface.isUpdating = true;
             StyleMemoryInterface.loadStyleMap();
-            styles.forEach(style => {
-                StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)] = new StyleModel(style).toJsonDict();
+
+            for(let style of styles) {
+                const styleModel = new StyleModel(style);
+                await styleModel.makePrompt();
+                StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)] = styleModel.toJsonDict();
                 processedStyles.push(StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)]);
-            });
+            }
+
             StyleMemoryInterface.saveStyleMap();
             StyleMemoryInterface.isUpdating = false;
         } catch (error) {
@@ -30,11 +34,15 @@ class StyleMemoryInterface {
         return processedStyles;
     }
 
-    static addStyle(style) {
+    static async addStyle(style) {
         try{
             StyleMemoryInterface.isUpdating = true;
             StyleMemoryInterface.loadStyleMap();
-            StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)] = new StyleModel(style).toJsonDict();
+
+            const styleModel = new StyleModel(style);
+            await styleModel.makePrompt();
+            StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)] = styleModel.toJsonDict();
+
             StyleMemoryInterface.saveStyleMap();
             StyleMemoryInterface.isUpdating = false;
         } catch (error) {

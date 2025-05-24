@@ -107,10 +107,10 @@ checkDependencyServers().then(() => {
     });
 
 
-    app.post('/addStyles', (req, res) => {
+    app.post('/addStyles', async (req, res) => {
         try {
 
-            const styles = StyleMemoryInterface.addStyles(req.body.styles);
+            const styles = await StyleMemoryInterface.addStyles(req.body.styles);
             res.json({ styles });
 
         } catch (error) {
