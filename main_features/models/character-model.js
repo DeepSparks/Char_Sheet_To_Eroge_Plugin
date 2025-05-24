@@ -12,7 +12,6 @@ class CharacterModel {
         this.breast_size = req_body.breast_size || this.breast_size || '';
         this.skin_color = req_body.skin_color || this.skin_color || '';
         this.etc = req_body.etc || this.etc || '';
-        this.prompt = '';
 
         if(!this.hair_style.includes("hair")) this.hair_style = this.hair_style + " hair";
         if(!this.hair_color.includes("hair")) this.hair_color = this.hair_color + " hair";
@@ -32,16 +31,13 @@ class CharacterModel {
         }
     }
 
-    async makePrompt() {
-        let promptKeywords = [this.age, this.hair_style, this.hair_color, this.eye_color, this.breast_size, this.skin_color, this.etc]
-
-        for(let i = 0; i < promptKeywords.length; i++) {
-            if(/[^\x00-\x7F]/.test(promptKeywords[i])) {
-                promptKeywords[i] = await TranslateInterface.translateText('auto', 'en', promptKeywords[i]);
+    async translateKeywords() {
+        for (let key of ['age', 'hair_style', 'hair_color', 'eye_color', 'breast_size', 'skin_color', 'etc']) {
+            if(/[^\x00-\x7F]/.test(this[key])) {
+                this[key] = await TranslateInterface.translateText('auto', 'en', this[key]);
+                this[key] = this[key].toLowerCase();
             }
         }
-
-        this.prompt = promptKeywords.filter(attr => attr).join(', ').toLowerCase();
     }
 
     toJsonDict() {
@@ -49,7 +45,7 @@ class CharacterModel {
     }
 
     toPrompt() {
-        return this.prompt;
+        return [this.age, this.hair_style, this.hair_color, this.eye_color, this.breast_size, this.skin_color, this.etc].filter(attr => attr).join(', ').toLowerCase();
     }
 }
 

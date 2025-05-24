@@ -19,7 +19,7 @@ class StyleMemoryInterface {
 
             for(let style of styles) {
                 const styleModel = new StyleModel(style);
-                await styleModel.makePrompt();
+                await styleModel.translateKeywords();
                 StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)] = styleModel.toJsonDict();
                 processedStyles.push(StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)]);
             }
@@ -40,7 +40,7 @@ class StyleMemoryInterface {
             StyleMemoryInterface.loadStyleMap();
 
             const styleModel = new StyleModel(style);
-            await styleModel.makePrompt();
+            await styleModel.translateKeywords();
             StyleMemoryInterface.styleMap[StyleMemoryInterface.getStyleMapKey(style)] = styleModel.toJsonDict();
 
             StyleMemoryInterface.saveStyleMap();

@@ -19,7 +19,7 @@ class CharacterMemoryInterface {
 
             for(let character of characters) {
                 const characterModel = new CharacterModel(character);
-                await characterModel.makePrompt();
+                await characterModel.translateKeywords();
                 CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
                 processedCharacters.push(CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
             }
@@ -40,7 +40,7 @@ class CharacterMemoryInterface {
             CharacterMemoryInterface.loadCharacterMap();
 
             const characterModel = new CharacterModel(character);
-            await characterModel.makePrompt();
+            await characterModel.translateKeywords();
             CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
 
             CharacterMemoryInterface.saveCharacterMap();

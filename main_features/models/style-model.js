@@ -11,7 +11,6 @@ class StyleModel {
         this.panties = req_body.panties || this.panties || '';
         this.panties_color = req_body.panties_color || this.panties_color || '';
         this.etc = req_body.etc || this.etc || '';
-        this.prompt = '';
 
         if(this.bra && !this.bra.includes("bra")) this.bra = this.bra + " bra";
         if(this.bra_color && !this.bra_color.includes("bra")) this.bra_color = this.bra_color + " bra";
@@ -28,16 +27,13 @@ class StyleModel {
         }
     }
 
-    async makePrompt() {
-        let promptKeywords = [this.clothes_color + " " + this.clothes, this.bra, this.bra_color, this.panties, this.panties_color, this.etc]
-
-        for(let i = 0; i < promptKeywords.length; i++) {
-            if(/[^\x00-\x7F]/.test(promptKeywords[i])) {
-                promptKeywords[i] = await TranslateInterface.translateText('auto', 'en', promptKeywords[i]);
+    async translateKeywords() {
+        for (let key of ['clothes', 'clothes_color', 'bra', 'bra_color', 'panties', 'panties_color', 'etc']) {
+            if(/[^\x00-\x7F]/.test(this[key])) {
+                this[key] = await TranslateInterface.translateText('auto', 'en', this[key]);
+                this[key] = this[key].toLowerCase();
             }
         }
-
-        this.prompt = promptKeywords.filter(attr => attr).join(', ').toLowerCase();
     }
 
     toJsonDict() {
@@ -45,7 +41,7 @@ class StyleModel {
     }
 
     toPrompt() {
-        return this.prompt;
+        return [this.clothes_color + " " + this.clothes, this.bra, this.bra_color, this.panties, this.panties_color, this.etc].filter(attr => attr).join(', ').toLowerCase();
     }
 }
 
