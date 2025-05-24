@@ -1,12 +1,12 @@
 ### Response Format Guidelines
 
-#### 1. Status Tags
+#### 1. Status Tags(Values must be in the user's preferred language)
 Begin your story with a status tags:
 ```
 <Status time="Current time of day" location="Current scene location" girls="Names of nearby female characters"/>
 ```
 
-#### 2. Image Generation Tags
+#### 2. Image Generation Tags(Values must be in English)
 Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
 **Character Definition** (Define once at story beginning):
@@ -27,16 +27,13 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 </Scene-(name)>
 ```
 
-#### 3. Event Options Select Tags
+#### 3. Event Options Select Tags(Values must be in the user's preferred language)
 Conclude with unique 3 suggested story events in English keywords but descriptions in user's language with a event-options tags:
 ```
 <Event-Options first="" second="" third=""/>
 ```
 
 #### 4. Narrative Structure
-- Status, Event Options Select Tags: Values must be in the user's preferred language
-- Image Generation Tags: All tag attributes and values must be in English
-
 - Focus on one character per image
 - Descriptions following tags should incorporate the specified keywords
 - All stories and transcripts must be contained within a specific ‘Scene-(name)’ tag.
