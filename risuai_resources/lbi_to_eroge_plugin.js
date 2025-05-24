@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v2.1.1
+//@display-name LBI to Eroge Plugin v2.1.2
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -25,7 +25,7 @@ const CONFIG = {
         "etc": ""
     },
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
-    START_OF_CONTENT_TAG: "<Definitions>",
+    START_OF_CONTENT_TAGS: ["<Definitions>", "<Scenes>"],
     END_OF_CONTENT_TAG: "</Scenes>",
     IS_USE_RANDOM_EVENT_SELECTION: false,
     IS_ONLY_ALLOW_GIRL_CHARACTER: true
@@ -622,7 +622,7 @@ async function handleDisplay(content) {
     const raw_content = content;
     try {
 
-        if(!content.includes(CONFIG.START_OF_CONTENT_TAG)) {
+        if(!CONFIG.START_OF_CONTENT_TAGS.some(tag => content.includes(tag))) {
             return raw_content
         }
 
