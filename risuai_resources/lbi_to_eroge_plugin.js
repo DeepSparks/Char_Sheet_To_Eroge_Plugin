@@ -322,7 +322,7 @@ class TagParser {
             const attributesStr = match[1];
             
             const attributes = {};
-            const attrRegex = /([^\s="']+)\s*=\s*["']([^"']*)["']/g;
+            const attrRegex = /([^\s="']+)\s*=\s*["']([^"]*)["']/g;
             let attrMatch;
             
             while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
