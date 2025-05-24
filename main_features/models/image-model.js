@@ -1,6 +1,6 @@
 import md5 from 'md5';
 
-import {CharacterMemoryInterface, StyleMemoryInterface} from '../interfaces/index.js';
+import {CharacterMemoryInterface, StyleMemoryInterface, TranslateInterface} from '../interfaces/index.js';
 import keywordProcessors from '../processors/keyword_processors/index.js';
 import Config from '../config.js';
 
@@ -33,6 +33,20 @@ class ImageModel {
             this.person_prompt = "1boy, solo";
 
         keywordProcessors[Config.IMAGE_KEYWORD_MODE].process(this)
+    }
+
+    static async translateReqBody(reqBody) {
+        for (let key of ['common_prompt', 'common_negative_prompt', 'character_prompt']) {
+            let translatedParts = [];
+            for(let part of reqBody[key].split(',')) {
+                if(/[^\x00-\x7F]/.test(part)) {
+                    translatedParts.push(await TranslateInterface.translateText('auto', 'en', part));
+                } else {
+                    translatedParts.push(part);
+                }
+            }
+            reqBody[key] = translatedParts.join(', ');
+        }
     }
     
     toJsonDict() {

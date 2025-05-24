@@ -5,6 +5,7 @@ import fs from 'fs';
 import {
     CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, 
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
+    CharacterModel, StyleModel, ImageModel,
     Utils, Config 
 } from './main_features/index.js';
 
@@ -85,6 +86,10 @@ checkDependencyServers().then(() => {
     app.post('/addCharacters', async (req, res) => {
         try {
 
+            for(let character of req.body.characters) {
+                await CharacterModel.translateReqBody(character);
+            }
+
             const characters = await CharacterMemoryInterface.addCharacters(req.body.characters);
             res.json({ characters });
 
@@ -109,6 +114,10 @@ checkDependencyServers().then(() => {
 
     app.post('/addStyles', async (req, res) => {
         try {
+            
+            for(let style of req.body.styles) {
+                await StyleModel.translateReqBody(style);
+            }
 
             const styles = await StyleMemoryInterface.addStyles(req.body.styles);
             res.json({ styles });
@@ -134,6 +143,10 @@ checkDependencyServers().then(() => {
 
     app.post('/generateImages', async (req, res) => {
         try {
+
+            for(let imageModel of req.body.imageModels) {
+                await ImageModel.translateReqBody(imageModel);
+            }
 
             let urls = await ImageGenerateInterface.generateImages(req.body.imageModels);
             if(req.body.isWaitUntilImagesGenerated) {

@@ -31,11 +31,11 @@ class CharacterModel {
         }
     }
 
-    async translateKeywords() {
+    static async translateReqBody(reqBody) {
         for (let key of ['age', 'hair_style', 'hair_color', 'eye_color', 'breast_size', 'skin_color', 'etc']) {
-            if(/[^\x00-\x7F]/.test(this[key])) {
-                this[key] = await TranslateInterface.translateText('auto', 'en', this[key]);
-                this[key] = this[key].toLowerCase();
+            if(/[^\x00-\x7F]/.test(reqBody[key])) {
+                reqBody[key] = await TranslateInterface.translateText('auto', 'en', reqBody[key]);
+                reqBody[key] = reqBody[key].toLowerCase();
             }
         }
     }
