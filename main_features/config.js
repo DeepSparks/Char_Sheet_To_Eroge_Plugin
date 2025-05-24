@@ -49,6 +49,9 @@ class Config {
     static get TRANSLATION_MODE() {
         return process.env.TRANSLATION_MODE || 'google';
     }
+    static get TRANSLATION_SERVER_URL() {
+        return process.env.TRANSLATION_SERVER_URL || '';
+    }
     static get TRANSLATION_API_KEY() {
         return process.env.TRANSLATION_API_KEY || '';
     }
