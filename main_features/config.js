@@ -99,6 +99,10 @@ class Config {
         if(!process.env.VOICEPEAK_SPEAKER_IDS) return [];
         return process.env.VOICEPEAK_SPEAKER_IDS.split(',').map(id => id.trim());
     }
+    static get VOICEPEAK_KEYWORD_JOIN() {
+        if(!process.env.VOICEPEAK_KEYWORD_JOIN) return {};
+        return JSON.parse(process.env.VOICEPEAK_KEYWORD_JOIN);
+    }
 }
 
 export default Config;

@@ -6,6 +6,15 @@ import Config from '../../config.js';
 class VoicePeakKeywordProcessor {
     static process(voiceModel) {
         voiceModel.speaker_id = VoicePeakKeywordProcessor.getSpeakerId(voiceModel.name);
+
+        let createdEmotions = {};
+        const keywordJoin = Config.VOICEPEAK_KEYWORD_JOIN;
+        if(keywordJoin[voiceModel.speaker_id]) {
+            for(const [emotion, value] of Object.entries(voiceModel.emotions)) {
+                createdEmotions[keywordJoin[voiceModel.speaker_id][emotion]] = value;
+            }
+        }
+        voiceModel.emotions = createdEmotions;
     }
 
     static getSpeakerId(name) {
