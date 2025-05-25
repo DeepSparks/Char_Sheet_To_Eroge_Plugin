@@ -1,8 +1,7 @@
 import fs from 'fs';
 
 import Utils from '../../utils.js';
-
-const POSSIBLE_SPEAKER_IDS = [4, 5, 8, 10, 14, 23, 43, 46, 54, 58, 68];
+import Config from '../../config.js';
 
 class VoiceVoxKeywordProcessor {
     static process(voiceModel) {
@@ -25,7 +24,7 @@ class VoiceVoxKeywordProcessor {
             return nameMap[name];
         }
 
-        nameMap[name] = Utils.get_unique_id(POSSIBLE_SPEAKER_IDS, Object.values(nameMap));
+        nameMap[name] = Utils.get_unique_id(Config.VOICEVOX_SPEAKER_IDS, Object.values(nameMap));
         fs.writeFileSync(filePath, JSON.stringify(nameMap, null, 2));
         return nameMap[name];
     }

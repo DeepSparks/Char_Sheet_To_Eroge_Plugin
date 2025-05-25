@@ -90,6 +90,15 @@ class Config {
     static get IS_USE_GLOBAL_QUEUE() { 
         return process.env.IS_USE_GLOBAL_QUEUE === 'true';
     }
+
+    static get VOICEVOX_SPEAKER_IDS() {
+        if(!process.env.VOICEVOX_SPEAKER_IDS) return [];
+        return process.env.VOICEVOX_SPEAKER_IDS.split(',').map(Number);
+    }
+    static get VOICEPEAK_SPEAKER_IDS() {
+        if(!process.env.VOICEPEAK_SPEAKER_IDS) return [];
+        return process.env.VOICEPEAK_SPEAKER_IDS.split(',');
+    }
 }
 
 export default Config;
