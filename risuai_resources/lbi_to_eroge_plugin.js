@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.0.1
+//@display-name LBI to Eroge Plugin v3.0.2
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -528,7 +528,7 @@ class VoiceTagParser extends TagParser {
 
 // 공통 처리 클래스
 class ContentProcessor {
-    static async fetchOrGenerate(fullTagModelsMap, content, cacheInstance, generateFunction) {
+    static async fetchOrGenerate(fullTagModelsMap, is_end_of_content, cacheInstance, generateFunction) {
         const models = Object.values(fullTagModelsMap);
         let urls = [];
         let randomSeed = CONFIG.NO_RANDOM_SEED;
@@ -548,10 +548,9 @@ class ContentProcessor {
             randomSeed = cacheInstance.get(firstPrompt).randomImageSeed;
         } 
         else {
-            const isUserSelection = content.includes(CONFIG.END_OF_CONTENT_TAG);
-            urls = await generateFunction(models, isUserSelection);
+            urls = await generateFunction(models, false);
             
-            if (isUserSelection) {
+            if (is_end_of_content) {
                 randomSeed = Math.floor(Math.random() * 100000000000).toString();
                 
                 models.forEach((model, index) => {
@@ -565,10 +564,10 @@ class ContentProcessor {
 }
 
 class ImageProcessor extends ContentProcessor {
-    static async fetchOrGenerateImages(imageTagModelMap, content) {
+    static async fetchOrGenerateImages(imageTagModelMap, is_end_of_content) {
         return this.fetchOrGenerate(
             imageTagModelMap, 
-            content, 
+            is_end_of_content, 
             imageCache, 
             PluginBackend.generateImages.bind(PluginBackend)
         );
@@ -576,10 +575,10 @@ class ImageProcessor extends ContentProcessor {
 }
 
 class VoiceTagProcessor extends ContentProcessor {
-    static async fetchOrGenerateVoices(fullTagVoiceVoxModelsMap, content) {
+    static async fetchOrGenerateVoices(fullTagVoiceVoxModelsMap, is_end_of_content) {
         return this.fetchOrGenerate(
             fullTagVoiceVoxModelsMap, 
-            content, 
+            is_end_of_content, 
             voiceVoxCache, 
             PluginBackend.generateVoices.bind(PluginBackend)
         );
@@ -649,6 +648,8 @@ class VoiceRenderer extends ContentRenderer {
 let displayCount = 0
 async function handleDisplay(content) {
     const raw_content = content;
+    const is_end_of_content = content.includes(CONFIG.END_OF_CONTENT_TAG);
+
     try {
 
         if(!CONFIG.START_OF_CONTENT_TAGS.some(tag => content.includes(tag))) {
@@ -671,15 +672,24 @@ async function handleDisplay(content) {
 
         content = await handleCharacterTag(content);
         content = await handleStyleTag(content);
-        content = await handleVoiceTag(content);
 
 
-        const image_tag_parse_info = await handleImageTag(content, [content_for_status], [content_for_event_options]);
+        const voice_tag_parse_info = await handleVoiceTag(content, is_end_of_content);
+        content = voice_tag_parse_info.result
+
+
+        const image_tag_parse_info = await handleImageTag(content, [content_for_status], [content_for_event_options], is_end_of_content);
         content = image_tag_parse_info.result
         const is_image_tag_processed = image_tag_parse_info.is_processed
 
         if(!is_image_tag_processed) {
             return `Content is processing... Please wait a moment. (${raw_content.length} characters generated) `
+        }
+
+
+        if(is_end_of_content) {
+            await voice_tag_parse_info.wait_until_voices_generated();
+            await image_tag_parse_info.wait_until_images_generated();
         }
 
 
@@ -782,11 +792,12 @@ async function handleStyleTag(content) {
     return content;
 }
 
-async function handleImageTag(content, front_contents, back_contents) {
+async function handleImageTag(content, front_contents, back_contents, is_end_of_content) {
     if (!content || !content.includes(`<${CONFIG.TAG_NAMES.SCENE}`)) {
         return {
             result: content,
-            is_processed: false
+            is_processed: false,
+            wait_until_images_generated: async () => {}
         };
     }
 
@@ -794,13 +805,14 @@ async function handleImageTag(content, front_contents, back_contents) {
     if(Object.keys(fullTagModelsMap).length === 0) {
         return {
             result: content,
-            is_processed: false
+            is_processed: false,
+            wait_until_images_generated: async () => {}
         };
     }
     
 
     const { urls, randomSeed: randomImageSeed } = await ImageProcessor.fetchOrGenerateImages(
-        fullTagModelsMap, content
+        fullTagModelsMap, is_end_of_content
     );
 
 
@@ -816,22 +828,33 @@ async function handleImageTag(content, front_contents, back_contents) {
     }
     return {
         result,
-        is_processed: Object.keys(fullTagModelsMap).length > 0
+        is_processed: Object.keys(fullTagModelsMap).length > 0,
+        wait_until_images_generated: async () => {
+            if(Object.keys(fullTagModelsMap).length > 0) {
+                await PluginBackend.generateImages(Object.values(fullTagModelsMap), true);
+            }
+        }
     }
 }
 
-async function handleVoiceTag(content) {
+async function handleVoiceTag(content, is_end_of_content) {
     if (!content || !content.includes(`<${CONFIG.TAG_NAMES.VOICE}`)) {
-        return content;
+        return {
+            result: content,
+            wait_until_voices_generated: async () => {}
+        };
     }
 
     const fullTagWithTextModelsMap = VoiceTagParser.parseTagsFromContent(content);
     if(Object.keys(fullTagWithTextModelsMap).length === 0) {
-        return content;
+        return {
+            result: content,
+            wait_until_voices_generated: async () => {}
+        };
     }
 
     const { urls: voiceUrls, randomSeed: voiceRandomSeed } = await VoiceTagProcessor.fetchOrGenerateVoices(
-        fullTagWithTextModelsMap, content
+        fullTagWithTextModelsMap, is_end_of_content
     );
 
     let result = content;
@@ -841,7 +864,14 @@ async function handleVoiceTag(content) {
         const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl);
         result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(new RegExp(`<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\/>`, "g"), renderedVoicePlayer));
     }
-    return result;
+    return {
+        result,
+        wait_until_voices_generated: async () => {
+            if(Object.keys(fullTagWithTextModelsMap).length > 0) {
+                await PluginBackend.generateVoices(Object.values(fullTagWithTextModelsMap), true);
+            }
+        }
+    }
 }
 
 
