@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.0.0
+//@display-name LBI to Eroge Plugin v3.0.1
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -504,7 +504,7 @@ class ImageTagParser extends TagParser {
 class VoiceTagParser extends TagParser {
     static parseTagsFromContent(content) {
         const fullTagWithTextModelsMap = {};
-        const TAG_REGEX = new RegExp(`"(.*)".*(<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\\/>)`, 'g')
+        const TAG_REGEX = new RegExp(`"([^"]*)"[^"]*?(<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\\/>)`, 'g')
         const matches = [...content.matchAll(TAG_REGEX)];
 
         for (const match of matches) {
