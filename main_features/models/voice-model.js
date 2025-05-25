@@ -7,6 +7,7 @@ class VoiceModel {
     constructor(req_body) {
         this.name = req_body.name || '';
         this.text = req_body.text || '';
+        this.emotions = req_body.emotions || {};
 
         keywordProcessors[Config.VOICE_KEYWORD_MODE].process(this);
     }

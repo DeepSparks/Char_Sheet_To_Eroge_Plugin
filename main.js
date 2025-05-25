@@ -63,6 +63,15 @@ async function checkDependencyServers() {
     if(Config.IS_USE_VOICE_GENERATION) {
         voiceGenerationServerOk = await checkServerStatus(Config.VOICE_GENERATION_SERVER_URL, 'Voice Generation Server');
     }
+    if(Config.VOICE_GENERATION_PROGRAM_PATH) {
+        if(!fs.existsSync(Config.VOICE_GENERATION_PROGRAM_PATH)) {
+            Utils.logToFile(`Voice Generation Program Path(${Config.VOICE_GENERATION_PROGRAM_PATH}) is not found.`, 'error');
+            process.exit(1);
+        }
+        else {
+            Utils.logToFile(`Voice Generation Program Path(${Config.VOICE_GENERATION_PROGRAM_PATH}) is found.`, 'info');
+        }
+    }
     
     if (!imageGenerationServerOk || !voiceGenerationServerOk) {
         Utils.logToFile('Required servers are not running. Program will be terminated.', 'error');

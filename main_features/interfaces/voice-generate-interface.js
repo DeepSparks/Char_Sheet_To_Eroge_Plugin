@@ -3,6 +3,7 @@ import fs from 'fs';
 import { GlobalQueueUtil, VoiceQueueUtil } from '../queue_utils/index.js';
 import { VoiceModel } from '../models/index.js';
 import Config from '../config.js';
+import Utils from '../utils.js';
 
 class VoiceGenerateInterface {
     static async generateVoices(voiceModels) {
@@ -15,8 +16,8 @@ class VoiceGenerateInterface {
     }
     
     static async generateVoice(voiceModel) {
-        if(!Config.VOICE_GENERATION_SERVER_URL) {
-            Utils.logToFile('Voice Generation Server url is not set. Please set it in the config.js file.', 'error');
+        if(!Config.VOICE_GENERATION_SERVER_URL && !Config.VOICE_GENERATION_PROGRAM_PATH) {
+            Utils.logToFile('Voice Generation Server url or program path is not set. Please set it in the config.js file.', 'error');
             return null;
         }
 

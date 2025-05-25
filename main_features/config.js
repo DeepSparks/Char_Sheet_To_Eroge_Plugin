@@ -36,6 +36,9 @@ class Config {
     static get VOICE_GENERATION_SERVER_URL() { 
         return process.env.VOICE_GENERATION_SERVER_URL || '';
     }
+    static get VOICE_GENERATION_PROGRAM_PATH() {
+        return process.env.VOICE_GENERATION_PROGRAM_PATH || '';
+    }
     static get VOICE_GENERATION_MODE() { 
         return process.env.VOICE_GENERATION_MODE || 'voice-vox';
     }
