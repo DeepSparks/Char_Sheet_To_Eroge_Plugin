@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v2.1.3
+//@display-name LBI to Eroge Plugin v2.2.0
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -13,6 +13,7 @@ const CONFIG = {
         SCENES: "Scenes",
         SCENE: "Scene",
         EVENT_OPTIONS: "Event-Options",
+        VOICE: "Voice"
     },
     NO_RANDOM_SEED: "0",
     URL_UPDATE_FREQUENCY: 50,
@@ -199,6 +200,19 @@ class VoiceModel extends BaseModel {
         super(attributes);
         this.name = attributes.name || '';
         this.text = attributes.text || '';
+        this.happy = Number(attributes.happy) || 0;
+        this.fun = Number(attributes.fun) || 0;
+        this.angry = Number(attributes.angry) || 0;
+        this.sad = Number(attributes.sad) || 0;
+        this.crying = Number(attributes.crying) || 0;
+        
+        this.emotions = {
+            happy: this.happy,
+            fun: this.fun,
+            angry: this.angry,
+            sad: this.sad,
+            crying: this.crying
+        }
     }
     
     toJsonDict() {
@@ -320,21 +334,26 @@ class TagParser {
         for (const match of matches) {
             const fullTag = match[0];
             const attributesStr = match[1];
-            
-            const attributes = {};
-            const attrRegex = /([^\s="']+)\s*=\s*["']([^"]*)["']/g;
-            let attrMatch;
-            
-            while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
-                const [, name, value] = attrMatch;
-                attributes[name] = value;
-            }
+            const attributes = this.parse_attributes(attributesStr);
             
             const model = new ModelClass(attributes);
             fullTagModelsMap[fullTag] = model;
         }
 
         return fullTagModelsMap;
+    }
+
+    static parse_attributes(attributesStr) {
+        const attributes = {};
+        const attrRegex = /([^\s="']+)\s*=\s*["']([^"']*)["']/g;
+        let attrMatch;
+        
+        while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
+            const [, name, value] = attrMatch;
+            attributes[name] = value;
+        }
+
+        return attributes;
     }
 }
 
@@ -368,15 +387,15 @@ class ImageTagParser extends TagParser {
     
         const fullTagModelsMap = {};
         let fullTagInnerTexts= [];
-        const TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.SCENE}\-([^\\s]+)\\s*([^>]+)>([^\<]+)\<\/${CONFIG.TAG_NAMES.SCENE}\-[^\\s]+>`, 'g');
-        const matches = [...content.matchAll(TAG_REGEX)];
 
+        const TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.SCENE}\-([^\\s>]+)(?:\\s+([^>]*))?>(([^<]|<(?!\\/Scene\\-\\1>))*?)<\\/${CONFIG.TAG_NAMES.SCENE}\\-\\1>`, 'g')
+        const matches = [...content.matchAll(TAG_REGEX)];
 
         let names_to_check = []
         for (const match of matches) {
             const name = match[1];
             const attributesStr = match[2];
-            const attributes = this._parse_attributes(attributesStr);
+            const attributes = this.parse_attributes(attributesStr);
             
             if(name !== OTHER_TAG_NAME && !names_to_check.includes(name)) {
                 names_to_check.push(name);
@@ -393,7 +412,7 @@ class ImageTagParser extends TagParser {
             let name = match[1];
             const attributesStr = match[2];
             const innerText = match[3];
-            const attributes = this._parse_attributes(attributesStr);
+            const attributes = this.parse_attributes(attributesStr);
 
 
             if(!attributes.name) {
@@ -480,38 +499,25 @@ class ImageTagParser extends TagParser {
     
         return { fullTagModelsMap, processedFullTagInnerTexts };
     }
-
-    static _parse_attributes(attributesStr) {
-        const attributes = {};
-        const attrRegex = /([^\s="']+)\s*=\s*["']([^"']*)["']/g;
-        let attrMatch;
-        
-        while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
-            const [, name, value] = attrMatch;
-            attributes[name] = value;
-        }
-
-        return attributes;
-    }
 }
 
 class VoiceTagParser extends TagParser {
     static parseTagsFromContent(content) {
         const fullTagWithTextModelsMap = {};
-        const TAG_REGEX = new RegExp(`"(.*)".*(\<${CONFIG.TAG_NAMES.VOICE} name="(.*)"\/>)`, 'g');
+        const TAG_REGEX = new RegExp(`"(.*)".*(<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\\/>)`, 'g')
         const matches = [...content.matchAll(TAG_REGEX)];
 
         for (const match of matches) {
             const fullTagWithText = match[0];
             const text = match[1];
-            const name = match[3];
+            const attributesStr = match[2];
+            const attributes = this.parse_attributes(attributesStr);
             
-            const attributes = {
+            const model = new VoiceModel({
                 text: text,
-                name: name
-            };
+                ...attributes
+            });
             
-            const model = new VoiceModel(attributes);
             fullTagWithTextModelsMap[fullTagWithText] = model;
         }
 
@@ -833,7 +839,7 @@ async function handleVoiceTag(content) {
         const currentFullTagWithText = Object.keys(fullTagWithTextModelsMap)[tagIndex];
         const currentVoiceUrl = VoiceRenderer.createVoiceUrl(voiceUrls[tagIndex], voiceRandomSeed);
         const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl);
-        result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(/\<${CONFIG.TAG_NAMES.VOICE} name="(.*)"\/>/, renderedVoicePlayer));
+        result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(new RegExp(`<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\/>`, "g"), renderedVoicePlayer));
     }
     return result;
 }
