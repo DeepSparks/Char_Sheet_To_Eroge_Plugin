@@ -14,6 +14,7 @@ class VoicePeakProcessor {
             .map(([emotion, value]) => `${emotion}=${value}`)
             .join(',');
     
+        text = text.replaceAll('"', '');
         const command = `"${Config.VOICE_GENERATION_PROGRAM_PATH}" --say "${text}" --narrator "${narrator}" --emotion ${emotionString} --out "${outputPath}"`;
     
         return new Promise((resolve, reject) => {
