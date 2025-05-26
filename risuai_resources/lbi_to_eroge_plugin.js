@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.1.1
+//@display-name LBI to Eroge Plugin v3.1.2
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -653,48 +653,80 @@ async function handleDisplay(content) {
     const is_start_of_content = content.includes(`<${CONFIG.TAG_NAMES.START}/>`);
     const is_end_of_content = content.includes(`<${CONFIG.TAG_NAMES.END}/>`);
 
+    const is_status_tag_included = content.includes(`<${CONFIG.TAG_NAMES.STATUS}`);
+    const is_character_tag_included = content.includes(`<${CONFIG.TAG_NAMES.CHARACTER}`);
+    const is_style_tag_included = content.includes(`<${CONFIG.TAG_NAMES.STYLE}`);
+    const is_event_options_tag_included = content.includes(`<${CONFIG.TAG_NAMES.EVENT_OPTIONS}`);
+    const is_scene_tag_included = content.includes(`<${CONFIG.TAG_NAMES.SCENE}`);
+    const is_voice_tag_included = content.includes(`<${CONFIG.TAG_NAMES.VOICE}`);
+
     try {
         if(!is_start_of_content) {
             return raw_content
         }
 
         displayCount += 1
-
-        const status_parse_info = handleStatusTag(content);
-        content = status_parse_info.content
-        const content_for_status = status_parse_info.content_for_status
-
-        const event_options_parse_info = handleEventOptionsTag(content);
-        content = event_options_parse_info.content
-        const content_for_event_options = event_options_parse_info.content_for_event_options
-
-        const styles_for_content = getStylesForContent();
+        let front_contents = []
+        let back_contents = []
+        let waiting_functions = []
 
 
-        content = await handleCharacterTag(content);
-        content = await handleStyleTag(content);
+        if(is_status_tag_included) {
+            const status_parse_info = handleStatusTag(content);
+            content = status_parse_info.content
+            front_contents.push(status_parse_info.content_for_status)
+        }
+
+        if(is_event_options_tag_included) {
+            const event_options_parse_info = handleEventOptionsTag(content);
+            content = event_options_parse_info.content
+            back_contents.push(event_options_parse_info.content_for_event_options)
+        }
 
 
-        const voice_tag_parse_info = await handleVoiceTag(content, is_end_of_content);
-        content = voice_tag_parse_info.result
+        if(is_character_tag_included) {
+            content = await handleCharacterTag(content);
+        }
+
+        if(is_style_tag_included) {
+            content = await handleStyleTag(content);
+        }
 
 
-        const image_tag_parse_info = await handleImageTag(content, [content_for_status], [content_for_event_options], is_end_of_content);
-        content = image_tag_parse_info.result
-        const is_image_tag_processed = image_tag_parse_info.is_processed
+        if(is_voice_tag_included) {
+            const voice_tag_parse_info = await handleVoiceTag(content, is_end_of_content);
+            content = voice_tag_parse_info.result
+            if(is_end_of_content && voice_tag_parse_info.wait_until_voices_generated) {
+                waiting_functions.push(async () => {
+                    await voice_tag_parse_info.wait_until_voices_generated();
+                })
+            }
+        }
 
-        if(!is_image_tag_processed) {
-            return `Content is processing... Please wait a moment. (${raw_content.length} characters generated) `
+        if(is_scene_tag_included) {
+            content = restoreSceneTags(content);
+            const image_tag_parse_info = await handleImageTag(content, front_contents, back_contents, is_end_of_content);
+            content = image_tag_parse_info.result
+            if(is_end_of_content && image_tag_parse_info.wait_until_images_generated) {
+                waiting_functions.push(async () => {
+                    await image_tag_parse_info.wait_until_images_generated();
+                })
+            }
         }
 
 
         if(is_end_of_content) {
-            await voice_tag_parse_info.wait_until_voices_generated();
-            await image_tag_parse_info.wait_until_images_generated();
+            for(let waiting_function of waiting_functions) {
+                await waiting_function();
+            }
         }
 
-
-        return content + styles_for_content;
+        
+        if((!is_scene_tag_included) && (!is_voice_tag_included) && (is_status_tag_included || is_event_options_tag_included || is_character_tag_included || is_style_tag_included)) {
+            return `Content is processing... Please wait a moment. (${raw_content.length} characters generated)`
+        }
+        
+        return content + getStylesForContent();
 
     } catch (error) {
         PluginBackend.addToLog("[PLUGIN] Error while displaying content: " + error.message + '\n' + error.stack, "error");
@@ -748,15 +780,8 @@ function handleEventOptionsTag(content) {
     return { content, content_for_event_options };
 }
 
-function getStylesForContent() {
-    return IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES
-}
 
 async function handleCharacterTag(content) {
-    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.CHARACTER}`)) {
-        return content;
-    }
-
     const characterTagModelMap = CharacterTagParser.parseTagsFromContent(content);
     for(let tagIndex = 0; tagIndex < Object.keys(characterTagModelMap).length; tagIndex++) {
         const currentFullTag = Object.keys(characterTagModelMap)[tagIndex];
@@ -778,10 +803,6 @@ async function handleCharacterTag(content) {
 }
 
 async function handleStyleTag(content) {
-    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.STYLE}`)) {
-        return content;
-    }
-
     const styleTagModelMap = StyleTagParser.parseTagsFromContent(content);
     for(let tagIndex = 0; tagIndex < Object.keys(styleTagModelMap).length; tagIndex++) {
         const currentFullTag = Object.keys(styleTagModelMap)[tagIndex];
@@ -793,20 +814,32 @@ async function handleStyleTag(content) {
     return content;
 }
 
-async function handleImageTag(content, front_contents, back_contents, is_end_of_content) {
-    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.SCENE}`)) {
-        return {
-            result: content,
-            is_processed: false,
-            wait_until_images_generated: async () => {}
-        };
+
+function restoreSceneTags(content) {
+    const START_SCENE_TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.SCENE}\-([^\\s>]+)(?:\\s+([^>]*))?>`, 'g')
+    const END_SCENE_TAG_REGEX = new RegExp(`<\\/${CONFIG.TAG_NAMES.SCENE}\-([^\\s>]+)>`, 'g')
+    
+    const start_scene_matches = [...content.matchAll(START_SCENE_TAG_REGEX)];
+    const end_scene_matches = [...content.matchAll(END_SCENE_TAG_REGEX)];
+    
+    if(start_scene_matches.length > 0 && start_scene_matches.length !== end_scene_matches.length) {
+        const tag_to_add = `</${CONFIG.TAG_NAMES.SCENE}-${start_scene_matches[start_scene_matches.length - 1][1]}>`;
+        if(content.includes(`</${CONFIG.TAG_NAMES.SCENES}`)) {
+            const scenes_tag_index = content.indexOf(`</${CONFIG.TAG_NAMES.SCENES}>`);
+            content = content.slice(0, scenes_tag_index) + tag_to_add + content.slice(scenes_tag_index);
+        } else {
+            content += tag_to_add;
+        }
     }
 
+    return content;
+}
+
+async function handleImageTag(content, front_contents, back_contents, is_end_of_content) {
     const { fullTagModelsMap, processedFullTagInnerTexts } = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
     if(Object.keys(fullTagModelsMap).length === 0) {
         return {
             result: content,
-            is_processed: false,
             wait_until_images_generated: async () => {}
         };
     }
@@ -829,7 +862,6 @@ async function handleImageTag(content, front_contents, back_contents, is_end_of_
     }
     return {
         result,
-        is_processed: Object.keys(fullTagModelsMap).length > 0,
         wait_until_images_generated: async () => {
             if(Object.keys(fullTagModelsMap).length > 0) {
                 await PluginBackend.generateImages(Object.values(fullTagModelsMap), true);
@@ -839,13 +871,6 @@ async function handleImageTag(content, front_contents, back_contents, is_end_of_
 }
 
 async function handleVoiceTag(content, is_end_of_content) {
-    if (!content || !content.includes(`<${CONFIG.TAG_NAMES.VOICE}`)) {
-        return {
-            result: content,
-            wait_until_voices_generated: async () => {}
-        };
-    }
-
     const fullTagWithTextModelsMap = VoiceTagParser.parseTagsFromContent(content);
     if(Object.keys(fullTagWithTextModelsMap).length === 0) {
         return {
@@ -873,6 +898,11 @@ async function handleVoiceTag(content, is_end_of_content) {
             }
         }
     }
+}
+
+
+function getStylesForContent() {
+    return IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES
 }
 
 
