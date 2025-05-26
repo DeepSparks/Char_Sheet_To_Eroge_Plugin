@@ -34,7 +34,7 @@ Conclude with unique 3 suggested story events in English keywords but descriptio
 ```
 
 #### 4. Voice Tag
-You must insert the appropriate Voice tag to the right of every specific character's lines.
+You must insert the appropriate Voice tag to the right of **every specific character's lines**.
 If the corresponding emotion has an attribute of 0, you can omit that attribute.
 ```
 "character's line"<Voice name="character name" happy="0~100" fun="0~100" angry="0~100" sad="0~100" crying="0~100"/>
