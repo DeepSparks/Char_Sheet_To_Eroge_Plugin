@@ -1,19 +1,21 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.1.0
+//@display-name LBI to Eroge Plugin v3.1.1
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
     IMAGE_WIDTH: 1248,
     IMAGE_HEIGHT: 832,
     TAG_NAMES: {
+        START: "Start",
         STATUS: "Status",
         DEFINITIONS: "Definitions",
         CHARACTER: "Character",
         STYLE: "Style",
         SCENES: "Scenes",
         SCENE: "Scene",
+        VOICE: "Voice",
         EVENT_OPTIONS: "Event-Options",
-        VOICE: "Voice"
+        END: "End"
     },
     NO_RANDOM_SEED: "0",
     URL_UPDATE_FREQUENCY: 50,
@@ -26,7 +28,6 @@ const CONFIG = {
         "etc": ""
     },
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
-    START_OF_CONTENT_TAGS: ["<Definitions>", "<Scenes>"],
     END_OF_CONTENT_TAG: "</Scenes>",
     IS_USE_RANDOM_EVENT_SELECTION: false,
     IS_ONLY_ALLOW_GIRL_CHARACTER: true
@@ -649,14 +650,14 @@ class VoiceRenderer extends ContentRenderer {
 let displayCount = 0
 async function handleDisplay(content) {
     const raw_content = content;
-    const is_end_of_content = content.includes(CONFIG.END_OF_CONTENT_TAG);
+
+    const is_start_of_content = content.includes(`<${CONFIG.TAG_NAMES.START}/>`);
+    const is_end_of_content = content.includes(`<${CONFIG.TAG_NAMES.END}/>`);
 
     try {
-
-        if(!CONFIG.START_OF_CONTENT_TAGS.some(tag => content.includes(tag))) {
+        if(!is_start_of_content) {
             return raw_content
         }
-
 
         displayCount += 1
 

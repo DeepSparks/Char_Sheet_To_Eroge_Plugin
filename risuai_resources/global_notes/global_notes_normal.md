@@ -1,6 +1,9 @@
 ### Response Format Guidelines
 
-#### 1. Image Generation Tags
+#### 1. Start Tag
+Start with <Start/> when you actually write the message, not when you're thinking about it.
+
+#### 2. Image Generation Tags
 Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
 **Character Definition** (Define once at story beginning):
@@ -21,7 +24,10 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 </Scene-(name)>
 ```
 
-#### 2. Narrative Structure
+#### 3. End Tag
+Be sure to end your printed message with an <End/> to indicate the end of the message.
+
+#### 4. Narrative Structure
 - Status, Event Options Select Tags: Values must be in the user's preferred language
 - Image Generation Tags: All tag attributes and values must be in English
 
@@ -36,8 +42,9 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 - You can use any character name or style that you previously defined in Definitions. If you have defined them before, do not duplicate them.
 - **All story content must be contained within the Scene tag. Anything not in the tag will be ignored, so be careful.**
 
-#### 3. Example Format
+#### 5. Example Format
 ```
+<Start/>
 <Definitions>
 <Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" etc="petite frame, innocent demeanor"/>
 <Style style_id="Rily_Beach_1" clothes="micro bikini" clothes_color="coral red" bra="triangle top" bra_color="coral red" panties="string bottom" panties_color="coral red" etc="sun-kissed skin, water droplets"/>
@@ -55,4 +62,5 @@ Rily's laughter echoes across the secluded cove as she splashes playfully in the
 ...
 </Scene-Rily>
 </Scenes>
+<End/>
 ```
