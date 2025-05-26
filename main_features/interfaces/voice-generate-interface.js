@@ -40,9 +40,7 @@ class VoiceGenerateInterface {
         const urls = [];
         for (const voiceModel of voiceModels) {
             const filePath = (new VoiceModel(voiceModel)).toFilePath();
-            while (!fs.existsSync(filePath)) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
+            await Utils.wait_file_creation_safely(filePath);
             urls.push(filePath);
         }
         return urls;

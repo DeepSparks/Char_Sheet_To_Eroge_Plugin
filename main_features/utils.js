@@ -52,6 +52,30 @@ class Utils {
     static get_random_index(array) {
         return Math.floor(Math.random() * array.length);
     }
+
+    static async wait_file_creation_safely(filePath, checkInterval=500) {
+        while (!fs.existsSync(filePath)) {
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+        }
+
+        while (true) {
+            try {
+                const fileHandle = await fs.promises.open(filePath, 'r+');
+                await fileHandle.close();
+
+                return;
+            } catch (error) {
+                if (error.code === 'EBUSY' || error.code === 'EMFILE' || error.code === 'EACCES') {
+                    Utils.logToFile(`파일이 아직 사용 중: ${filePath}`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, checkInterval));
+                    continue;
+                } else {
+                    Utils.logToFile(`파일 잠금 체크 중 오류 (무시): ${filePath} - ${error.message}`, 'info');
+                    return;
+                }
+            }
+        }
+    }
 }
 
 export default Utils;

@@ -45,7 +45,7 @@ class ImageGenerateInterface {
         for (const imageModel of imageModels) {
             const filePath = (new ImageModel(imageModel)).toFilePath();
             while (!fs.existsSync(filePath) || Utils.is_image_waiting(filePath)) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
             urls.push(filePath);
         }
