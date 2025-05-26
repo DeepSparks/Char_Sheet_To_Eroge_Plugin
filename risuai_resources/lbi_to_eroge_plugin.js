@@ -28,7 +28,6 @@ const CONFIG = {
         "etc": ""
     },
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
-    END_OF_CONTENT_TAG: "</Scenes>",
     IS_USE_RANDOM_EVENT_SELECTION: false,
     IS_ONLY_ALLOW_GIRL_CHARACTER: true
 };
