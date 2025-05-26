@@ -10,7 +10,7 @@ class CharacterMemoryInterface {
     static isUpdating = false;
 
 
-    static async addCharacters(characters) {
+    static addCharacters(characters) {
         const processedCharacters = [];
 
         try{
@@ -33,7 +33,7 @@ class CharacterMemoryInterface {
         return processedCharacters;
     }
 
-    static async addCharacter(character) {
+    static addCharacter(character) {
         try{
             CharacterMemoryInterface.isUpdating = true;
             CharacterMemoryInterface.loadCharacterMap();

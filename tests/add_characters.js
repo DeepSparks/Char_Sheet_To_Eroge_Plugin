@@ -11,6 +11,7 @@ TestUtil.jsonRequest('http://127.0.0.1:3000/addCharacters', {
             eye_color: 'blue',
             breast_size: 'flat',
             skin_color: 'pale',
+            voice_type: 'bright',
             etc: 'bell collar'
         }
     ]

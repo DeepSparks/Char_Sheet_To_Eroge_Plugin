@@ -11,6 +11,7 @@ class CharacterModel {
         this.eye_color = req_body.eye_color || this.eye_color || '';
         this.breast_size = req_body.breast_size || this.breast_size || '';
         this.skin_color = req_body.skin_color || this.skin_color || '';
+        this.voice_type = req_body.voice_type || this.voice_type || '';
         this.etc = req_body.etc || this.etc || '';
 
         if(!this.hair_style.includes("hair")) this.hair_style = this.hair_style + " hair";

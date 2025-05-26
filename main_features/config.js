@@ -103,6 +103,13 @@ class Config {
         if(!process.env.VOICEPEAK_KEYWORD_JOIN) return {};
         return JSON.parse(process.env.VOICEPEAK_KEYWORD_JOIN);
     }
+    static get IS_USE_VOICE_TYPE_MATCHING() {
+        return process.env.IS_USE_VOICE_TYPE_MATCHING === 'true';
+    }
+    static get VOICE_TYPE_MATCHING_INFO() {
+        if(!process.env.VOICE_TYPE_MATCHING_INFO) return {};
+        return JSON.parse(process.env.VOICE_TYPE_MATCHING_INFO);
+    }
 }
 
 export default Config;

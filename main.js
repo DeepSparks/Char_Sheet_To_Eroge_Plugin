@@ -99,7 +99,7 @@ checkDependencyServers().then(() => {
                 await CharacterModel.translateReqBody(character);
             }
 
-            const characters = await CharacterMemoryInterface.addCharacters(req.body.characters);
+            const characters = CharacterMemoryInterface.addCharacters(req.body.characters);
             res.json({ characters });
 
         } catch (error) {

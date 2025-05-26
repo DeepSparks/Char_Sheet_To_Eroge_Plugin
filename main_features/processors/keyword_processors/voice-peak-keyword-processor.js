@@ -1,5 +1,6 @@
 import fs from 'fs';
 
+import { CharacterMemoryInterface } from '../../interfaces/index.js';
 import Utils from '../../utils.js';
 import Config from '../../config.js';
 
@@ -33,7 +34,29 @@ class VoicePeakKeywordProcessor {
             return nameMap[name];
         }
 
-        nameMap[name] = Utils.get_unique_id(Config.VOICEPEAK_SPEAKER_IDS, Object.values(nameMap));
+
+        let voiceIdsToChoose = Config.VOICEPEAK_SPEAKER_IDS;
+        if(Config.IS_USE_VOICE_TYPE_MATCHING) {
+            const character = CharacterMemoryInterface.getCharacter({
+                name: name
+            });
+            if(character) {
+                const matchedVoiceIds = Config.VOICE_TYPE_MATCHING_INFO[character.voice_type];
+                if(matchedVoiceIds) {
+                    let usableVoiceIds = [];
+                    for(let voiceId of matchedVoiceIds) {
+                        if(Config.VOICEPEAK_SPEAKER_IDS.includes(voiceId)) {
+                            usableVoiceIds.push(voiceId);
+                        }
+                    }
+                    if(usableVoiceIds.length > 0) {
+                        voiceIdsToChoose = usableVoiceIds;
+                    }
+                }
+            }
+        }
+
+        nameMap[name] = Utils.get_unique_id(voiceIdsToChoose, Object.values(nameMap));
         fs.writeFileSync(filePath, JSON.stringify(nameMap, null, 2));
         return nameMap[name];
     }

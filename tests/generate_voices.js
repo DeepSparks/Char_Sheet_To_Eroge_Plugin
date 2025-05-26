@@ -1,10 +1,27 @@
-const REQUEST_URL = 'http://127.0.0.1:3000/generateVoices';
+import TestUtil from './test_util.js';
 
-const REQUEST_BODY = {
+TestUtil.jsonRequest('http://127.0.0.1:3000/addCharacters', {
+    characters: [
+        {
+            name: 'Leira',
+            gender: 'girl',
+            age: 'very young',
+            hair_style: 'twintails',
+            hair_color: 'pink',
+            eye_color: 'blue',
+            breast_size: 'flat',
+            skin_color: 'pale',
+            voice_type: 'bright',
+            etc: 'bell collar'
+        }
+    ]
+})
+
+TestUtil.jsonRequest('http://127.0.0.1:3000/generateVoices', {
     isWaitUntilVoicesGenerated: true,
     voiceModels: [
         {
-            name: 'char1',
+            name: 'Leira',
             text: '반갑습니다.',
             emotions: {
                 happy: 50,
@@ -15,15 +32,4 @@ const REQUEST_BODY = {
             }
         }
     ]
-}
-
-fetch(REQUEST_URL, {
-    method: 'POST',
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(REQUEST_BODY)
 })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
