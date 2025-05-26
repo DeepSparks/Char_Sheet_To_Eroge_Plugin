@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.0.2
+//@display-name LBI to Eroge Plugin v3.1.0
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -130,6 +130,7 @@ class CharacterModel extends BaseModel {
         this.eye_color = attributes.eye_color || '';
         this.breast_size = attributes.breast_size || '';
         this.skin_color = attributes.skin_color || '';
+        this.voice_type = attributes.voice_type || '';
         this.etc = attributes.etc || '';
     }
 

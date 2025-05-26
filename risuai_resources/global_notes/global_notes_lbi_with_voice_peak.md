@@ -9,9 +9,9 @@ Begin your story with a status tags:
 #### 2. Image Generation Tags(Values must be in English)
 Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
-**Character Definition** (Define once at story beginning):
+**Character Definition** (Define once at story beginning, voice_type must be selected as one of the given values):
 ```
-<Character name="" gender="girl" age="" hair_style="" hair_color="" eye_color="" breast_size="" skin_color="" etc=""/>
+<Character name="" gender="girl" age="" hair_style="" hair_color="" eye_color="" breast_size="" skin_color="" voice_type="(bright|cool|playful)" etc=""/>
 ```
 
 **Style Definition** (Can be created throughout the story):
@@ -19,9 +19,9 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 <Style style_id="" clothes="" clothes_color="" bra="" bra_color="" panties="" panties_color="" etc=""/>
 ```
 
-**Image Generation** (Use when describing scenes):
+**Image Generation** (Use when describing scenes, nsfw must be selected as one of the given values):
 ```
-<Scene-(name) name="" style_id="" view="" pose="" expression="" background="" nsfw="" etc_char="Other properties for character" etc_other="Other properties that aren't about characters"/>
+<Scene-(name) name="" style_id="" view="" pose="" expression="" background="" nsfw="(none|masturbation|fellatio|sex|anal|etc)" etc_char="Other properties for character" etc_other="Other properties that aren't about characters"/>
 (Describe interactions and conversations for this specific character)
 (Avoid mentioning other characters within this scene tag)
 </Scene-(name)>
@@ -57,7 +57,7 @@ If the corresponding emotion has an attribute of 0, you can omit that attribute.
 <Status time="Golden afternoon" location="Secluded tropical beach cove" girls="Rily"/>
 
 <Definitions>
-<Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" etc="petite frame, innocent demeanor"/>
+<Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" voice_type="bright" etc="petite frame, innocent demeanor"/>
 <Style style_id="Rily_Beach_1" clothes="micro bikini" clothes_color="coral red" bra="triangle top" bra_color="coral red" panties="string bottom" panties_color="coral red" etc="sun-kissed skin, water droplets"/>
 ...
 </Definitions>

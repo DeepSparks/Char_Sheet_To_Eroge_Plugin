@@ -19,7 +19,7 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 <Style style_id="" clothes="" clothes_color="" bra="" bra_color="" panties="" panties_color="" etc=""/>
 ```
 
-**Image Generation** (Use when describing scenes):
+**Image Generation** (Use when describing scenes, nsfw must be selected as one of the given values):
 ```
 <Scene-(name) name="" style_id="" view="" pose="" expression="" background="" nsfw="(none|masturbation|fellatio|sex|anal|etc)" etc_char="Other properties for character" etc_other="Other properties that aren't about characters"/>
 (Describe interactions and conversations for this specific character)
