@@ -734,6 +734,7 @@ async function handleDisplay(content) {
     }
 }
 
+
 function handleStatusTag(content) {
     const statusTagModelMap = StatusTagParser.parseTagsFromContent(content);
     for(let tagIndex = 0; tagIndex < Object.keys(statusTagModelMap).length; tagIndex++) {
