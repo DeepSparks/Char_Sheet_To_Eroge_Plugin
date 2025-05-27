@@ -239,6 +239,7 @@ checkDependencyServers().then(() => {
     app.use('/outputs/images', express.static('./outputs/images'));  
     app.use('/outputs/voices', express.static('./outputs/voices'));
     app.use('/outputs/memories', express.static('./outputs/memories'));
+    app.use('/resources', express.static('./resources'));
 
 
     if(Config.IS_USE_GLOBAL_QUEUE) {

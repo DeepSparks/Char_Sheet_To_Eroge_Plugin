@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.1.3
+//@display-name LBI to Eroge Plugin v3.1.4
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -706,8 +706,12 @@ class ImageRenderer extends ContentRenderer {
 }
 
 class VoiceRenderer extends ContentRenderer {
-    static createVoiceUrl(voicePath, seed) {
-        return super.createUrl(voicePath, seed);
+    static createVoiceUrl(voicePath, seed, is_end_of_content) {
+        if(is_end_of_content) {
+            return super.createUrl(voicePath, seed);
+        } else {
+            return ""
+        }
     }
 
     static createVoicePlayer(voiceVoxUrl) {
@@ -961,7 +965,7 @@ async function handleVoiceTag(content, is_end_of_content) {
     let result = content;
     for(let tagIndex = 0; tagIndex < Object.keys(fullTagWithTextModelsMap).length; tagIndex++) {
         const currentFullTagWithText = Object.keys(fullTagWithTextModelsMap)[tagIndex];
-        const currentVoiceUrl = VoiceRenderer.createVoiceUrl(urls[tagIndex], randomSeeds[tagIndex]);
+        const currentVoiceUrl = VoiceRenderer.createVoiceUrl(urls[tagIndex], randomSeeds[tagIndex], is_end_of_content);
         const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl);
         result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(new RegExp(`<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\/>`, "g"), renderedVoicePlayer));
     }
