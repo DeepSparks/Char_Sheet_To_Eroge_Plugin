@@ -82,7 +82,7 @@ class Config {
         return Number(process.env.RETRY_INTERVAL_SECONDS) || 3;
     }
     static get NEXT_QUEUE_WAITING_SECONDS() { 
-        return Number(process.env.NEXT_QUEUE_WAITING_SECONDS) || 0.25;
+        return Number(process.env.NEXT_QUEUE_WAITING_SECONDS) || 0;
     }
     static get IS_CLEAR_SERVER_AT_STARTUP() { 
         return process.env.IS_CLEAR_SERVER_AT_STARTUP === 'true';
