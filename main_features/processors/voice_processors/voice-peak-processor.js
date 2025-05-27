@@ -3,11 +3,22 @@ import { exec } from 'child_process';
 import { TranslateInterface } from '../../interfaces/index.js';
 import Config from '../../config.js';
 import { VoiceModel } from '../../models/index.js';
+import Utils from '../../utils.js';
+
+const TEXT_LIMIT = 139;
+const SPLIT_CHARS = ["。","！","？","、"];
 
 class VoicePeakProcessor {
     static async process(voiceModel) {
-        const text = VoiceModel.sanitizeText(await TranslateInterface.translateForVoiceScript(voiceModel.text));
-        await VoicePeakProcessor.makeVoice(text, voiceModel.speaker_id, voiceModel.emotions, voiceModel.toFilePath());
+        const translatedText = await TranslateInterface.translateForVoiceScript(voiceModel.text);
+
+        let targetText = VoiceModel.sanitizeText(translatedText);
+        if(targetText.length > TEXT_LIMIT) {
+            targetText = VoicePeakProcessor.cutSpeak(targetText, TEXT_LIMIT, SPLIT_CHARS);
+            Utils.logToFile(`주어진 음성 문장이 너무 길어서 자르기 처리됨: ${translatedText} -> ${targetText}`);
+        }
+        
+        await VoicePeakProcessor.makeVoice(targetText, voiceModel.speaker_id, voiceModel.emotions, voiceModel.toFilePath());
     }
 
     static async makeVoice(text, narrator, emotions, outputPath) {
@@ -29,6 +40,32 @@ class VoicePeakProcessor {
                 resolve(outputPath);
             });
         });
+    }
+
+    static cutSpeak(speak, cutLength=TEXT_LIMIT, splitChars=SPLIT_CHARS) {
+        // 수단 1: 불필요한 공백이나 특수 문자를 제거
+        speak = speak.replace(/[\s♥～. ]/g, '');
+        if(speak.length <= cutLength) {
+            return speak;
+        }
+    
+        // 수단 2: 문장 분리
+        let splitCharsIndexes = [];
+        for(let i = 0; i < speak.length; i++) {
+            if(splitChars.includes(speak[i])) {
+                splitCharsIndexes.push(i);
+            }
+        }
+        splitCharsIndexes.sort((a, b) => b - a);
+        for(let i = 0; i < splitCharsIndexes.length; i++) {
+            const sentence = speak.slice(0, splitCharsIndexes[i]+1);
+            if(sentence.length <= cutLength) {
+                return sentence;
+            }
+        }
+    
+        // 수단 3: 강제로 자르기
+        return speak.slice(0, cutLength);
     }
 }
 
