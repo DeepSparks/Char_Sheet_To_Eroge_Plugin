@@ -1,7 +1,7 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.1.4
+//@display-name LBI to Eroge Plugin v3.1.5
 
-const CONFIG = {
+let CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
     IMAGE_WIDTH: 1248,
     IMAGE_HEIGHT: 832,
@@ -29,7 +29,10 @@ const CONFIG = {
     },
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
     IS_USE_RANDOM_EVENT_SELECTION: false,
-    IS_ONLY_ALLOW_GIRL_CHARACTER: true
+    IS_ONLY_ALLOW_GIRL_CHARACTER: true,
+    RESOURCES: {
+        WAITING_IMAGE: `resources/image_waiting.png`
+    }
 };
 
 const IMAGE_CONTAINER_STYLES = `
@@ -404,7 +407,7 @@ class StyleTagParser extends TagParser {
 
 class ImageTagParser extends TagParser {
     static async parseTagsFromContent(content, front_contents, back_contents) {
-        const OTHER_TAG_NAME = "Othe";
+        const OTHER_TAG_NAME = "Other";
     
         const fullTagModelsMap = {};
         let fullTagInnerTexts= [];
@@ -471,6 +474,12 @@ class ImageTagParser extends TagParser {
         }]
     
         
+        if(fullTagInnerTexts.every(item => item.name === OTHER_TAG_NAME)) {
+            const text = fullTagInnerTexts.map(item => item.text).join("\n");
+            return {isSingleOtherTag: true, innerText: text};
+        }
+
+
         const processedFullTagInnerTexts = {};
         
         const realNameIndices = [];
@@ -915,7 +924,18 @@ function restoreSceneTags(content) {
 }
 
 async function handleImageTag(content, front_contents, back_contents, is_end_of_content) {
-    const { fullTagModelsMap, processedFullTagInnerTexts } = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
+    const parsedResult = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
+    if(parsedResult.isSingleOtherTag) {
+        const currentUrl = ImageRenderer.createImageUrl(CONFIG.RESOURCES.WAITING_IMAGE, 1);
+        const renderedSlide = ImageRenderer.createSlideContext(currentUrl, parsedResult.innerText);
+        return {
+            result: renderedSlide,
+            wait_until_images_generated: async () => {}
+        };
+    }
+
+    
+    const { fullTagModelsMap, processedFullTagInnerTexts } = parsedResult;
     if(Object.keys(fullTagModelsMap).length === 0) {
         return {
             result: content,
