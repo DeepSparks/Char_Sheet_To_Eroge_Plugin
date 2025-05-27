@@ -1,5 +1,5 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v3.1.2
+//@display-name LBI to Eroge Plugin v3.1.3
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
@@ -243,6 +243,7 @@ class PluginBackend {
         await this.jsonPostRequest("addToLog", { log, type });
     }
 
+
     static async addCharacters(characterModels) {
         return this.jsonPostRequest("addCharacters", {
             characters: characterModels.map(characterModel => characterModel.toJsonDict())
@@ -264,11 +265,13 @@ class PluginBackend {
         return existsCharacters;
     }
 
+
     static async addStyles(styleModels) {
         return this.jsonPostRequest("addStyles", {
             styles: styleModels.map(styleModel => styleModel.toJsonDict())
         });
     }
+
 
     static async generateImages(imageModels, isWaitUntilImagesGenerated = false) {
         return (await this.jsonPostRequest("generateImages", {
@@ -279,6 +282,15 @@ class PluginBackend {
         })).urls;
     }
 
+    static async checkImageCompletions(imageModels) {
+        return (await this.jsonPostRequest("checkImageCompletions", {
+            imageModels: imageModels.map(
+                imageModel => imageModel.toJsonDict()
+            )
+        })).completions;
+    }
+
+
     static async generateVoices(voiceModels, isWaitUntilVoicesGenerated = false) {
         return (await this.jsonPostRequest("generateVoices", {
             voiceModels: voiceModels.map(
@@ -286,6 +298,14 @@ class PluginBackend {
             ),
             isWaitUntilVoicesGenerated: isWaitUntilVoicesGenerated
         })).urls;
+    }
+
+    static async checkVoiceCompletions(voiceModels) {
+        return (await this.jsonPostRequest("checkVoiceCompletions", {
+            voiceModels: voiceModels.map(
+                voiceModel => voiceModel.toJsonDict()
+            )
+        })).completions;
     }
 }
 
@@ -529,38 +549,93 @@ class VoiceTagParser extends TagParser {
 
 // 공통 처리 클래스
 class ContentProcessor {
-    static async fetchOrGenerate(fullTagModelsMap, is_end_of_content, cacheInstance, generateFunction) {
+    static async fetchOrGenerate(fullTagModelsMap, is_end_of_content, cacheInstance, generateFunction, checkCompletionFunction) {
         const models = Object.values(fullTagModelsMap);
-        let urls = [];
-        let randomSeed = CONFIG.NO_RANDOM_SEED;
+        let urls = Array(models.length).fill(null);
+        let randomSeeds = Array(models.length).fill(null);
 
         if (models.length === 0) {
-            return { urls, randomSeed };
+            return { urls, randomSeeds };
         }
 
 
-        const firstPrompt = models[0].toPromptString();
-        if (cacheInstance.has(firstPrompt)) {
-            urls = models.map(model => {
-                const prompt = model.toPromptString();
-                return cacheInstance.has(prompt) ? cacheInstance.get(prompt).url : null;
-            }).filter(url => url);
-            
-            randomSeed = cacheInstance.get(firstPrompt).randomImageSeed;
-        } 
-        else {
-            urls = await generateFunction(models, false);
-            
-            if (is_end_of_content) {
-                randomSeed = Math.floor(Math.random() * 100000000000).toString();
-                
-                models.forEach((model, index) => {
-                    cacheInstance.set(model.toPromptString(), urls[index], randomSeed);
-                });
+        for(let modelIndex = 0; modelIndex < models.length; modelIndex++) {
+            const model = models[modelIndex];
+            const cacheKey = model.toPromptString();
+
+            if(cacheInstance.has(cacheKey)) {
+                const matchedCacheInstance = cacheInstance.get(cacheKey);
+                urls[modelIndex] = matchedCacheInstance.url;
+                randomSeeds[modelIndex] = matchedCacheInstance.randomImageSeed;
             }
         }
 
-        return { urls, randomSeed };
+        
+        let models_to_generate = [];
+        let generated_model_indexes = [];
+        for(let modelIndex = 0; modelIndex < models.length; modelIndex++) {
+            if(urls[modelIndex] !== null) continue;
+
+            const model = models[modelIndex];
+            models_to_generate.push(model);
+            generated_model_indexes.push(modelIndex);
+        } 
+
+        const isCompleteds = await checkCompletionFunction(models_to_generate);
+        for(let completed_model_index = 0; completed_model_index < isCompleteds.length; completed_model_index++) {
+            const model = models_to_generate[completed_model_index];
+            const cacheKey = model.toPromptString();
+            const modelIndex = generated_model_indexes[completed_model_index];
+
+            if(cacheInstance.has(cacheKey)) {
+                const matchedCacheInstance = cacheInstance.get(cacheKey);
+                urls[modelIndex] = matchedCacheInstance.url;
+                randomSeeds[modelIndex] = matchedCacheInstance.randomImageSeed;
+                continue;
+            }
+
+            if(isCompleteds[completed_model_index].isCompleted) {
+                urls[modelIndex] = isCompleteds[completed_model_index].filePath
+                randomSeeds[modelIndex] = 1;
+                cacheInstance.set(model.toPromptString(), urls[modelIndex], randomSeeds[modelIndex]);
+            }
+        } 
+
+
+        const models_to_generate_second = [];
+        let generated_model_indexes_second = [];
+        for(let modelIndex = 0; modelIndex < models.length; modelIndex++) {
+            if(urls[modelIndex] !== null) continue;
+
+            const model = models[modelIndex];
+            models_to_generate_second.push(model);
+            generated_model_indexes_second.push(modelIndex);
+        }
+
+        const generated_urls = await generateFunction(models_to_generate_second, false);
+        for(let generated_url_index = 0; generated_url_index < generated_urls.length; generated_url_index++) {
+            const model = models_to_generate_second[generated_url_index];
+            const cacheKey = model.toPromptString();
+            const modelIndex = generated_model_indexes_second[generated_url_index];
+
+            if(cacheInstance.has(cacheKey)) {
+                const matchedCacheInstance = cacheInstance.get(cacheKey);
+                urls[modelIndex] = matchedCacheInstance.url;
+                randomSeeds[modelIndex] = matchedCacheInstance.randomImageSeed;
+                continue;
+            }
+
+            urls[modelIndex] = generated_urls[generated_url_index];
+            if(is_end_of_content) {
+                randomSeeds[modelIndex] = 1;
+            }
+            else {
+                randomSeeds[modelIndex] = 0
+            }
+        }
+
+
+        return { urls, randomSeeds };
     }
 }
 
@@ -570,18 +645,20 @@ class ImageProcessor extends ContentProcessor {
             imageTagModelMap, 
             is_end_of_content, 
             imageCache, 
-            PluginBackend.generateImages.bind(PluginBackend)
+            PluginBackend.generateImages.bind(PluginBackend),
+            PluginBackend.checkImageCompletions.bind(PluginBackend)
         );
     }
 }
 
-class VoiceTagProcessor extends ContentProcessor {
+class VoiceProcessor extends ContentProcessor {
     static async fetchOrGenerateVoices(fullTagVoiceVoxModelsMap, is_end_of_content) {
         return this.fetchOrGenerate(
             fullTagVoiceVoxModelsMap, 
             is_end_of_content, 
             voiceVoxCache, 
-            PluginBackend.generateVoices.bind(PluginBackend)
+            PluginBackend.generateVoices.bind(PluginBackend),
+            PluginBackend.checkVoiceCompletions.bind(PluginBackend)
         );
     }
 }
@@ -589,8 +666,7 @@ class VoiceTagProcessor extends ContentProcessor {
 
 class ContentRenderer {
     static createUrl(contentPath, seed) {
-        const UPDATE_COUNT = (seed === CONFIG.NO_RANDOM_SEED) ? Math.floor(displayCount/CONFIG.URL_UPDATE_FREQUENCY) : 0;
-        return `${CONFIG.BACKEND_URL}/${contentPath}?randomSeed=${seed}&updateCount=${UPDATE_COUNT}`;
+        return `${CONFIG.BACKEND_URL}/${contentPath}?randomSeed=${seed}`;
     }
 }
 
@@ -646,7 +722,6 @@ class VoiceRenderer extends ContentRenderer {
 }
 
 
-let displayCount = 0
 async function handleDisplay(content) {
     const raw_content = content;
 
@@ -665,7 +740,6 @@ async function handleDisplay(content) {
             return raw_content
         }
 
-        displayCount += 1
         let front_contents = []
         let back_contents = []
         let waiting_functions = []
@@ -846,7 +920,7 @@ async function handleImageTag(content, front_contents, back_contents, is_end_of_
     }
     
 
-    const { urls, randomSeed: randomImageSeed } = await ImageProcessor.fetchOrGenerateImages(
+    const { urls, randomSeeds } = await ImageProcessor.fetchOrGenerateImages(
         fullTagModelsMap, is_end_of_content
     );
 
@@ -856,7 +930,7 @@ async function handleImageTag(content, front_contents, back_contents, is_end_of_
         const currentFullTag = Object.keys(fullTagModelsMap)[tagIndex];
         const currentSlideContext = processedFullTagInnerTexts[currentFullTag].text;
 
-        const currentUrl = ImageRenderer.createImageUrl(urls[tagIndex], randomImageSeed);
+        const currentUrl = ImageRenderer.createImageUrl(urls[tagIndex], randomSeeds[tagIndex]);
         const renderedSlide = ImageRenderer.createSlideContext(currentUrl, currentSlideContext);
 
         result += renderedSlide;
@@ -880,14 +954,14 @@ async function handleVoiceTag(content, is_end_of_content) {
         };
     }
 
-    const { urls: voiceUrls, randomSeed: voiceRandomSeed } = await VoiceTagProcessor.fetchOrGenerateVoices(
+    const { urls, randomSeeds } = await VoiceProcessor.fetchOrGenerateVoices(
         fullTagWithTextModelsMap, is_end_of_content
     );
 
     let result = content;
     for(let tagIndex = 0; tagIndex < Object.keys(fullTagWithTextModelsMap).length; tagIndex++) {
         const currentFullTagWithText = Object.keys(fullTagWithTextModelsMap)[tagIndex];
-        const currentVoiceUrl = VoiceRenderer.createVoiceUrl(voiceUrls[tagIndex], voiceRandomSeed);
+        const currentVoiceUrl = VoiceRenderer.createVoiceUrl(urls[tagIndex], randomSeeds[tagIndex]);
         const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl);
         result = result.replace(currentFullTagWithText, currentFullTagWithText.replace(new RegExp(`<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\/>`, "g"), renderedVoicePlayer));
     }
