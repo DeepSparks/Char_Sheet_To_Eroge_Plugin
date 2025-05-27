@@ -47,17 +47,23 @@ class ImageModel {
             let translatedParts = [];
             for(let part of reqBody[key].split(',')) {
                 if(/[^\x00-\x7F]/.test(part)) {
-                    translatedParts.push(await TranslateInterface.translateText('auto', 'en', part));
+                    translatedParts.push((await TranslateInterface.translateText('auto', 'en', part.trim())).trim());
                 } else {
-                    translatedParts.push(part);
+                    translatedParts.push(part.trim());
                 }
             }
             reqBody[key] = translatedParts.join(', ').toLowerCase();
         }
     }
-    
+
     toJsonDict() {
-        return {...this};
+        return {
+            name: this.name,
+            style_id: this.style_id,
+            common_prompt: this.common_prompt,
+            common_negative_prompt: this.common_negative_prompt,
+            character_prompt: this.character_prompt
+        };
     }
 
     toPromptString() {

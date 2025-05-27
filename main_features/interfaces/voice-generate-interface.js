@@ -45,6 +45,15 @@ class VoiceGenerateInterface {
         }
         return urls;
     }
+
+    static async checkVoiceCompletions(voiceModels) {
+        const completions = [];
+        for (const voiceModel of voiceModels) {
+            const filePath = (new VoiceModel(voiceModel)).toFilePath();
+            completions.push({ filePath: filePath, isCompleted: await Utils.check_file_completion_safely(filePath) });
+        }
+        return completions;
+    }
 }
 
 export default VoiceGenerateInterface;

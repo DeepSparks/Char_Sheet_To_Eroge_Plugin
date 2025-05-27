@@ -44,12 +44,28 @@ class ImageGenerateInterface {
         const urls = [];
         for (const imageModel of imageModels) {
             const filePath = (new ImageModel(imageModel)).toFilePath();
-            while (!fs.existsSync(filePath) || Utils.is_image_waiting(filePath)) {
+            while (!this.isImageCompleted(filePath)) {
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
             urls.push(filePath);
         }
         return urls;
+    }
+
+    static checkImageCompletions(imageModels) {
+        const completions = [];
+        for (const imageModel of imageModels) {
+            const filePath = (new ImageModel(imageModel)).toFilePath();
+            completions.push({
+                filePath: filePath,
+                isCompleted: this.isImageCompleted(filePath)
+            });
+        }
+        return completions;
+    }
+
+    static isImageCompleted(filePath) {
+        return fs.existsSync(filePath) && !Utils.is_image_waiting(filePath);
     }
 }
 

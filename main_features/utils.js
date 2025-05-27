@@ -76,6 +76,23 @@ class Utils {
             }
         }
     }
+
+    static async check_file_completion_safely(filePath) {
+        if(!fs.existsSync(filePath)) {
+            return false;
+        }
+        
+        try {
+            const fileHandle = await fs.promises.open(filePath, 'r+');
+            await fileHandle.close();
+            return true;
+        } catch (error) {
+            if (error.code === 'EBUSY' || error.code === 'EMFILE' || error.code === 'EACCES') {
+                return false;
+            }
+            return true;
+        }
+    }
 }
 
 export default Utils;

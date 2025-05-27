@@ -13,7 +13,11 @@ class VoiceModel {
     }
     
     toJsonDict() {
-        return { ...this };
+        return {
+            name: this.name,
+            text: this.text,
+            emotions: this.emotions
+        };
     }
 
     toPromptString() {

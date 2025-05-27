@@ -169,6 +169,23 @@ checkDependencyServers().then(() => {
         }
     });
 
+    app.post('/checkImageCompletions', async (req, res) => {
+        try {
+
+            for(let imageModel of req.body.imageModels) {
+                await ImageModel.translateReqBody(imageModel);
+            }
+
+            const completions = ImageGenerateInterface.checkImageCompletions(req.body.imageModels);
+            res.json({ completions });
+
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
+
+
     app.post('/generateVoices', async (req, res) => {
         try {
 
@@ -183,6 +200,19 @@ checkDependencyServers().then(() => {
             res.json({ error: error.message, stack: error.stack });
         }
     });
+
+    app.post('/checkVoiceCompletions', async (req, res) => {
+        try {
+
+            const completions = await VoiceGenerateInterface.checkVoiceCompletions(req.body.voiceModels);
+            res.json({ completions });
+
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
+    
 
     app.post('/translateTexts', async (req, res) => {
         try {
