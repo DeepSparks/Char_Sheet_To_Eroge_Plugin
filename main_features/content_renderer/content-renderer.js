@@ -3,6 +3,7 @@ import { ContentStatusModel } from './models/index.js';
 import { handleStatusTag, handleEventOptionsTag, handleCharacterTag, handleStyleTag, handleBackgroundTag, handleVoiceTag, handleImageTag } from './handlers/index.js';
 import { VoiceCache, ImageCache } from './content_caches/index.js';
 import { restoreSceneTag } from './restorers/index.js';
+import { ProgressUIRenderer } from './renderers/index.js';
 import Utils from '../utils.js';
 
 let voiceCache = new VoiceCache();
@@ -35,16 +36,25 @@ class ContentRenderer {
             }
     
     
+            let processed_characters = []
             if(content_status.is_character_tag_included) {
-                content = await handleCharacterTag(content);
+                const character_tag_parse_info = await handleCharacterTag(content);
+                content = character_tag_parse_info.content
+                processed_characters = character_tag_parse_info.processed_characters
             }
     
+            let processed_styles = []
             if(content_status.is_style_tag_included) {
-                content = await handleStyleTag(content);
+                const style_tag_parse_info = await handleStyleTag(content);
+                content = style_tag_parse_info.content
+                processed_styles = style_tag_parse_info.processed_styles
             }
 
+            let processed_backgrounds = []
             if(content_status.is_background_tag_included) {
-                content = await handleBackgroundTag(content);
+                const background_tag_parse_info = await handleBackgroundTag(content);
+                content = background_tag_parse_info.content
+                processed_backgrounds = background_tag_parse_info.processed_backgrounds
             }
     
     
@@ -78,7 +88,7 @@ class ContentRenderer {
             }
     
             if(content_status.is_processing()) {
-                return `Content is processing... Please wait a moment. (${content_status.raw_content.length} characters generated)`
+                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds);
             }
             
             return content + IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES

@@ -33,6 +33,78 @@ export const CONFIG = {
     }
 };
 
+export const PROGRESS_UI_STYLES = `<style>
+.progress-container {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: sans-serif, "Apple SD Gothic Neo", "Malgun Gothic", "Dotum", sans-serif;
+    border: 1px solid #444;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.progress-text {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+#char-count {
+    font-weight: bold;
+    color: #5dade2;
+}
+.progress-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.progress-item {
+    background-color: #383838;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #555;
+}
+.item-label {
+    font-weight: bold;
+    margin-right: 8px;
+    color: #a9cce3;
+}
+.item-status {
+    font-style: italic;
+}
+.status-pending {
+    color: #f39c12; /* 주황색 */
+    border-left-color: #f39c12;
+}
+.status-completed {
+    color: #2ecc71; /* 녹색 */
+    border-left-color: #2ecc71;
+}
+.status-none {
+    color: #95a5a6; /* 회색 */
+    border-left-color: #95a5a6;
+}
+.processed-items-list {
+    list-style-type: none;
+    padding-left: 10px;
+    margin-top: 8px;
+    font-size: 0.9em;
+}
+.processed-items-list li {
+    margin-bottom: 4px;
+    color: #bdc3c7;
+    padding-left: 10px;
+    position: relative;
+}
+.processed-items-list li::before {
+    content: '✓';
+    color: #2ecc71;
+    position: absolute;
+    left: -5px;
+    font-weight: bold;
+}
+</style>`
+
 export const IMAGE_CONTAINER_STYLES = `<style>
 .root-container {
     display: flex;

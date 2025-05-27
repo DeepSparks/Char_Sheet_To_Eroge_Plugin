@@ -10,5 +10,8 @@ export default async function handleStyleTag(content) {
 
     await BackendInterface.addStyles(Object.values(styleTagModelMap));
 
-    return content;
+    return {
+        content: content,
+        processed_styles: Object.values(styleTagModelMap)
+    };
 }

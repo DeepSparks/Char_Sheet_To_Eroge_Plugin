@@ -10,5 +10,8 @@ export default async function handleBackgroundTag(content) {
 
     await BackendInterface.addBackgrounds(Object.values(backgroundTagModelMap));
 
-    return content;
+    return {
+        content: content,
+        processed_backgrounds: Object.values(backgroundTagModelMap)
+    }
 }

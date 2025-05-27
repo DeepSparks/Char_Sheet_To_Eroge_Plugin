@@ -20,5 +20,8 @@ export default async function handleCharacterTag(content) {
 
     await BackendInterface.addCharacters(Object.values(characterTagModelMap));
 
-    return content;
+    return {
+        content: content,
+        processed_characters: Object.values(characterTagModelMap)
+    }
 }
