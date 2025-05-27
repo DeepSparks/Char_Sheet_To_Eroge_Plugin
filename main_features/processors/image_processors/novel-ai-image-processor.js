@@ -3,6 +3,7 @@ import fs from 'fs'
 
 import Utils from '../../utils.js';
 import Config from '../../config.js';
+import { RandomUtil } from '../../utils/index.js';
 
 class NovelAIUIImageProcessor {
     static async process(imageModel) {
@@ -129,7 +130,7 @@ class NovelAIUIImageProcessor {
           }]
         }))
 
-        payload.parameters.seed = Math.floor(Math.random() * 1000000000)
+        payload.parameters.seed = RandomUtil.get_random_seed()
 
         return payload
     }

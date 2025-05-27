@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 
 import {
-    CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface,
+    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface,
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
-    CharacterModel, StyleModel, ImageModel,
+    CharacterModel, StyleModel, BackgroundModel, ImageModel,
     Utils, Config 
 } from './main_features/index.js';
 
@@ -150,6 +150,35 @@ checkDependencyServers().then(() => {
     });
 
 
+    app.post('/addBackgrounds', async (req, res) => {
+        try {
+
+            for(let background of req.body.backgrounds) {
+                await BackgroundModel.translateReqBody(background);
+            }
+
+            const backgrounds = await BackgroundMemoryInterface.addBackgrounds(req.body.backgrounds);
+            res.json({ backgrounds });
+            
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
+    app.post('/getBackgrounds', (req, res) => {
+        try {
+
+            const backgrounds = BackgroundMemoryInterface.getBackgrounds(req.body.backgrounds);
+            res.json({ backgrounds });
+
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
+
     app.post('/generateImages', async (req, res) => {
         try {
 
@@ -224,7 +253,7 @@ checkDependencyServers().then(() => {
         }
     });
 
-    app.post(`/render_content`, async (req, res) => {
+    app.post(`/renderContent`, async (req, res) => {
         try {
             const result = await RenderContentInterface.renderContent(req.body.content);
             res.json({ result });

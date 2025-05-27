@@ -1,8 +1,8 @@
 ### Interface
 #### Voice Tag
 You must insert the appropriate Voice tag to the right of every specific character's lines.
-Structure: "character's line"<Voice name="character name"/>
+Structure: <Voice name="character name" text="character's line"/>
 #### Example
 ```
-"Hello."<Voice name="Rily"/>She said.
+<Voice name="Rily" text="Hello."/>She said.
 ```

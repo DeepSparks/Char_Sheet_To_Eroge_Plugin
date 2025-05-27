@@ -2,10 +2,11 @@ import { exec } from 'child_process';
 
 import { TranslateInterface } from '../../interfaces/index.js';
 import Config from '../../config.js';
+import { VoiceModel } from '../../models/index.js';
 
 class VoicePeakProcessor {
     static async process(voiceModel) {
-        const text = await TranslateInterface.translateForVoiceScript(voiceModel.text);
+        const text = VoiceModel.sanitizeText(await TranslateInterface.translateForVoiceScript(voiceModel.text));
         await VoicePeakProcessor.makeVoice(text, voiceModel.speaker_id, voiceModel.emotions, voiceModel.toFilePath());
     }
 
@@ -14,7 +15,6 @@ class VoicePeakProcessor {
             .map(([emotion, value]) => `${emotion}=${value}`)
             .join(',');
     
-        text = text.replaceAll('"', '');
         const command = `"${Config.VOICE_GENERATION_PROGRAM_PATH}" --say "${text}" --narrator "${narrator}" --emotion ${emotionString} --out "${outputPath}"`;
     
         return new Promise((resolve, reject) => {

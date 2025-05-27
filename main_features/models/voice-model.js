@@ -6,7 +6,7 @@ import Config from '../config.js';
 class VoiceModel {
     constructor(req_body) {
         this.name = req_body.name || '';
-        this.text = req_body.text || '';
+        this.text = VoiceModel.sanitizeText(req_body.text) || '';
         this.emotions = req_body.emotions || {};
 
         keywordProcessors[Config.VOICE_KEYWORD_MODE].process(this);
@@ -30,6 +30,10 @@ class VoiceModel {
 
     toFilePath() {
         return `outputs/voices/${this.toMD5()}.wav`;
+    }
+
+    static sanitizeText(text) {
+        return [...text.matchAll(new RegExp(`(?:[^\\s\\\\n"]| )+`, 'g'))].map((match)=>match[0].trim()).filter((match)=>match).join(" ");
     }
 }
 

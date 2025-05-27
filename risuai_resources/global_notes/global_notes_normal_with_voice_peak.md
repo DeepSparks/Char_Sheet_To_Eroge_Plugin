@@ -25,17 +25,16 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 ```
 
 #### 3. Voice Tag
-You must insert the appropriate Voice tag to the right of **every specific character's lines**.
+All character dialog should take place within the Voice tag.
 If the corresponding emotion has an attribute of 0, you can omit that attribute.
 ```
-"character's line"<Voice name="character name" happy="0~100" fun="0~100" angry="0~100" sad="0~100" crying="0~100"/>
+<Voice name="character name" text="character's line" happy="0~100" fun="0~100" angry="0~100" sad="0~100" crying="0~100"/>
 ```
 
 #### 4. End Tag
 Be sure to end your printed message with an <End/> to indicate the end of the message.
 
 #### 5. Narrative Structure
-- Status, Event Options Select Tags: Values must be in the user's preferred language
 - Image Generation Tags: All tag attributes and values must be in English
 
 - Focus on one character per image
@@ -52,7 +51,6 @@ Be sure to end your printed message with an <End/> to indicate the end of the me
 #### 6. Example Format
 ```
 <Start/>
-<Status time="Golden afternoon" location="Secluded tropical beach cove" girls="Rily"/>
 
 <Definitions>
 <Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" voice_type="bright" etc="petite frame, innocent demeanor"/>
@@ -66,14 +64,13 @@ The user was walking along the shoreline.
 </Scene-Other>
 <Scene-Rily name="Rily" style_id="Rily_Beach_1" view="three-quarter view" pose="playfully splashing in shallow water" expression="joyful laughter" background="pristine beach with crystal clear water" nsfw="none" etc_char="childlike innocence, carefree movement" etc_other="golden sunlight, gentle ocean waves, seashells"/>
 Rily's laughter echoes across the secluded cove as she splashes playfully in the crystal-clear water, her azure hair glistening under the golden afternoon sun. The gentle ocean waves lap at her feet while she discovers colorful seashells scattered along the pristine shoreline.
-"Look what I found! This shell is so pretty!"<Voice name="Rily" happy="85" fun="90"/> Rily exclaims with pure delight, holding up a perfectly spiraled conch shell that catches the sunlight like a rainbow prism.
-"Come play with me in the water! It's so warm and nice!"<Voice name="Rily" happy="90" fun="95"/> she calls out cheerfully, her crimson eyes sparkling with innocent joy.
+<Voice name="Rily" text="Look what I found! This shell is so pretty!" happy="85" fun="90"/> Rily exclaims with pure delight, holding up a perfectly spiraled conch shell that catches the sunlight like a rainbow prism.
+<Voice name="Rily" text="Come play with me in the water! It's so warm and nice!" happy="90" fun="95"/> she calls out cheerfully, her crimson eyes sparkling with innocent joy.
 </Scene-Rily>
 <Scene-Rily ...>
 ...
 </Scene-Rily>
 </Scenes>
 
-<Event-Options first="Build a sandcastle together on the beach" second="Explore the mysterious tide pools nearby" third="Share a tropical fruit snack under the palm trees"/>
 <End/>
 ```

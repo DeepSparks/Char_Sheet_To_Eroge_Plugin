@@ -1,8 +1,8 @@
-import { ContentRender } from '../renders/index.js';
+import { ContentRenderer } from '../content_renderer/index.js';
 
 class RenderContentInterface {
     static async renderContent(content) {
-        return ContentRender.renderContent(content);
+        return ContentRenderer.renderContent(content);
     }
 }
 

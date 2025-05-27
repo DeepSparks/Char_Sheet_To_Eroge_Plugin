@@ -15,6 +15,12 @@ class VoicePeakKeywordProcessor {
                 createdEmotions[keywordJoin[voiceModel.speaker_id][emotion]] = value;
             }
         }
+
+        // 너무 감정 값이 큰 경우, 생성되는 보이스가 불안정해지 때문에 1/2로 줄임
+        for(const [emotion, value] of Object.entries(createdEmotions)) {
+            createdEmotions[emotion] = Math.floor(Number(value) / 2);
+        }
+
         voiceModel.emotions = createdEmotions;
     }
 

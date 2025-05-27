@@ -31,6 +31,20 @@ async function main() {
             }
         ]
     })
+
+    await TestUtil.jsonRequest('http://127.0.0.1:3000/addBackgrounds', {
+        backgrounds: [
+            {
+                background_id: 'lbi_airport',
+                setting_type: 'indoor',
+                location: 'luxury tropical airport',
+                time_period: 'morning',
+                weather: 'sunny',
+                special_features: 'floor-to-ceiling windows, tropical plants, marble floors',
+                etc: 'air conditioning, soft tropical music playing'
+            }
+        ]
+    })
     
     await TestUtil.jsonRequest('http://127.0.0.1:3000/generateImages', {
         isWaitUntilImagesGenerated: true,
@@ -38,7 +52,8 @@ async function main() {
             {
                 name: 'Leira',
                 style_id: 'Airport_Welcome',
-                common_prompt: "tropical airport, airplane in background, palm trees",
+                background_id: 'lbi_airport',
+                common_prompt: "energetic standing posture, bright smile",
                 common_negative_prompt: "",
                 character_prompt: "running towards viewer, excited smile, childlike innocence, bouncing movements"
             }
@@ -50,7 +65,8 @@ async function main() {
             {
                 name: 'Leira',
                 style_id: 'Airport_Welcome',
-                common_prompt: "tropical airport, airplane in background, palm trees",
+                background_id: 'lbi_airport',
+                common_prompt: "energetic standing posture, bright smile",
                 common_negative_prompt: "",
                 character_prompt: "running towards viewer, excited smile, childlike innocence, bouncing movements"
             }

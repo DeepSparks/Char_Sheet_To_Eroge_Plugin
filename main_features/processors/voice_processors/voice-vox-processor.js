@@ -3,10 +3,11 @@ import fs from 'fs';
 import { TranslateInterface } from '../../interfaces/index.js';
 import Utils from '../../utils.js';
 import Config from '../../config.js';
+import { VoiceModel } from '../../models/index.js';
 
 class VoiceVoxProcessor {
     static async process(voiceModel) {
-        const text = await TranslateInterface.translateForVoiceScript(voiceModel.text);
+        const text = VoiceModel.sanitizeText(await TranslateInterface.translateForVoiceScript(voiceModel.text));
         await VoiceVoxProcessor.makeVoice(text, voiceModel.speaker_id, voiceModel.toFilePath());
     }
 

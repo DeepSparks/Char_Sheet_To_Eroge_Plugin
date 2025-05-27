@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 import Config from './config.js';
+import { RandomUtil } from './utils/index.js';
 
 const IMAGE_WAITING_BASE64_ID = fs.readFileSync(Config.IMAGE_WAITING_FILE_PATH, 'base64').slice(0, 50);
 
@@ -36,7 +37,7 @@ class Utils {
     static get_unique_id(possibleIds, usedIds) {
         const unusedIds = possibleIds.filter(id => !usedIds.includes(id));
         if (unusedIds.length > 0) {
-            return unusedIds[Utils.get_random_index(unusedIds)];
+            return unusedIds[RandomUtil.get_random_array_index(unusedIds)];
         }
 
         const idFrequency = {};
@@ -46,11 +47,7 @@ class Utils {
         
         const minFrequency = Math.min(...Object.values(idFrequency));
         const leastUsedIds = possibleIds.filter(id => idFrequency[id] === minFrequency);
-        return leastUsedIds[Utils.get_random_index(leastUsedIds)];
-    }
-
-    static get_random_index(array) {
-        return Math.floor(Math.random() * array.length);
+        return leastUsedIds[RandomUtil.get_random_array_index(leastUsedIds)];
     }
 
     static async wait_file_creation_safely(filePath, checkInterval=500) {
