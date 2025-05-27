@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 
 import {
-    CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, 
+    CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface,
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
     CharacterModel, StyleModel, ImageModel,
     Utils, Config 
@@ -223,6 +223,17 @@ checkDependencyServers().then(() => {
             res.json({ error: error.message, stack: error.stack });
         }
     });
+
+    app.post(`/render_content`, async (req, res) => {
+        try {
+            const result = await RenderContentInterface.renderContent(req.body.content);
+            res.json({ result });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+    
     
 
     app.listen(3000, () => {
