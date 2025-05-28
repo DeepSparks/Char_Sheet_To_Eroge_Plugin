@@ -1,13 +1,15 @@
-import { IMAGE_CONTAINER_STYLES, VOICE_CONTAINER_STYLES } from './constants.js';
+import { ALL_STYLES } from './constants.js';
 import { ContentStatusModel } from './models/index.js';
 import { handleStatusTag, handleEventOptionsTag, handleCharacterTag, handleStyleTag, handleBackgroundTag, handleVoiceTag, handleImageTag } from './handlers/index.js';
 import { VoiceCache, ImageCache } from './content_caches/index.js';
 import { restoreSceneTag } from './restorers/index.js';
 import { ProgressUIRenderer } from './renderers/index.js';
 import Utils from '../utils.js';
+import md5 from 'md5';
 
 let voiceCache = new VoiceCache();
 let imageCache = new ImageCache();
+let is_preview_loadding_triggered_set = new Set();
 
 class ContentRenderer {
     static async renderContent(content) {
@@ -17,6 +19,15 @@ class ContentRenderer {
             if(!content_status.is_start_of_content) {
                 return content_status.raw_content
             }
+
+
+            let preview_check_key = md5(content_status.raw_content.slice(0, 1500));
+            if(content_status.is_preview_loading_trigger) {
+                if(!is_preview_loadding_triggered_set.has(preview_check_key)) {
+                    is_preview_loadding_triggered_set.add(preview_check_key);
+                }
+            }
+            let is_preview_loadding_triggered = is_preview_loadding_triggered_set.has(preview_check_key) && !content_status.is_end_of_content;
     
             let front_contents = []
             let back_contents = []
@@ -59,7 +70,7 @@ class ContentRenderer {
     
     
             if(content_status.is_voice_tag_included) {
-                const voice_tag_parse_info = await handleVoiceTag(content, voiceCache, content_status.is_end_of_content);
+                const voice_tag_parse_info = await handleVoiceTag(content, voiceCache, content_status.is_end_of_content, is_preview_loadding_triggered);
                 content = voice_tag_parse_info.result
 
                 if(content_status.is_end_of_content && voice_tag_parse_info.wait_until_voices_generated) {
@@ -88,10 +99,17 @@ class ContentRenderer {
             }
     
             if(content_status.is_processing()) {
-                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds);
+                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds) + ALL_STYLES;
             }
             
-            return content + IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES
+
+            if(is_preview_loadding_triggered) {
+                return content + `<div class="progress-container">
+<p class="progress-text">미리보기가 로드되었습니다. 최종 결과까지는 시간이 걸리며, 재랜더링으로 재생이 끊길 수 있습니다.</p>
+</div>` + ALL_STYLES
+            }
+
+            return content + ALL_STYLES
     
         } catch (error) {
             Utils.logErrorToFile(error);

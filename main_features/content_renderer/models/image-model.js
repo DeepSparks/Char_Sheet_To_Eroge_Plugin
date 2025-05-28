@@ -30,7 +30,7 @@ class ImageModel extends BaseModel {
             nsfw_prompt = '';
         }
         else if(CONFIG.NSFW_PROMPT_MAP[nsfw_prompt]) {
-            this.common_prompt = "nsfw, explicit, open clothes, " + this.common_prompt;
+            this.common_prompt = "nsfw, explicit, open clothes, uncensored, " + this.common_prompt;
             nsfw_prompt = CONFIG.NSFW_PROMPT_MAP[nsfw_prompt];
         }
         this.character_prompt = [nsfw_prompt, attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || '';

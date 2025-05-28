@@ -1,5 +1,3 @@
-import { PROGRESS_UI_STYLES } from '../constants.js';
-
 class ProgressUIRenderer {
     static renderContent(content_status, processed_characters, processed_styles, processed_backgrounds) {
         const charCount = content_status.raw_content.length;
@@ -80,7 +78,7 @@ class ProgressUIRenderer {
         }
 
 
-        return PROGRESS_UI_STYLES + `<div class="progress-container">
+        return `<div class="progress-container">
 <p class="progress-text">콘텐츠 처리 중... (현재 <span id="char-count">${charCount}</span>자 생성됨)</p>
 ${detailsHTML}
 </div>

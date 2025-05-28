@@ -1,19 +1,15 @@
 import BaseRenderer from './base.js';
 
 class VoiceRenderer extends BaseRenderer {
-    static createVoiceUrl(voicePath, seed, is_end_of_content) {
-        if(is_end_of_content) {
-            return super.createUrl(voicePath, seed);
-        }
-
-        return ""
+    static createVoiceUrl(voicePath, seed) {
+        return super.createUrl(voicePath, seed);
     }
 
-    static createVoicePlayer(voiceVoxUrl, is_end_of_content) {
-        if(is_end_of_content) {
+    static createVoicePlayer(voiceUrl, is_end_of_content, is_preview_loadding_triggered) {
+        if(is_end_of_content || (is_preview_loadding_triggered && voiceUrl.includes("randomSeed=1"))) {
             return `
             <span class="audio-container" style="height: 30px; overflow: hidden; position: relative; border-radius: 30px 30px 0px 30px; display: inline-block; opacity: 0.5; margin-top: 5px; margin-bottom: 2.5px;">
-                <audio class="audio-player" controls style="position: relative; left: -10px; top: -40px;"><source src="${voiceVoxUrl}" type="audio/wav"></audio>
+                <audio class="audio-player" controls style="position: relative; left: -10px; top: -40px;"><source src="${voiceUrl}" type="audio/wav"></audio>
             </span>
             `;
         }

@@ -3,7 +3,7 @@ import { VoiceProcessor } from '../processors/index.js';
 import { VoiceRenderer } from '../renderers/index.js';
 import BackendInterface from '../backend-interface.js';
 
-export default async function handleVoiceTag(content, voiceCache, is_end_of_content) {
+export default async function handleVoiceTag(content, voiceCache, is_end_of_content, is_preview_loadding_triggered) {
     const { fullTagModelsMap, otherTagModelsMap } = await VoiceTagParser.parseTagsFromContent(content);
     if(Object.keys(fullTagModelsMap).length === 0) {
         return {
@@ -29,7 +29,7 @@ export default async function handleVoiceTag(content, voiceCache, is_end_of_cont
         const currentFullTagWithText = Object.keys(fullTagModelsMap)[tagIndex];
         const currentVoiceModel = Object.values(fullTagModelsMap)[tagIndex];
         const currentVoiceUrl = VoiceRenderer.createVoiceUrl(urls[tagIndex], randomSeeds[tagIndex], is_end_of_content);
-        const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl, is_end_of_content);
+        const renderedVoicePlayer = VoiceRenderer.createVoicePlayer(currentVoiceUrl, is_end_of_content, is_preview_loadding_triggered);
         result = result.replace(currentFullTagWithText, `\"${currentVoiceModel.text}\"` + renderedVoicePlayer);
     }
 

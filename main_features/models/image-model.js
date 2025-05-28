@@ -23,6 +23,8 @@ class ImageModel {
                 this.common_prompt = 'explicit, ' + this.common_prompt;
             if(!this.common_prompt.includes("nsfw"))
                 this.common_prompt = 'nsfw, ' + this.common_prompt;
+            if(!this.common_prompt.includes("uncensored"))
+                this.common_prompt = 'uncensored, ' + this.common_prompt;
         }
 
         const backgroundInfo = BackgroundMemoryInterface.getBackground({background_id: this.background_id});

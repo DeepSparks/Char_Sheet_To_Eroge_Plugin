@@ -1,4 +1,4 @@
-const QUALITY_KEYWORDS = ["looking at viewer", "uncensored", "tsunako", "masterpiece", "best quality", "high score", "great score", "absurdres", "highres"]
+const QUALITY_KEYWORDS = ["looking at viewer", "tsunako", "masterpiece", "best quality", "high score", "great score", "absurdres", "highres"]
 const NEGATIVE_KEYWORDS = [
     "bad anatomy", "bad feet", "bad hands", "bad proportions", "bad perspective",
     "wrong hand", "wrong foot", "ugly hands", "ugly arms",

@@ -259,3 +259,5 @@ export const VOICE_CONTAINER_STYLES = `<style>
     50% { transform: scaleY(0.3); }
 }
 </style>`;
+
+export const ALL_STYLES = PROGRESS_UI_STYLES + IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES;
