@@ -1,6 +1,6 @@
 export const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
-    IMAGE_WIDTH: 1248,
+    IMAGE_WIDTH: 1216,
     IMAGE_HEIGHT: 832,
     TAG_NAMES: {
         START: "Start",
@@ -126,8 +126,8 @@ export const IMAGE_CONTAINER_STYLES = `<style>
 .image-container-in-progress {
     width: ${CONFIG.IMAGE_WIDTH}px;
     min-height: ${CONFIG.IMAGE_HEIGHT}px;
-    background-color: white;
-    background-size: cover;
+    background-color: #383838;
+    background-size: contain;
     background-position: center top;
     background-repeat: no-repeat;
     background-attachment: local;
