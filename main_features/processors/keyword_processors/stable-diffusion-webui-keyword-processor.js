@@ -1,22 +1,7 @@
-const QUALITY_KEYWORDS = ["looking at viewer", "tsunako", "masterpiece", "best quality", "high score", "great score", "absurdres", "highres"]
-const NEGATIVE_KEYWORDS = [
-    "bad anatomy", "bad feet", "bad hands", "bad proportions", "bad perspective",
-    "wrong hand", "wrong foot", "ugly hands", "ugly arms",
-    "missing finger", "extra finger", "fewer digits", "extra digits",
-    "extra toes", "missing toes", "extra arms", "extra faces", "multiple heads", "no pussy",
+import Config from '../../config.js';
 
-    "error", "artistic error", "wardrobe error",
-    "text", "signature", "watermark", "username", "blurry", "cropped", "lowres",
-
-    "worst quality", "low quality",
-    "low score", "bad score", "average score",
-
-    "censored", "blank censor",
-    "afterimage", "motion blur", "speed lines", "motion lines",
-    "futanari", "aged up", "old", "wrinkled skin",
-    "1boy", "2boys", "3boys", "multiple boys"
-]
-
+const QUALITY_KEYWORDS = Config.LOCAL_AI_QUALITY_KEYWORDS
+const NEGATIVE_KEYWORDS = Config.LOCAL_AI_NEGATIVE_KEYWORDS
 
 class StableDiffusionWebUIKeywordProcessor {
     static process(imageModel) {

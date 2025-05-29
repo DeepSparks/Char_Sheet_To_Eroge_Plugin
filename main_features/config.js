@@ -110,6 +110,62 @@ class Config {
         if(!process.env.VOICE_TYPE_MATCHING_INFO) return {};
         return JSON.parse(process.env.VOICE_TYPE_MATCHING_INFO);
     }
+
+    static get IS_NOT_USE_RANDOM_DYNAMIC_VIEW() {
+        return process.env.IS_NOT_USE_RANDOM_DYNAMIC_VIEW === 'true';
+    }
+    static get RANDOM_VIEW_KEYWORDS() {
+        if(!process.env.RANDOM_VIEW_KEYWORDS) return ["from behind", "from side", "from above", "from below", "top-down view", "three quarter view", "dutch angle", "low angle"];
+        return process.env.RANDOM_VIEW_KEYWORDS.split(',').map(keyword => keyword.trim());
+    }
+
+    static get IS_NOT_USE_NSFW_PROMPT_MAP() {
+        return process.env.IS_NOT_USE_NSFW_PROMPT_MAP === 'true';
+    }
+    static get NSFW_PROMPT_MAP() {
+        if(!process.env.NSFW_PROMPT_MAP) return {"masturbation":"masturbation, female masturbation, pussy juice","fellatio":"fellatio, invisible man, disembodied penis","sex":"sex, vaginal, invisible man, disembodied penis","anal":"anal, invisible man, disembodied penis","etc":"invisible man"}
+        return JSON.parse(process.env.NSFW_PROMPT_MAP);
+    }
+    static get DEFAULT_NSFW_KEYWORDS() {
+        if(!process.env.DEFAULT_NSFW_KEYWORDS) return ["nsfw", "explicit", "open clothes", "uncensored"];
+        return process.env.DEFAULT_NSFW_KEYWORDS.split(',').map(keyword => keyword.trim());
+    }
+
+    static get NOVELAI_MODEL() {
+        return process.env.NOVELAI_MODEL || 'nai-diffusion-4-5-full';
+    }
+    static get NOVELAI_QUALITY_KEYWORDS() {
+        if(!process.env.NOVELAI_QUALITY_KEYWORDS) return ["looking at viewer", "location", "detailed background", "tsunako", "masterpiece", "very aesthetic", "best quality", "amazing quality", "no text", "absurdres", "highres", "game_cg"];
+        return process.env.NOVELAI_QUALITY_KEYWORDS.split(',').map(keyword => keyword.trim());
+    }
+    static get NOVELAI_NEGATIVE_KEYWORDS() {
+        if(!process.env.NOVELAI_NEGATIVE_KEYWORDS) return ["normal quality", "bad quality", "worst quality", "displeasing", "very displeasing", "lowres", "bad anatomy", "bad perspective", "bad proportions", "bad face", "bad arm", "bad hands", "bad leg", "bad feet", "bad reflection", "bad link", "bad source", "wrong hand", "wrong feet", "missing", "missing limb", "missing eye", "missing tooth", "missing ear", "missing finger", "extra", "extra faces", "extra eyes", "extra mouth", "extra ears", "extra breasts", "extra arms", "extra hands", "extra legs", "extra digits", "fewer digits", "cropped", "cropped head", "cropped torso", "cropped arms", "cropped legs", "JPEG artifacts", "signature", "watermark", "username", "blurry", "artist name", "fat", "duplicate", "mutation", "deformed", "disfigured", "long neck", "unfinished", "chromatic aberration", "scan", "scan artifacts", "abstract", "@_@", "brown skin", "glasses", "vertical lines", "vertical banding", "multiple views", "simple background", "aged up", "old"];
+        return process.env.NOVELAI_NEGATIVE_KEYWORDS.split(',').map(keyword => keyword.trim());
+    }
+    static get NOVELAI_NEGATIVE_KEYWORDS_FOR_CHARACTER() {
+        if(!process.env.NOVELAI_NEGATIVE_KEYWORDS_FOR_CHARACTER) return ["lowres", "aliasing"];
+        return process.env.NOVELAI_NEGATIVE_KEYWORDS_FOR_CHARACTER.split(',').map(keyword => keyword.trim());
+    }
+
+    static get LOCAL_AI_QUALITY_KEYWORDS() {
+        if(!process.env.LOCAL_AI_QUALITY_KEYWORDS) return ["looking at viewer", "tsunako", "masterpiece", "best quality", "high score", "great score", "absurdres", "highres"];
+        return process.env.LOCAL_AI_QUALITY_KEYWORDS.split(',').map(keyword => keyword.trim());
+    }
+    static get LOCAL_AI_NEGATIVE_KEYWORDS() {
+        if(!process.env.LOCAL_AI_NEGATIVE_KEYWORDS) return ["bad anatomy", "bad feet", "bad hands", "bad proportions", "bad perspective", "wrong hand", "wrong foot", "ugly hands", "ugly arms", "missing finger", "extra finger", "fewer digits", "extra digits", "extra toes", "missing toes", "extra arms", "extra faces", "multiple heads", "no pussy", "error", "artistic error", "wardrobe error", "text", "signature", "watermark", "username", "blurry", "cropped", "lowres", "worst quality", "low quality", "low score", "bad score", "average score", "censored", "blank censor", "afterimage", "motion blur", "speed lines", "motion lines", "futanari", "aged up", "old", "wrinkled skin", "1boy", "2boys", "3boys", "multiple boys"];
+        return process.env.LOCAL_AI_NEGATIVE_KEYWORDS.split(',').map(keyword => keyword.trim());
+    }
+
+    static get SERVER_PORT() {
+        return Number(process.env.SERVER_PORT) || 3000;
+    }
+
+    static get IS_USE_RANDOM_EVENT_SELECTION() {
+        return process.env.IS_USE_RANDOM_EVENT_SELECTION === 'true';
+    }
+    static get IS_ALLOW_MALE_CHARACTER() {
+        return process.env.IS_ALLOW_MALE_CHARACTER === 'true';
+    }
 }
 
 export default Config;

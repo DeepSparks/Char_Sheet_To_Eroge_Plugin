@@ -53,7 +53,7 @@ class NovelAIUIImageProcessor {
     static _makePayload(imageModel) {
         const payload = {
             "input": "",
-            "model": "nai-diffusion-4-full",
+            "model": Config.NOVELAI_MODEL,
             "action": "generate",
             "parameters": {
                 "params_version": 3,

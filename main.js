@@ -265,8 +265,8 @@ checkDependencyServers().then(() => {
     
     
 
-    app.listen(3000, () => {
-        Utils.logToFile('Server is running on port 3000', 'info');
+    app.listen(Config.SERVER_PORT, () => {
+        Utils.logToFile(`Server is running on port ${Config.SERVER_PORT}`, 'info');
     });
 
 

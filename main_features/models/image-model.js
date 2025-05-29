@@ -17,14 +17,11 @@ class ImageModel {
 
         if(Config.ADD_DEFAULT_NSFW_KEYWORD) {
             this.common_negative_prompt = this.common_negative_prompt.replace("nsfw", "").replace("explicit", "");
-            if(!this.common_prompt.includes("open clothes"))
-                this.common_prompt = 'open clothes, ' + this.common_prompt;
-            if(!this.common_prompt.includes("explicit"))
-                this.common_prompt = 'explicit, ' + this.common_prompt;
-            if(!this.common_prompt.includes("nsfw"))
-                this.common_prompt = 'nsfw, ' + this.common_prompt;
-            if(!this.common_prompt.includes("uncensored"))
-                this.common_prompt = 'uncensored, ' + this.common_prompt;
+            for(let keyword of Config.DEFAULT_NSFW_KEYWORDS) {
+                if(!this.common_prompt.includes(keyword)) {
+                    this.common_prompt = keyword + ", " + this.common_prompt;
+                }
+            }
         }
 
         const backgroundInfo = BackgroundMemoryInterface.getBackground({background_id: this.background_id});

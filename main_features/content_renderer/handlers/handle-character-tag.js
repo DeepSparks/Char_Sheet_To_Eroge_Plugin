@@ -9,7 +9,7 @@ export default async function handleCharacterTag(content) {
         content = content.replace(currentFullTag, "");
     }
 
-    if(CONFIG.IS_ONLY_ALLOW_GIRL_CHARACTER) {
+    if(!CONFIG.IS_ALLOW_MALE_CHARACTER) {
         for(let characterKey of Object.keys(characterTagModelMap)) {
             const character = characterTagModelMap[characterKey];
             if(character.gender !== 'girl') {

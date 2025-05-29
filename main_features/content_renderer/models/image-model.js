@@ -1,3 +1,5 @@
+import md5 from 'md5';
+
 import BaseModel from './base.js';
 import { CONFIG } from '../constants.js';
 
@@ -9,7 +11,7 @@ class ImageModel extends BaseModel {
         this.style_id = attributes.style_id || '';
         this.background_id = attributes.background_id || '';
 
-        this.view = attributes.view || '';
+        this.view = (CONFIG.IS_NOT_USE_RANDOM_DYNAMIC_VIEW ? attributes.view : this.getDeterministicRandomView(attributes)) || '';
         this.pose = attributes.pose || '';
         this.expression = attributes.expression || '';
         this.background = attributes.background || '';
@@ -21,19 +23,33 @@ class ImageModel extends BaseModel {
         this.common_negative_prompt = attributes.common_negative_prompt || '';
         this.character_prompt = attributes.character_prompt || '';
 
+        this.common_prompt = [this.view, this.background, this.etc_other].filter(attr => attr).join(', ');
 
-        this.common_prompt = [attributes.background, attributes.etc_other].filter(attr => attr).join(', '); // attributes.view는 퀄리티 이슈로 제외
-
-        let nsfw_prompt = attributes.nsfw || 'none';
-        if(nsfw_prompt === 'none') {
+        const first_nsfw_keyword = this.nsfw.split(',')[0].trim();
+        const left_nsfw_keywords = this.nsfw.split(',').slice(1).map(keyword => keyword.trim());
+        if(first_nsfw_keyword === 'none') {
+            this.nsfw = left_nsfw_keywords.join(', ');
             this.common_negative_prompt = 'nsfw';
-            nsfw_prompt = '';
+        } else if(CONFIG.MAP_KEYWORDS.NSFW[first_nsfw_keyword]) {
+            if(CONFIG.IS_NOT_USE_NSFW_PROMPT_MAP) {
+                this.common_prompt = CONFIG.DEFAULT_KEYWORDS.NSFW.join(', ') + ", " + this.common_prompt;
+            }
+            else {
+                this.common_prompt = CONFIG.DEFAULT_KEYWORDS.NSFW.join(', ') + ", " + this.common_prompt;
+                this.nsfw = CONFIG.MAP_KEYWORDS.NSFW[first_nsfw_keyword] + ", " + left_nsfw_keywords.join(', ');
+            }
         }
-        else if(CONFIG.NSFW_PROMPT_MAP[nsfw_prompt]) {
-            this.common_prompt = "nsfw, explicit, open clothes, uncensored, " + this.common_prompt;
-            nsfw_prompt = CONFIG.NSFW_PROMPT_MAP[nsfw_prompt];
-        }
-        this.character_prompt = [nsfw_prompt, attributes.pose, attributes.expression, attributes.etc_char].filter(attr => attr).join(', ') || '';
+        this.character_prompt = [this.nsfw, this.pose, this.expression, this.etc_char].filter(attr => attr).join(', ') || '';
+    }
+
+    getDeterministicRandomView(attributes) {
+        const seed = JSON.stringify(attributes);
+        const hash = md5(seed);
+        
+        const hashNumber = parseInt(hash.substring(0, 8), 16);
+        const index = hashNumber % CONFIG.RANDOM_KEYWORDS.VIEW.length;
+        
+        return CONFIG.RANDOM_KEYWORDS.VIEW[index] + ", " + "dynamic angle";
     }
 
     toJsonDict() {
@@ -41,7 +57,7 @@ class ImageModel extends BaseModel {
     }
 
     static getCheckAttributes() {
-        return ['name', 'style_id', 'background_id', 'view', 'pose', 'expression', 'background', 'nsfw', 'etc_char', 'etc_other'];
+        return ['name', 'style_id', 'background_id', 'view', 'pose', 'expression', 'nsfw', 'etc_char', 'etc_other'];
     }
 }
 

@@ -20,6 +20,10 @@ class ContentRenderer {
                 return content_status.raw_content
             }
 
+            if(content_status.start_of_content_index !== -1) {
+                content = content.slice(content_status.start_of_content_index);
+            }
+
 
             let preview_check_key = md5(content_status.raw_content.slice(0, 1500));
             if(content_status.is_preview_loading_trigger) {

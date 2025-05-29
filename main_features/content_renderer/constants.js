@@ -1,5 +1,7 @@
+import Config from '../config.js';
+
 export const CONFIG = {
-    BACKEND_URL: "http://127.0.0.1:3000",
+    BACKEND_URL: `http://127.0.0.1:${Config.SERVER_PORT}`,
     IMAGE_WIDTH: 1216,
     IMAGE_HEIGHT: 832,
     TAG_NAMES: {
@@ -17,20 +19,23 @@ export const CONFIG = {
     },
     NO_RANDOM_SEED: "0",
     URL_UPDATE_FREQUENCY: 50,
-    NSFW_PROMPT_MAP: {
-        "none": "",
-        "masturbation": "masturbation, female masturbation, pussy juice",
-        "fellatio": "fellatio, invisible man, disembodied penis, cum in mouth",
-        "sex": "sex, vaginal, invisible man, disembodied penis, cum in pussy",
-        "anal": "anal, invisible man, disembodied penis, cum in pussy",
-        "etc": ""
-    },
     EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
-    IS_USE_RANDOM_EVENT_SELECTION: false,
-    IS_ONLY_ALLOW_GIRL_CHARACTER: true,
     RESOURCES: {
         WAITING_IMAGE: `resources/image_waiting.png`
-    }
+    },
+    RANDOM_KEYWORDS: {
+        VIEW: Config.RANDOM_VIEW_KEYWORDS
+    },
+    MAP_KEYWORDS: {
+        NSFW: Config.NSFW_PROMPT_MAP
+    },
+    DEFAULT_KEYWORDS: {
+        NSFW: Config.DEFAULT_NSFW_KEYWORDS
+    },
+    IS_USE_RANDOM_EVENT_SELECTION: Config.IS_USE_RANDOM_EVENT_SELECTION,
+    IS_ALLOW_MALE_CHARACTER: Config.IS_ALLOW_MALE_CHARACTER,
+    IS_NOT_USE_RANDOM_DYNAMIC_VIEW: Config.IS_NOT_USE_RANDOM_DYNAMIC_VIEW,
+    IS_NOT_USE_NSFW_PROMPT_MAP: Config.IS_NOT_USE_NSFW_PROMPT_MAP
 };
 
 export const PROGRESS_UI_STYLES = `<style>
