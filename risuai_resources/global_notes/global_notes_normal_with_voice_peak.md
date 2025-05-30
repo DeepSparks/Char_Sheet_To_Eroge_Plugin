@@ -18,7 +18,7 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
 **Background Definition** (Can be created throughout the story, time_period and season must select one of the given keywords.):
 ```
-<Background background_id="" setting_type="" location="" time_period="(dawn|morning|golden_hour|dusk|night|midnight)" season="(spring|summer|autumn|winter)" weather="" special_features="" etc=""/>
+<Background background_id="" setting_type="" location="" time_period="(dawn|morning|dusk|night)" season="(spring|summer|autumn|winter)" weather="" special_features="" etc=""/>
 ```
 
 **Image Generation** (Use when describing scenes, The first element of nsfw must be selected from the elements listed by you):
@@ -65,7 +65,7 @@ Be sure to end your printed message with an <End/> to indicate the end of the me
 <Definitions>
 <Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" voice_type="bright" etc="petite frame, innocent demeanor"/>
 <Style style_id="Rily_Beach_1" clothes="micro bikini" clothes_color="coral red" bra="triangle top" bra_color="coral red" panties="string bottom" panties_color="coral red" etc="sun-kissed skin, water droplets"/>
-<Background background_id="tropical_beach_cove" setting_type="outdoor" location="secluded beach" time_period="golden_hour" season="summer" weather="sunny" special_features="crystal clear water, white sand, palm trees, seashells" etc="gentle ocean sounds, warm breeze"/>
+<Background background_id="tropical_beach_cove" setting_type="outdoor" location="secluded beach" time_period="dusk" season="summer" weather="sunny" special_features="crystal clear water, white sand, palm trees, seashells" etc="gentle ocean sounds, warm breeze"/>
 ...
 </Definitions>
 
