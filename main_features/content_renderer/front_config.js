@@ -71,7 +71,7 @@ class FrontConfig {
 
     static get PROGRESS_UI_STYLES() {
         return `<style>
-.progress-container {
+.preview-loading-container {
     background-color: #2c2c2c;
     color: #e0e0e0;
     padding: 20px;
@@ -81,6 +81,17 @@ class FrontConfig {
     margin: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     height: 65px;
+}
+.progress-container {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: sans-serif, "Apple SD Gothic Neo", "Malgun Gothic", "Dotum", sans-serif;
+    border: 1px solid #444;
+    margin: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    min-height: 65px;
 }
 .progress-text {
     font-size: 1.1em;

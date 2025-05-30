@@ -108,7 +108,7 @@ class ContentRenderer {
             
 
             if(is_preview_loadding_triggered) {
-                return content + `<div class="progress-container">
+                return content + `<div class="preview-loading-container">
 <p class="progress-text">미리보기가 로드되었습니다. 최종 결과까지는 시간이 걸리며, 재랜더링으로 재생이 끊길 수 있습니다.</p>
 </div>` + FrontConfig.ALL_STYLES
             }
