@@ -1,7 +1,7 @@
 import md5 from 'md5';
 
 import BaseModel from './base.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 
 class ImageModel extends BaseModel {
     constructor(attributes) {
@@ -11,7 +11,7 @@ class ImageModel extends BaseModel {
         this.style_id = attributes.style_id || '';
         this.background_id = attributes.background_id || '';
 
-        this.view = (CONFIG.IS_NOT_USE_RANDOM_DYNAMIC_VIEW ? attributes.view : this.getDeterministicRandomView(attributes)) || '';
+        this.view = (FrontConfig.IS_NOT_USE_RANDOM_DYNAMIC_VIEW ? attributes.view : this.getDeterministicRandomView(attributes)) || '';
         this.pose = attributes.pose || '';
         this.expression = attributes.expression || '';
         this.background = attributes.background || '';
@@ -30,13 +30,13 @@ class ImageModel extends BaseModel {
         if(first_nsfw_keyword === 'none') {
             this.nsfw = left_nsfw_keywords.join(', ');
             this.common_negative_prompt = 'nsfw';
-        } else if(CONFIG.MAP_KEYWORDS.NSFW[first_nsfw_keyword]) {
-            if(CONFIG.IS_NOT_USE_NSFW_PROMPT_MAP) {
-                this.common_prompt = CONFIG.DEFAULT_KEYWORDS.NSFW.join(', ') + ", " + this.common_prompt;
+        } else if(FrontConfig.MAP_KEYWORDS.NSFW[first_nsfw_keyword]) {
+            if(FrontConfig.IS_NOT_USE_NSFW_PROMPT_MAP) {
+                this.common_prompt = FrontConfig.DEFAULT_KEYWORDS.NSFW.join(', ') + ", " + this.common_prompt;
             }
             else {
-                this.common_prompt = CONFIG.DEFAULT_KEYWORDS.NSFW.join(', ') + ", " + this.common_prompt;
-                this.nsfw = CONFIG.MAP_KEYWORDS.NSFW[first_nsfw_keyword] + ", " + left_nsfw_keywords.join(', ');
+                this.common_prompt = FrontConfig.DEFAULT_KEYWORDS.NSFW.join(', ') + ", " + this.common_prompt;
+                this.nsfw = FrontConfig.MAP_KEYWORDS.NSFW[first_nsfw_keyword] + ", " + left_nsfw_keywords.join(', ');
             }
         }
         this.character_prompt = [this.nsfw, this.pose, this.expression, this.etc_char].filter(attr => attr).join(', ') || '';
@@ -47,9 +47,9 @@ class ImageModel extends BaseModel {
         const hash = md5(seed);
         
         const hashNumber = parseInt(hash.substring(0, 8), 16);
-        const index = hashNumber % CONFIG.RANDOM_KEYWORDS.VIEW.length;
+        const index = hashNumber % FrontConfig.RANDOM_KEYWORDS.VIEW.length;
         
-        return CONFIG.RANDOM_KEYWORDS.VIEW[index] + ", " + "dynamic angle";
+        return FrontConfig.RANDOM_KEYWORDS.VIEW[index] + ", " + "dynamic angle";
     }
 
     toJsonDict() {

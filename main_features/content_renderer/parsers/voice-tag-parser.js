@@ -1,5 +1,5 @@
 import TagParserBase from './base.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import { VoiceModel } from '../models/index.js';
 import BackendInterface from '../backend-interface.js';
 
@@ -9,7 +9,7 @@ class VoiceTagParser extends TagParserBase {
         const CHECK_ATTRIBUTES = VoiceModel.getCheckAttributes();
         
 
-        const TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.VOICE}\\s+([^>]+)\\/>`, 'g');
+        const TAG_REGEX = new RegExp(`<${FrontConfig.TAG_NAMES.VOICE}\\s+([^>]+)\\/>`, 'g');
         const matches = [...content.matchAll(TAG_REGEX)];
 
         let names_to_check = []

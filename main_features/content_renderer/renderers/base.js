@@ -1,8 +1,8 @@
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 
 class BaseRenderer {
     static createUrl(contentPath, seed) {
-        return `${CONFIG.BACKEND_URL}/${contentPath}?randomSeed=${seed}`;
+        return `${FrontConfig.BACKEND_URL}/${contentPath}?randomSeed=${seed}`;
     }
 }
 

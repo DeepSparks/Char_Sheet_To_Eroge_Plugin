@@ -1,4 +1,4 @@
-import { ALL_STYLES } from './constants.js';
+import FrontConfig from './front_config.js';
 import { ContentStatusModel } from './models/index.js';
 import { handleStatusTag, handleEventOptionsTag, handleCharacterTag, handleStyleTag, handleBackgroundTag, handleVoiceTag, handleImageTag } from './handlers/index.js';
 import { VoiceCache, ImageCache } from './content_caches/index.js';
@@ -103,17 +103,17 @@ class ContentRenderer {
             }
     
             if(content_status.is_processing()) {
-                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds) + ALL_STYLES;
+                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds) + FrontConfig.ALL_STYLES;
             }
             
 
             if(is_preview_loadding_triggered) {
                 return content + `<div class="progress-container">
 <p class="progress-text">미리보기가 로드되었습니다. 최종 결과까지는 시간이 걸리며, 재랜더링으로 재생이 끊길 수 있습니다.</p>
-</div>` + ALL_STYLES
+</div>` + FrontConfig.ALL_STYLES
             }
 
-            return content + ALL_STYLES
+            return content + FrontConfig.ALL_STYLES
     
         } catch (error) {
             Utils.logErrorToFile(error);

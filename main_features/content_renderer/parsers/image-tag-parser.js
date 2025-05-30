@@ -1,5 +1,5 @@
 import TagParserBase from './base.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import { ImageModel } from '../models/index.js';
 import BackendInterface from '../backend-interface.js';
 
@@ -11,7 +11,7 @@ class ImageTagParser extends TagParserBase {
         const fullTagModelsMap = {};
         let fullTagInnerTexts= [];
 
-        const TAG_REGEX = new RegExp(`<${CONFIG.TAG_NAMES.SCENE}\-([^\\s>]+)(?:\\s+([^>]*))?>(([^<]|<(?!\\/Scene\\-\\1>))*?)<\\/${CONFIG.TAG_NAMES.SCENE}\\-\\1>`, 'g')
+        const TAG_REGEX = new RegExp(`<${FrontConfig.TAG_NAMES.SCENE}\-([^\\s>]+)(?:\\s+([^>]*))?>(([^<]|<(?!\\/Scene\\-\\1>))*?)<\\/${FrontConfig.TAG_NAMES.SCENE}\\-\\1>`, 'g')
         const matches = [...content.matchAll(TAG_REGEX)];
 
         let names_to_check = []

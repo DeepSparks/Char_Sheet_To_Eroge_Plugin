@@ -1,10 +1,10 @@
 import TagParserBase from './base.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import { StatusModel } from '../models/index.js';
 
 class StatusTagParser extends TagParserBase {
     static parseTagsFromContent(content) {
-        return super.parseTagsFromContent(content, CONFIG.TAG_NAMES.STATUS, StatusModel, StatusModel.getCheckAttributes());
+        return super.parseTagsFromContent(content, FrontConfig.TAG_NAMES.STATUS, StatusModel, StatusModel.getCheckAttributes());
     }
 }
 

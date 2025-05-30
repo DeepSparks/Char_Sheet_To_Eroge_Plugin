@@ -1,5 +1,5 @@
 import BaseRenderer from './base.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import { RandomUtil } from '../../utils/index.js';
 
 class ImageRenderer extends BaseRenderer {
@@ -23,7 +23,7 @@ class ImageRenderer extends BaseRenderer {
 
 <input type="checkbox" id="${checkboxId}" class="hide-content-container-id"/>
 <div class="root-container">
-    <div style="width: ${CONFIG.IMAGE_WIDTH}px;">
+    <div style="width: ${FrontConfig.IMAGE_WIDTH}px;">
         <label class="hide-content-container-label" for="${checkboxId}">내용 표시</label>
     </div>
 </div>

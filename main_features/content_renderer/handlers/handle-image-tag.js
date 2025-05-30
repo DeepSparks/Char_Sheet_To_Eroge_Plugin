@@ -1,13 +1,13 @@
 import { ImageTagParser } from '../parsers/index.js';
 import { ImageRenderer } from '../renderers/index.js';
 import { ImageProcessor } from '../processors/index.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import BackendInterface from '../backend-interface.js';
 
 export default async function handleImageTag(content, front_contents, back_contents, imageCache, is_end_of_content) {
     const parsedResult = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
     if(parsedResult.isSingleOtherTag) {
-        const currentUrl = ImageRenderer.createImageUrl(CONFIG.RESOURCES.WAITING_IMAGE, 1);
+        const currentUrl = ImageRenderer.createImageUrl(FrontConfig.RESOURCES.WAITING_IMAGE, 1);
         const renderedSlide = ImageRenderer.createSlideContext(currentUrl, parsedResult.innerText);
         return {
             result: renderedSlide,

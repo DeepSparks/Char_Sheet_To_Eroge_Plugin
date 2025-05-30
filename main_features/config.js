@@ -156,6 +156,9 @@ class Config {
         return process.env.LOCAL_AI_NEGATIVE_KEYWORDS.split(',').map(keyword => keyword.trim());
     }
 
+    static get SERVER_HOST() {
+        return process.env.SERVER_HOST || '127.0.0.1';
+    }
     static get SERVER_PORT() {
         return Number(process.env.SERVER_PORT) || 3000;
     }

@@ -1,44 +1,76 @@
 import Config from '../config.js';
 
-export const CONFIG = {
-    BACKEND_URL: `http://127.0.0.1:${Config.SERVER_PORT}`,
-    IMAGE_WIDTH: 1216,
-    IMAGE_HEIGHT: 832,
-    TAG_NAMES: {
-        START: "Start",
-        STATUS: "Status",
-        DEFINITIONS: "Definitions",
-        CHARACTER: "Character",
-        STYLE: "Style",
-        SCENES: "Scenes",
-        BACKGROUND: "Background",
-        SCENE: "Scene",
-        VOICE: "Voice",
-        EVENT_OPTIONS: "Event-Options",
-        END: "End"
-    },
-    NO_RANDOM_SEED: "0",
-    URL_UPDATE_FREQUENCY: 50,
-    EVENT_OPTIONS_HEADER: "## Select Next Possible Event Options",
-    RESOURCES: {
-        WAITING_IMAGE: `resources/image_waiting.png`
-    },
-    RANDOM_KEYWORDS: {
-        VIEW: Config.RANDOM_VIEW_KEYWORDS
-    },
-    MAP_KEYWORDS: {
-        NSFW: Config.NSFW_PROMPT_MAP
-    },
-    DEFAULT_KEYWORDS: {
-        NSFW: Config.DEFAULT_NSFW_KEYWORDS
-    },
-    IS_USE_RANDOM_EVENT_SELECTION: Config.IS_USE_RANDOM_EVENT_SELECTION,
-    IS_ALLOW_MALE_CHARACTER: Config.IS_ALLOW_MALE_CHARACTER,
-    IS_NOT_USE_RANDOM_DYNAMIC_VIEW: Config.IS_NOT_USE_RANDOM_DYNAMIC_VIEW,
-    IS_NOT_USE_NSFW_PROMPT_MAP: Config.IS_NOT_USE_NSFW_PROMPT_MAP
-};
+class FrontConfig {
+    static get BACKEND_URL() {
+        return `http://${Config.SERVER_HOST}:${Config.SERVER_PORT}`;
+    }
+    static get IMAGE_WIDTH() {
+        return 1216;
+    }
+    static get IMAGE_HEIGHT() {
+        return 832;
+    }
+    static get TAG_NAMES() {
+        return {
+            START: "Start",
+            STATUS: "Status",
+            DEFINITIONS: "Definitions",
+            CHARACTER: "Character",
+            STYLE: "Style",
+            SCENES: "Scenes",
+            BACKGROUND: "Background",
+            SCENE: "Scene",
+            VOICE: "Voice",
+            EVENT_OPTIONS: "Event-Options",
+            END: "End"
+        };
+    }
+    static get NO_RANDOM_SEED() {
+        return "0";
+    }
+    static get URL_UPDATE_FREQUENCY() {
+        return 50;
+    }
+    static get EVENT_OPTIONS_HEADER() {
+        return "## Select Next Possible Event Options";
+    }
+    static get RESOURCES() {
+        return {
+            WAITING_IMAGE: `resources/image_waiting.png`
+        };
+    }
 
-export const PROGRESS_UI_STYLES = `<style>
+    static get RANDOM_KEYWORDS() {
+        return {
+            VIEW: Config.RANDOM_VIEW_KEYWORDS
+        };
+    }
+    static get MAP_KEYWORDS() {
+        return {
+            NSFW: Config.NSFW_PROMPT_MAP
+        };
+    }
+    static get DEFAULT_KEYWORDS() {
+        return {
+            NSFW: Config.DEFAULT_NSFW_KEYWORDS
+        };
+    }
+
+    static get IS_USE_RANDOM_EVENT_SELECTION() {
+        return Config.IS_USE_RANDOM_EVENT_SELECTION;
+    }
+    static get IS_ALLOW_MALE_CHARACTER() {
+        return Config.IS_ALLOW_MALE_CHARACTER;
+    }
+    static get IS_NOT_USE_RANDOM_DYNAMIC_VIEW() {
+        return Config.IS_NOT_USE_RANDOM_DYNAMIC_VIEW;
+    }
+    static get IS_NOT_USE_NSFW_PROMPT_MAP() {
+        return Config.IS_NOT_USE_NSFW_PROMPT_MAP;
+    }
+
+    static get PROGRESS_UI_STYLES() {
+        return `<style>
 .progress-container {
     background-color: #2c2c2c;
     color: #e0e0e0;
@@ -109,8 +141,9 @@ export const PROGRESS_UI_STYLES = `<style>
     font-weight: bold;
 }
 </style>`
-
-export const IMAGE_CONTAINER_STYLES = `<style>
+    }
+    static get IMAGE_CONTAINER_STYLES() {
+        return `<style>
 .root-container {
     display: flex;
     justify-content: center;
@@ -118,8 +151,8 @@ export const IMAGE_CONTAINER_STYLES = `<style>
 }
 
 .image-container {
-    width: ${CONFIG.IMAGE_WIDTH}px;
-    height: ${CONFIG.IMAGE_HEIGHT}px;
+    width: ${FrontConfig.IMAGE_WIDTH}px;
+    height: ${FrontConfig.IMAGE_HEIGHT}px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -129,8 +162,8 @@ export const IMAGE_CONTAINER_STYLES = `<style>
 }
 
 .image-container-in-progress {
-    width: ${CONFIG.IMAGE_WIDTH}px;
-    min-height: ${CONFIG.IMAGE_HEIGHT}px;
+    width: ${FrontConfig.IMAGE_WIDTH}px;
+    min-height: ${FrontConfig.IMAGE_HEIGHT}px;
     background-color: #383838;
     background-size: contain;
     background-position: center top;
@@ -158,9 +191,10 @@ export const IMAGE_CONTAINER_STYLES = `<style>
 .hide-content-container-label:hover {
     opacity: 1;
 }
-</style>`;
-
-export const VOICE_CONTAINER_STYLES = `<style>
+</style>`
+    }
+    static get VOICE_CONTAINER_STYLES() {
+        return `<style>
 .audio-container {
     height: 30px;
     overflow: hidden;
@@ -264,5 +298,10 @@ export const VOICE_CONTAINER_STYLES = `<style>
     50% { transform: scaleY(0.3); }
 }
 </style>`;
+    }
+    static get ALL_STYLES() {
+        return FrontConfig.PROGRESS_UI_STYLES + FrontConfig.IMAGE_CONTAINER_STYLES + FrontConfig.VOICE_CONTAINER_STYLES;
+    }
+}
 
-export const ALL_STYLES = PROGRESS_UI_STYLES + IMAGE_CONTAINER_STYLES + VOICE_CONTAINER_STYLES;
+export default FrontConfig;

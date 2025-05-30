@@ -1,4 +1,4 @@
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import { EventOptionsTagParser } from '../parsers/index.js';
 import { RandomUtil } from '../../utils/index.js';
 
@@ -17,12 +17,12 @@ export default function handleEventOptionsTag(content) {
     const eventOptionsJsonDict = eventOptionsModel.toJsonDict();
     let content_for_event_options = ""
     if(eventOptionsJsonDict.first && eventOptionsJsonDict.second && eventOptionsJsonDict.third) {
-        if(CONFIG.IS_USE_RANDOM_EVENT_SELECTION) {
+        if(FrontConfig.IS_USE_RANDOM_EVENT_SELECTION) {
             const event_options = [eventOptionsJsonDict.first, eventOptionsJsonDict.second, eventOptionsJsonDict.third];
             const randomEvent = RandomUtil.get_random_integer(0, 2);
             content_for_event_options = `## Random Event Selection\nNEXT EVENT: ${event_options[randomEvent]}`;
         } else {
-            content_for_event_options = `${CONFIG.EVENT_OPTIONS_HEADER}\n1. ${eventOptionsJsonDict.first}\n2. ${eventOptionsJsonDict.second}\n3. ${eventOptionsJsonDict.third}`;
+            content_for_event_options = `${FrontConfig.EVENT_OPTIONS_HEADER}\n1. ${eventOptionsJsonDict.first}\n2. ${eventOptionsJsonDict.second}\n3. ${eventOptionsJsonDict.third}`;
         }
     }
     return { content, content_for_event_options };

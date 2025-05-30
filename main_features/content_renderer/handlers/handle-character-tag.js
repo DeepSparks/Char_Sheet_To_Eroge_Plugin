@@ -1,5 +1,5 @@
 import { CharacterTagParser } from '../parsers/index.js';
-import { CONFIG } from '../constants.js';
+import FrontConfig from '../front_config.js';
 import BackendInterface from '../backend-interface.js';
 
 export default async function handleCharacterTag(content) {
@@ -9,7 +9,7 @@ export default async function handleCharacterTag(content) {
         content = content.replace(currentFullTag, "");
     }
 
-    if(!CONFIG.IS_ALLOW_MALE_CHARACTER) {
+    if(!FrontConfig.IS_ALLOW_MALE_CHARACTER) {
         for(let characterKey of Object.keys(characterTagModelMap)) {
             const character = characterTagModelMap[characterKey];
             if(character.gender !== 'girl') {
