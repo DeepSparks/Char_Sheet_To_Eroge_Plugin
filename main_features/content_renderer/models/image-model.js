@@ -23,7 +23,7 @@ class ImageModel extends BaseModel {
         this.common_negative_prompt = attributes.common_negative_prompt || '';
         this.character_prompt = attributes.character_prompt || '';
 
-        this.common_prompt = [this.view, this.background, this.etc_other].filter(attr => attr).join(', ');
+        this.common_prompt = ["{{" + this.view + "}}", this.background, this.etc_other].filter(attr => attr).join(', ');
 
         const first_nsfw_keyword = this.nsfw.split(',')[0].trim();
         const left_nsfw_keywords = this.nsfw.split(',').slice(1).map(keyword => keyword.trim());
