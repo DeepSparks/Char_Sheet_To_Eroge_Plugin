@@ -78,8 +78,9 @@ class FrontConfig {
     border-radius: 8px;
     font-family: sans-serif, "Apple SD Gothic Neo", "Malgun Gothic", "Dotum", sans-serif;
     border: 1px solid #444;
-    margin: 10px;
+    margin: 15px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    height: 65px;
 }
 .progress-text {
     font-size: 1.1em;
@@ -146,6 +147,7 @@ class FrontConfig {
         return `<style>
 .root-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
