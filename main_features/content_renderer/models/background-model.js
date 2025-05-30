@@ -7,6 +7,7 @@ class BackgroundModel extends BaseModel {
         this.setting_type = attributes.setting_type || '';
         this.location = attributes.location || '';
         this.time_period = attributes.time_period || '';
+        this.season = attributes.season || '';
         this.weather = attributes.weather || '';
         this.special_features = attributes.special_features || '';
         this.etc = attributes.etc || '';
@@ -17,7 +18,7 @@ class BackgroundModel extends BaseModel {
     }
 
     static getCheckAttributes() {
-        return ['background_id', 'setting_type', 'location', 'time_period', 'weather', 'special_features', 'etc'];
+        return ['background_id', 'setting_type', 'location', 'time_period', 'season', 'weather', 'special_features', 'etc'];
     }
 }
 

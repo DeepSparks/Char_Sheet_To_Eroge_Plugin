@@ -67,7 +67,7 @@ Be sure to end your printed message with an <End/> to indicate the end of the me
 <Definitions>
 <Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" etc="petite frame, innocent demeanor"/>
 <Style style_id="Rily_Beach_1" clothes="micro bikini" clothes_color="coral red" bra="triangle top" bra_color="coral red" panties="string bottom" panties_color="coral red" etc="sun-kissed skin, water droplets"/>
-<Background background_id="tropical_beach_cove" setting_type="outdoor" location="secluded beach" time_period="golden_hour" weather="sunny" special_features="crystal clear water, white sand, palm trees, seashells" etc="gentle ocean sounds, warm breeze"/>
+<Background background_id="tropical_beach_cove" setting_type="outdoor" location="secluded beach" time_period="golden_hour" season="summer" weather="sunny" special_features="crystal clear water, white sand, palm trees, seashells" etc="gentle ocean sounds, warm breeze"/>
 ...
 </Definitions>
 

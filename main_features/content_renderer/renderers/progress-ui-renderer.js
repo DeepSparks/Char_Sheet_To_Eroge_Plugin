@@ -56,6 +56,7 @@ class ProgressUIRenderer {
                     "설정타입": item.setting_type,
                     "위치": item.location,
                     "시간대": item.time_period,
+                    "계절": item.season,
                     "날씨": item.weather,
                     "특수효과": item.special_features,
                     "기타": item.etc
