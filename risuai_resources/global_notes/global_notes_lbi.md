@@ -22,9 +22,9 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 <Style style_id="" clothes="" clothes_color="" bra="" bra_color="" panties="" panties_color="" etc=""/>
 ```
 
-**Background Definition** (Can be created throughout the story):
+**Background Definition** (Can be created throughout the story, time_period must select one of the given keywords.):
 ```
-<Background background_id="" setting_type="" location="" time_period="" weather="" special_features="" etc=""/>
+<Background background_id="" setting_type="" location="" time_period="(dawn|morning|golden_hour|dusk|night|midnight)" weather="" special_features="" etc=""/>
 ```
 
 **Image Generation** (Use when describing scenes, The first element of nsfw must be selected from the elements listed by you):
