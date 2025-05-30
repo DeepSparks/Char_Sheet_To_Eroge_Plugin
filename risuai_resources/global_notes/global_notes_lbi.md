@@ -62,7 +62,7 @@ Be sure to end your printed message with an <End/> to indicate the end of the me
 #### 7. Example Format
 ```
 <Start/>
-<Status time="Golden afternoon" location="Secluded tropical beach cove" girls="Rily"/>
+<Status time_period="afternoon" location="Secluded tropical beach cove" girls="Rily"/>
 
 <Definitions>
 <Character name="Rily" gender="girl" age="very young" hair_style="long straight hair" hair_color="azure blue" eye_color="crimson red" breast_size="flat chest" skin_color="porcelain pale" etc="petite frame, innocent demeanor"/>
