@@ -3,10 +3,10 @@
 #### 1. Start Tag
 Start with <Start/> when you actually write the message, not when you're thinking about it.
 
-#### 2. Status Tags(Values must be in the user's preferred language)
+#### 2. Status Tags(Values must be in the user's preferred language, time_period must select one of the given keywords.)
 Begin your story with a status tags:
 ```
-<Status time="Current time of day" location="Current scene location" girls="Names of nearby female characters"/>
+<Status time_period="(dawn|morning|afternoon|evening|night|midnight)" location="Current scene location" girls="Names of nearby female characters"/>
 ```
 
 #### 3. Image Generation Tags(Values must be in English)
