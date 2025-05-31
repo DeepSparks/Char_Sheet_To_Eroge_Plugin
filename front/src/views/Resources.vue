@@ -144,6 +144,7 @@
                     variant="text"
                     size="small"
                     :loading="downloadingScenes[index]"
+                    style="color: black;"
                   />
                 </div>
                 <div 
