@@ -535,7 +535,7 @@ async function loadResourceNames() {
 async function selectResource(resourceName) {
   selectedResourceName.value = resourceName
   selectedMenuId.value = 'scenes' // 기본으로 장면 관리 선택
-  await loadResourceData()
+  await loadAllResourceData()
 }
 
 function backToSelector() {
@@ -598,6 +598,29 @@ async function loadResourceData() {
   } finally {
     loading.value = false
   }
+}
+
+async function loadAllResourceData() {
+  if (!selectedResourceName.value || !selectedMenuId.value) return
+
+  const htmlResponse = await ApiService.getAllRenderedHTMLs(selectedResourceName.value)
+  renderedHTMLs.value = htmlResponse.renderedHTMLs || []
+  downloadingScenes.value = new Array(renderedHTMLs.value.length).fill(false)
+
+  const imageResponse = await ApiService.getAllImages(selectedResourceName.value)
+  images.value = imageResponse.imageModels || []
+
+  const voiceResponse = await ApiService.getAllVoices(selectedResourceName.value)
+  voices.value = voiceResponse.voiceModels || []
+
+  const characterResponse = await ApiService.getAllCharacters(selectedResourceName.value)
+  characters.value = characterResponse.characters || []
+
+  const styleResponse = await ApiService.getAllStyles(selectedResourceName.value)
+  styles.value = styleResponse.styles || []
+
+  const backgroundResponse = await ApiService.getAllBackgrounds(selectedResourceName.value)
+  backgrounds.value = backgroundResponse.backgrounds || []
 }
 
 // 장면 다운로드 관련
