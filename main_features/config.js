@@ -135,7 +135,7 @@ class Config {
         return process.env.NOVELAI_MODEL || 'nai-diffusion-4-5-full';
     }
     static get NOVELAI_QUALITY_KEYWORDS() {
-        if(!process.env.NOVELAI_QUALITY_KEYWORDS) return ["looking at viewer", "location", "detailed background", "tsunako", "masterpiece", "very aesthetic", "best quality", "amazing quality", "no text", "absurdres", "highres", "game_cg"];
+        if(!process.env.NOVELAI_QUALITY_KEYWORDS) return ["looking at viewer", "location", "detailed background", "tsunako", "masterpiece", "best quality", "amazing quality", "very aesthetic", "absurdres", "-1::censored ::", "commission", "official style", "best illustration", "photoshop (medium)"];
         return process.env.NOVELAI_QUALITY_KEYWORDS.split(',').map(keyword => keyword.trim());
     }
     static get NOVELAI_NEGATIVE_KEYWORDS() {
