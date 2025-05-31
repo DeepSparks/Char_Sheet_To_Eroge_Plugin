@@ -57,28 +57,28 @@ class ContentRenderer {
     
             let processed_characters = []
             if(content_status.is_character_tag_included) {
-                const character_tag_parse_info = await handleCharacterTag(content, start_model);
+                const character_tag_parse_info = await handleCharacterTag(content, start_model.fixed_words);
                 content = character_tag_parse_info.content
                 processed_characters = character_tag_parse_info.processed_characters
             }
     
             let processed_styles = []
             if(content_status.is_style_tag_included) {
-                const style_tag_parse_info = await handleStyleTag(content, start_model);
+                const style_tag_parse_info = await handleStyleTag(content, start_model.fixed_words);
                 content = style_tag_parse_info.content
                 processed_styles = style_tag_parse_info.processed_styles
             }
 
             let processed_backgrounds = []
             if(content_status.is_background_tag_included) {
-                const background_tag_parse_info = await handleBackgroundTag(content, start_model);
+                const background_tag_parse_info = await handleBackgroundTag(content, start_model.fixed_words);
                 content = background_tag_parse_info.content
                 processed_backgrounds = background_tag_parse_info.processed_backgrounds
             }
     
     
             if(content_status.is_voice_tag_included) {
-                const voice_tag_parse_info = await handleVoiceTag(content, voiceCache, content_status.is_end_of_content, is_preview_loadding_triggered, start_model);
+                const voice_tag_parse_info = await handleVoiceTag(content, voiceCache, content_status.is_end_of_content, is_preview_loadding_triggered, start_model.fixed_words);
                 content = voice_tag_parse_info.result
 
                 if(content_status.is_end_of_content && voice_tag_parse_info.wait_until_voices_generated) {
@@ -90,7 +90,7 @@ class ContentRenderer {
     
             if(content_status.is_scene_tag_included) {
                 content = restoreSceneTag(content);
-                const image_tag_parse_info = await handleImageTag(content, front_contents, back_contents, imageCache, content_status.is_end_of_content, start_model);
+                const image_tag_parse_info = await handleImageTag(content, front_contents, back_contents, imageCache, content_status.is_end_of_content, start_model.fixed_words);
                 content = image_tag_parse_info.result
                 if(content_status.is_end_of_content && image_tag_parse_info.wait_until_images_generated) {
                     waiting_functions.push(async () => {
@@ -107,7 +107,7 @@ class ContentRenderer {
             }
     
             if(content_status.is_processing()) {
-                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds, start_model) + FrontConfig.ALL_STYLES;
+                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds, start_model.fixed_words) + FrontConfig.ALL_STYLES;
             }
             
 

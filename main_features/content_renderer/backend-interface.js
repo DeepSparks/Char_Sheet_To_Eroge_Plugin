@@ -2,7 +2,7 @@ import { CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface,
 import { CharacterModel, StyleModel, BackgroundModel, ImageModel } from '../models/index.js';
 
 class BackendInterface {
-    static async addCharacters(rawCharacterModels) {
+    static async addCharacters(rawCharacterModels, resource_name) {
         const requestBody = {
             characters: rawCharacterModels.map(rawCharacterModel => rawCharacterModel.toJsonDict())
         }
@@ -11,7 +11,7 @@ class BackendInterface {
             await CharacterModel.translateReqBody(character);
         }
 
-        return CharacterMemoryInterface.addCharacters(requestBody.characters);
+        return CharacterMemoryInterface.addCharacters(requestBody.characters, resource_name);
     }
 
     static async isCharactersExists(characterNames) {

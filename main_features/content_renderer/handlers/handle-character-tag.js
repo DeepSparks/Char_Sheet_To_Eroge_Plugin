@@ -2,7 +2,7 @@ import { CharacterTagParser } from '../parsers/index.js';
 import FrontConfig from '../front_config.js';
 import BackendInterface from '../backend-interface.js';
 
-export default async function handleCharacterTag(content) {
+export default async function handleCharacterTag(content, resource_name) {
     const characterTagModelMap = CharacterTagParser.parseTagsFromContent(content);
     for(let tagIndex = 0; tagIndex < Object.keys(characterTagModelMap).length; tagIndex++) {
         const currentFullTag = Object.keys(characterTagModelMap)[tagIndex];
@@ -18,7 +18,7 @@ export default async function handleCharacterTag(content) {
         }
     }
 
-    await BackendInterface.addCharacters(Object.values(characterTagModelMap));
+    await BackendInterface.addCharacters(Object.values(characterTagModelMap), resource_name);
 
     return {
         content: content,

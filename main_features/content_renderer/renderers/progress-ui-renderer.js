@@ -1,5 +1,5 @@
 class ProgressUIRenderer {
-    static renderContent(content_status, processed_characters, processed_styles, processed_backgrounds, start_model) {
+    static renderContent(content_status, processed_characters, processed_styles, processed_backgrounds, resource_name) {
         const charCount = content_status.raw_content.length;
 
         const charactersHTML = this._generateProgressItemHTML(
@@ -80,7 +80,7 @@ class ProgressUIRenderer {
 
 
         return `<div class="progress-container">
-<p class="progress-text">사용하는 리소스 폴더명: ${start_model.fixed_words || 'global'}</p>
+<p class="progress-text">사용하는 리소스 폴더명: ${resource_name || 'global'}</p>
 <p class="progress-text">콘텐츠 처리 중... (현재 <span id="char-count">${charCount}</span>자 생성됨)</p>
 ${detailsHTML}
 </div>
