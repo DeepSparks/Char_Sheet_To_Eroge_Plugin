@@ -21,6 +21,7 @@ class ImageGenerateInterface {
             return null;
         }
 
+        Utils.make_dir_if_not_exists(imageModel.toDirPath());
         if(!fs.existsSync(imageModel.toFilePath())) {
             fs.copyFileSync(Config.IMAGE_WAITING_FILE_PATH, imageModel.toFilePath());
         }

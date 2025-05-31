@@ -6,6 +6,7 @@ import Config from '../config.js';
 
 class ImageModel {
     constructor(req_body) {
+        this.resource_name = req_body.resource_name || '_default';
         this.name = req_body.name || '';
         this.style_id = req_body.style_id || '';
         this.background_id = req_body.background_id || '';
@@ -24,7 +25,7 @@ class ImageModel {
             }
         }
 
-        const backgroundInfo = BackgroundMemoryInterface.getBackground({background_id: this.background_id});
+        const backgroundInfo = BackgroundMemoryInterface.getBackground({background_id: this.background_id}, this.resource_name);
         if(backgroundInfo) {
             this.common_prompt = this.common_prompt + ", " + backgroundInfo.toPrompt();
         }
@@ -37,8 +38,8 @@ class ImageModel {
             this.character_prompt = this.character_prompt + ", " + Config.ADDITIONAL_CHARACTER_PROMPT;
 
 
-        const characterInfo = CharacterMemoryInterface.getCharacter({name: this.name});
-        const styleInfo = StyleMemoryInterface.getStyle({style_id: this.style_id});
+        const characterInfo = CharacterMemoryInterface.getCharacter({name: this.name}, this.resource_name);
+        const styleInfo = StyleMemoryInterface.getStyle({style_id: this.style_id}, this.resource_name);
         this.concat_character_prompt = [characterInfo.toPrompt(), styleInfo.toPrompt(), this.character_prompt].filter(attr => attr).join(', ');
         
         this.gender = characterInfo.gender;
@@ -67,8 +68,10 @@ class ImageModel {
 
     toJsonDict() {
         return {
+            resource_name: this.resource_name,
             name: this.name,
             style_id: this.style_id,
+            background_id: this.background_id,
             common_prompt: this.common_prompt,
             common_negative_prompt: this.common_negative_prompt,
             character_prompt: this.character_prompt
@@ -83,8 +86,12 @@ class ImageModel {
         return md5(this.toPromptString());
     }
 
+    toDirPath() {
+        return `outputs/${this.resource_name}/images`;
+    }
+
     toFilePath() {
-        return `outputs/images/${this.toMD5()}.png`;
+        return `${this.toDirPath()}/${this.toMD5()}.png`;
     }
 }
 

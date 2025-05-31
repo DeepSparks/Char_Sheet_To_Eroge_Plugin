@@ -2,6 +2,7 @@ import TestUtil from './test_util.js';
 
 async function main() {
     await TestUtil.jsonRequest('http://127.0.0.1:3000/addCharacters', {
+        resource_name: 'test_resource',
         characters: [
             {
                 name: 'Leira',
@@ -18,6 +19,7 @@ async function main() {
     })
     
     await TestUtil.jsonRequest('http://127.0.0.1:3000/addStyles', {
+        resource_name: 'test_resource',
         styles: [
             {
                 style_id: 'Airport_Welcome',
@@ -33,12 +35,14 @@ async function main() {
     })
 
     await TestUtil.jsonRequest('http://127.0.0.1:3000/addBackgrounds', {
+        resource_name: 'test_resource',
         backgrounds: [
             {
                 background_id: 'lbi_airport',
                 setting_type: 'indoor',
                 location: 'luxury tropical airport',
                 time_period: 'morning',
+                season: 'summer',
                 weather: 'sunny',
                 special_features: 'floor-to-ceiling windows, tropical plants, marble floors',
                 etc: 'air conditioning, soft tropical music playing'
@@ -46,10 +50,12 @@ async function main() {
         ]
     })
     
+    
     await TestUtil.jsonRequest('http://127.0.0.1:3000/generateImages', {
         isWaitUntilImagesGenerated: true,
         imageModels: [
             {
+                resource_name: 'test_resource',
                 name: 'Leira',
                 style_id: 'Airport_Welcome',
                 background_id: 'lbi_airport',
@@ -63,6 +69,7 @@ async function main() {
     await TestUtil.jsonRequest('http://127.0.0.1:3000/checkImageCompletions', {
         imageModels: [
             {
+                resource_name: 'test_resource',
                 name: 'Leira',
                 style_id: 'Airport_Welcome',
                 background_id: 'lbi_airport',
