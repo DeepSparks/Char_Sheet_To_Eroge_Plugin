@@ -39,9 +39,6 @@ class Config {
     static get VOICE_GENERATION_MODE() { 
         return process.env.VOICE_GENERATION_MODE || 'voice-vox';
     }
-    static get VOICE_KEYWORD_MODE() { 
-        return process.env.VOICE_KEYWORD_MODE || 'voice-vox';
-    }
     static get VOICE_GENERATION_API_KEY() { 
         return process.env.VOICE_GENERATION_API_KEY || '';
     }

@@ -10,7 +10,7 @@ class VoiceModel {
         this.text = VoiceModel.sanitizeText(req_body.text) || '';
         this.emotions = req_body.emotions || {};
 
-        keywordProcessors[Config.VOICE_KEYWORD_MODE].process(this);
+        keywordProcessors[Config.VOICE_GENERATION_MODE].process(this);
     }
     
     toJsonDict() {
