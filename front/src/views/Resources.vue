@@ -283,6 +283,7 @@
                       icon="mdi-download"
                       variant="text"
                       size="small"
+                      style="color: black;"
                     />
                   </div>
                 </v-card-text>
@@ -746,7 +747,9 @@ async function downloadVoice(voice) {
     const response = await fetch(`http://127.0.0.1:3000/${voice.saved_file_path}`)
     const blob = await response.blob()
     const link = document.createElement('a')
-    link.download = `${voice.name}_voice.wav`
+
+    const voice_name = voice.saved_file_path.split('/').pop().split('.')[0]
+    link.download = `${voice_name}.wav`
     link.href = URL.createObjectURL(blob)
     link.click()
   } catch (error) {
@@ -760,11 +763,13 @@ async function downloadAllVoices() {
     
     const zip = new JSZip()
     
+    let voice_index = 1
     for (const voice of voices.value) {
       try {
         const response = await fetch(`http://127.0.0.1:3000/${voice.saved_file_path}`)
         const blob = await response.blob()
-        zip.file(`${voice.name}_voice.wav`, blob)
+        zip.file(`${voice_index}.wav`, blob)
+        voice_index += 1
       } catch (error) {
         console.error(`음성 ${voice.name} 다운로드 실패:`, error)
       }
