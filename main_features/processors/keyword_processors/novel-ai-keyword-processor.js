@@ -10,6 +10,7 @@ class NovelAIKeywordProcessor {
 
         promptKeywords.push(imageModel.person_prompt);
         promptKeywords.push(imageModel.common_prompt);
+        promptKeywords.push("-1::censored::");
         promptKeywords.push("{{" + QUALITY_KEYWORDS.join(', ') + "}}");
 
         imageModel.prompt = promptKeywords.join(', ');
