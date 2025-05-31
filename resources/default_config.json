@@ -224,53 +224,6 @@
         },
 
         {
-            "group_id": "translation",
-            "group_alias": "번역",
-            "configs": [
-                {
-                    "config_id": "translation_mode",
-                    "config_alias": "번역 모드",
-                    "config_type": "dropdown",
-                    "config_options": [
-                        {
-                            "value": "google",
-                            "label": "Google"
-                        },
-                        {
-                            "value": "deepl",
-                            "label": "DeepL"
-                        }
-                    ],
-                    "value": "google"
-                },
-                {
-                    "config_id": "translation_server_url",
-                    "config_alias": "번역 서버 주소",
-                    "config_type": "string",
-                    "config_if_conditions": [
-                        {
-                            "config_id": "translation_mode",
-                            "config_value": "deepl"
-                        }
-                    ],
-                    "value": "https://api-free.deepl.com"
-                },
-                {
-                    "config_id": "translation_api_key",
-                    "config_alias": "번역 API 키",
-                    "config_type": "string",
-                    "config_if_conditions": [
-                        {
-                            "config_id": "translation_mode",
-                            "config_value": "deepl"
-                        }
-                    ],
-                    "value": ""
-                }
-            ]
-        },
-
-        {
             "group_id": "voice_generation",
             "group_alias": "음성 생성",
             "configs": [
@@ -424,6 +377,54 @@
                 }
             ]
         },
+
+        {
+            "group_id": "translation",
+            "group_alias": "번역",
+            "configs": [
+                {
+                    "config_id": "translation_mode",
+                    "config_alias": "번역 모드",
+                    "config_type": "dropdown",
+                    "config_options": [
+                        {
+                            "value": "google",
+                            "label": "Google"
+                        },
+                        {
+                            "value": "deepl",
+                            "label": "DeepL"
+                        }
+                    ],
+                    "value": "google"
+                },
+                {
+                    "config_id": "translation_server_url",
+                    "config_alias": "번역 서버 주소",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "translation_mode",
+                            "config_value": "deepl"
+                        }
+                    ],
+                    "value": "https://api-free.deepl.com"
+                },
+                {
+                    "config_id": "translation_api_key",
+                    "config_alias": "번역 API 키",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "translation_mode",
+                            "config_value": "deepl"
+                        }
+                    ],
+                    "value": ""
+                }
+            ]
+        },
+
 
         {
             "group_id": "detail_settings",
