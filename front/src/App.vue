@@ -1,8 +1,10 @@
 <template>
   <v-app>
     <v-main>
-      <router-view />
+      <HelloWorld />
     </v-main>
+
+    <AppFooter />
   </v-app>
 </template>
 
