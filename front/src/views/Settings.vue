@@ -385,7 +385,9 @@ onMounted(() => {
   border-radius: 16px;
   min-height: 600px;
   box-shadow: var(--shadow-soft);
-  overflow: hidden;
+  max-height: calc(80vh);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .config-section {
