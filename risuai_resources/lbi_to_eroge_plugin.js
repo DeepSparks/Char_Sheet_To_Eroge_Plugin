@@ -1,9 +1,9 @@
 //@name lbi_to_eroge_plugin
-//@display-name LBI to Eroge Plugin v4.2.0
+//@display-name LBI to Eroge Plugin v5.0.0
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
-    START_TAG: "<Start/>"
+    START_TAG_NAME: "Start"
 };
 
 
@@ -36,7 +36,7 @@ class PluginBackend {
 
 async function handleDisplay(content) {
     try {
-        if(!content.includes(CONFIG.START_TAG))
+        if(!content.match(new RegExp(`<${CONFIG.START_TAG_NAME}.*\/>`)))
             return content;
 
         const renderedContent = await PluginBackend.renderContent(content);
