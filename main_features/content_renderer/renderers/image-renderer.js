@@ -12,7 +12,11 @@ class ImageRenderer extends BaseRenderer {
 
         const checkboxId = `hide-content-checkbox-${randomSeed}`;
         const containerId = `content-container-${randomSeed}`;
-        const imageContainerClass = is_end_of_content ? "image-container" : "image-container-in-progress";
+
+        let imageContainerClass = is_end_of_content ? "image-container" : "image-container-in-progress";
+        if(FrontConfig.IS_ALWAYS_EXPAND_SCENE) {
+            imageContainerClass = "image-container-in-progress";
+        }
         
         return `
 <style>

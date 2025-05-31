@@ -169,6 +169,9 @@ class Config {
     static get IS_ALLOW_MALE_CHARACTER() {
         return process.env.IS_ALLOW_MALE_CHARACTER === 'true';
     }
+    static get IS_ALWAYS_EXPAND_SCENE() {
+        return process.env.IS_ALWAYS_EXPAND_SCENE === 'true';
+    }
 }
 
 export default Config;

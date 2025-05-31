@@ -68,6 +68,10 @@ class FrontConfig {
     static get IS_NOT_USE_NSFW_PROMPT_MAP() {
         return Config.IS_NOT_USE_NSFW_PROMPT_MAP;
     }
+    static get IS_ALWAYS_EXPAND_SCENE() {
+        return Config.IS_ALWAYS_EXPAND_SCENE;
+    }
+
 
     static get PROGRESS_UI_STYLES() {
         return `<style>
