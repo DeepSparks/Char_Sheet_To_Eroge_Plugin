@@ -5,6 +5,7 @@ import ImageGenerateInterface from './image-generate-interface.js';
 import VoiceGenerateInterface from './voice-generate-interface.js';
 import TranslateInterface from './translate-interface.js';
 import RenderContentInterface from './render-content-interface.js';
+import ResourceInterface from './resource-interface.js';
 
 export {
     CharacterMemoryInterface,
@@ -13,5 +14,6 @@ export {
     ImageGenerateInterface,
     VoiceGenerateInterface,
     TranslateInterface,
-    RenderContentInterface
+    RenderContentInterface,
+    ResourceInterface
 }

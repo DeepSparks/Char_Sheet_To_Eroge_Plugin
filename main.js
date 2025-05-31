@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 
 import {
-    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface,
+    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface,
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
     CharacterModel, StyleModel, BackgroundModel, ImageModel,
     Utils, Config 
@@ -274,6 +274,11 @@ checkDependencyServers().then(() => {
     app.post('/setConfig', (req, res) => {
         Config.set_config(req.body.config);
         res.json({ success: true });
+    });
+
+    
+    app.post('/getResourceNames', (req, res) => {
+        res.json({ resourceNames: ResourceInterface.getResourceNames() });
     });
     
 
