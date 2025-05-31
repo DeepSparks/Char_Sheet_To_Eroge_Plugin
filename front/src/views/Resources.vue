@@ -150,7 +150,7 @@
                 <div 
                   :ref="el => sceneRefs[index] = el"
                   class="scene-content"
-                  v-html="scene.renderedHTML"
+                  v-html="preprocessHtml(scene.renderedHTML)"
                 />
               </v-card>
             </div>
@@ -254,7 +254,7 @@
                     <p class="voice-text">"{{ voice.text }}"</p>
                     <div class="voice-emotions">
                       <v-chip
-                        v-for="(value, emotion) in voice.emotions"
+                        v-for="(value, emotion) in (voice.emotions || {})"
                         :key="emotion"
                         v-if="value > 0"
                         size="small"
@@ -686,6 +686,11 @@ async function downloadAllScenes() {
   } finally {
     downloadingAll.value = false
   }
+}
+
+function preprocessHtml(html) {
+  console.log(html)
+  return html
 }
 
 // 이미지 다운로드 관련
@@ -1147,7 +1152,6 @@ onMounted(() => {
 
 .scene-content {
   padding: 20px;
-  max-height: 400px;
   overflow-y: auto;
   border-radius: 0 0 16px 16px;
 }
