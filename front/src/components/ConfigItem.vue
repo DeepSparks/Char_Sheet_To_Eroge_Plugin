@@ -319,7 +319,6 @@ function decrementNumber() {
   flex-shrink: 0;
 }
 
-/* Boolean 필드 스타일 */
 .boolean-field {
   border-left: 4px solid #28a745;
 }
@@ -331,6 +330,7 @@ function decrementNumber() {
 .custom-switch :deep(.v-switch__track) {
   background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
   border: 1px solid rgba(0,0,0,0.1);
+  opacity: 1 !important;
 }
 
 .custom-switch :deep(.v-switch__thumb) {
@@ -338,19 +338,23 @@ function decrementNumber() {
   background: white !important;
 }
 
-.custom-switch :deep(.v-selection-control__input:hover .v-switch__track) {
+.custom-switch :deep(.v-selection-control--dirty .v-switch__track) {
+  background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%) !important;
+  border-color: rgba(76, 175, 80, 0.4) !important;
+}
+
+.custom-switch :deep(.v-selection-control__input:not(.v-selection-control--dirty):hover .v-switch__track) {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+}
+
+.custom-switch :deep(.v-selection-control--dirty .v-selection-control__input:hover .v-switch__track) {
+  background: linear-gradient(135deg, #b9eda1 0%, #6bc640 100%) !important;
 }
 
 .custom-switch :deep(.v-switch--inset .v-selection-control__input) {
   border-radius: 16px;
 }
 
-.custom-switch :deep(.v-switch__track) {
-  opacity: 1 !important;
-}
-
-/* Dropdown 필드 스타일 */
 .dropdown-field {
   border-left: 4px solid #17a2b8;
 }
