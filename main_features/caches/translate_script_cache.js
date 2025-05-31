@@ -17,7 +17,7 @@ class TranslateScriptCache {
     }
 
     static _getCacheFilePath() {
-        const cacheFilePath = "outputs/memories/translate_script_memory.json";
+        const cacheFilePath = "outputs/_global/memories/translate_script_memory.json";
         if(!fs.existsSync(cacheFilePath)) {
             fs.writeFileSync(cacheFilePath, JSON.stringify({}, null, 2));
         }

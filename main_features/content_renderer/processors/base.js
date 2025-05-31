@@ -1,5 +1,5 @@
 class ContentProcessorBase {
-    static async fetchOrGenerate(fullTagModelsMap, is_end_of_content, cacheInstance, generateFunction, checkCompletionFunction) {
+    static async fetchOrGenerate(fullTagModelsMap, is_end_of_content, cacheInstance, resource_name, generateFunction, checkCompletionFunction) {
         const models = Object.values(fullTagModelsMap);
         let urls = Array(models.length).fill(null);
         let randomSeeds = Array(models.length).fill(null);
@@ -31,7 +31,7 @@ class ContentProcessorBase {
             generated_model_indexes.push(modelIndex);
         } 
 
-        const isCompleteds = await checkCompletionFunction(models_to_generate);
+        const isCompleteds = await checkCompletionFunction(models_to_generate, resource_name);
         for(let completed_model_index = 0; completed_model_index < isCompleteds.length; completed_model_index++) {
             const model = models_to_generate[completed_model_index];
             const cacheKey = model.toPromptString();
@@ -62,7 +62,7 @@ class ContentProcessorBase {
             generated_model_indexes_second.push(modelIndex);
         }
 
-        const generated_urls = await generateFunction(models_to_generate_second, false);
+        const generated_urls = await generateFunction(models_to_generate_second, false, resource_name);
         for(let generated_url_index = 0; generated_url_index < generated_urls.length; generated_url_index++) {
             const model = models_to_generate_second[generated_url_index];
             const cacheKey = model.toPromptString();

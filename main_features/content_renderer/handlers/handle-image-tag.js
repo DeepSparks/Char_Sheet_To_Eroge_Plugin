@@ -4,8 +4,8 @@ import { ImageProcessor } from '../processors/index.js';
 import FrontConfig from '../front_config.js';
 import BackendInterface from '../backend-interface.js';
 
-export default async function handleImageTag(content, front_contents, back_contents, imageCache, is_end_of_content) {
-    const parsedResult = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents);
+export default async function handleImageTag(content, front_contents, back_contents, imageCache, is_end_of_content, resource_name) {
+    const parsedResult = await ImageTagParser.parseTagsFromContent(content, front_contents, back_contents, resource_name);
     if(parsedResult.isSingleOtherTag) {
         const currentUrl = ImageRenderer.createImageUrl(FrontConfig.RESOURCES.WAITING_IMAGE, 1);
         const renderedSlide = ImageRenderer.createSlideContext(currentUrl, parsedResult.innerText);
@@ -26,7 +26,7 @@ export default async function handleImageTag(content, front_contents, back_conte
     
 
     const { urls, randomSeeds } = await ImageProcessor.fetchOrGenerateImages(
-        fullTagModelsMap, is_end_of_content, imageCache
+        fullTagModelsMap, is_end_of_content, imageCache, resource_name
     );
 
 
@@ -44,7 +44,7 @@ export default async function handleImageTag(content, front_contents, back_conte
         result,
         wait_until_images_generated: async () => {
             if(Object.keys(fullTagModelsMap).length > 0) {
-                await BackendInterface.generateImages(Object.values(fullTagModelsMap), true);
+                await BackendInterface.generateImages(Object.values(fullTagModelsMap), true, resource_name);
             }
         }
     }

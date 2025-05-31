@@ -4,7 +4,7 @@ import { VoiceModel } from '../models/index.js';
 import BackendInterface from '../backend-interface.js';
 
 class VoiceTagParser extends TagParserBase {
-    static async parseTagsFromContent(content) {
+    static async parseTagsFromContent(content, resource_name) {
         const OTHER_TAG_NAME = "Other";
         const CHECK_ATTRIBUTES = VoiceModel.getCheckAttributes();
         
@@ -21,7 +21,7 @@ class VoiceTagParser extends TagParserBase {
                 names_to_check.push(attributes.name);
             }
         }
-        const existsCharacters = await BackendInterface.isCharactersExists(names_to_check);
+        const existsCharacters = await BackendInterface.isCharactersExists(names_to_check, resource_name);
 
 
         const fullTagModelsMap = {};

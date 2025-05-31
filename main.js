@@ -270,7 +270,7 @@ checkDependencyServers().then(() => {
     });
 
 
-    Utils.make_dir_if_not_exists('./outputs');
+    Utils.make_dir_if_not_exists('./outputs/_global/memories');
 
     app.use('/outputs', express.static('./outputs'));  
     app.use('/resources', express.static('./resources'));

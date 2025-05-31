@@ -14,14 +14,14 @@ class BackendInterface {
         return CharacterMemoryInterface.addCharacters(requestBody.characters, resource_name);
     }
 
-    static async isCharactersExists(characterNames) {
+    static async isCharactersExists(characterNames, resource_name) {
         const requestBody = {
             characters: characterNames.map(characterName => ({
                 name: characterName
             }))
         }
 
-        const characters = await CharacterMemoryInterface.getCharacters(requestBody.characters);
+        const characters = await CharacterMemoryInterface.getCharacters(requestBody.characters, resource_name);
 
         const existsCharacters = new Set();
         characters.forEach(character => {
@@ -56,10 +56,14 @@ class BackendInterface {
     }
 
 
-    static async generateImages(imageModels, isWaitUntilImagesGenerated = false) {
+    static async generateImages(imageModels, isWaitUntilImagesGenerated = false, resource_name) {
         const requestBody = {
             imageModels: imageModels.map(
-                imageModel => imageModel.toJsonDict()
+                imageModel => {
+                    const imageModelDict = imageModel.toJsonDict();
+                    imageModelDict.resource_name = resource_name;
+                    return imageModelDict;
+                }
             ),
             isWaitUntilImagesGenerated: isWaitUntilImagesGenerated
         }
@@ -76,11 +80,19 @@ class BackendInterface {
         return urls
     }
 
-    static async checkImageCompletions(imageModels) {
+    static async checkImageCompletions(imageModels, resource_name) {
         const requestBody = {
             imageModels: imageModels.map(
-                imageModel => imageModel.toJsonDict()
+                imageModel => {
+                    const imageModelDict = imageModel.toJsonDict();
+                    imageModelDict.resource_name = resource_name;
+                    return imageModelDict;
+                }
             )
+        }
+
+        for(let imageModel of requestBody.imageModels) {
+            await ImageModel.translateReqBody(imageModel);
         }
 
         const completions = ImageGenerateInterface.checkImageCompletions(requestBody.imageModels);
@@ -88,10 +100,14 @@ class BackendInterface {
     }
 
 
-    static async generateVoices(rawVoiceModels, isWaitUntilVoicesGenerated = false) {
+    static async generateVoices(rawVoiceModels, isWaitUntilVoicesGenerated = false, resource_name) {
         const requestBody = {
             voiceModels: rawVoiceModels.map(
-                rawVoiceModel => rawVoiceModel.toJsonDict()
+                rawVoiceModel => {
+                    const voiceModelDict = rawVoiceModel.toJsonDict();
+                    voiceModelDict.resource_name = resource_name;
+                    return voiceModelDict;
+                }
             ),
             isWaitUntilVoicesGenerated: isWaitUntilVoicesGenerated
         }
@@ -103,10 +119,14 @@ class BackendInterface {
         return urls
     }
 
-    static async checkVoiceCompletions(rawVoiceModels) {
+    static async checkVoiceCompletions(rawVoiceModels, resource_name) {
         const requestBody = {
             voiceModels: rawVoiceModels.map(
-                rawVoiceModel => rawVoiceModel.toJsonDict()
+                rawVoiceModel => {
+                    const voiceModelDict = rawVoiceModel.toJsonDict();
+                    voiceModelDict.resource_name = resource_name;
+                    return voiceModelDict;
+                }
             )
         }
 

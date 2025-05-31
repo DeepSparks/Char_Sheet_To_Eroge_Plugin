@@ -3,8 +3,8 @@ import { VoiceProcessor } from '../processors/index.js';
 import { VoiceRenderer } from '../renderers/index.js';
 import BackendInterface from '../backend-interface.js';
 
-export default async function handleVoiceTag(content, voiceCache, is_end_of_content, is_preview_loadding_triggered) {
-    const { fullTagModelsMap, otherTagModelsMap } = await VoiceTagParser.parseTagsFromContent(content);
+export default async function handleVoiceTag(content, voiceCache, is_end_of_content, is_preview_loadding_triggered, resource_name) {
+    const { fullTagModelsMap, otherTagModelsMap } = await VoiceTagParser.parseTagsFromContent(content, resource_name);
     if(Object.keys(fullTagModelsMap).length === 0) {
         return {
             result: content,
@@ -13,7 +13,7 @@ export default async function handleVoiceTag(content, voiceCache, is_end_of_cont
     }
 
     const { urls, randomSeeds } = await VoiceProcessor.fetchOrGenerateVoices(
-        fullTagModelsMap, is_end_of_content, voiceCache
+        fullTagModelsMap, is_end_of_content, voiceCache, resource_name
     );
 
 
@@ -37,7 +37,7 @@ export default async function handleVoiceTag(content, voiceCache, is_end_of_cont
         result,
         wait_until_voices_generated: async () => {
             if(Object.keys(fullTagModelsMap).length > 0) {
-                await BackendInterface.generateVoices(Object.values(fullTagModelsMap), true);
+                await BackendInterface.generateVoices(Object.values(fullTagModelsMap), true, resource_name);
             }
         }
     }
