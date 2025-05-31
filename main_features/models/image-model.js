@@ -49,7 +49,7 @@ class ImageModel {
             this.person_prompt = "1boy, solo";
 
 
-        keywordProcessors[Config.IMAGE_KEYWORD_MODE].process(this)
+        keywordProcessors[Config.IMAGE_GENERATION_MODE].process(this)
     }
 
     static async translateReqBody(reqBody) {

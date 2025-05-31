@@ -8,9 +8,6 @@ class Config {
     static get IMAGE_GENERATION_MODE() { 
         return process.env.IMAGE_GENERATION_MODE || 'stable-diffusion-web-ui';
     }
-    static get IMAGE_KEYWORD_MODE() { 
-        return process.env.IMAGE_KEYWORD_MODE || 'stable-diffusion-web-ui';
-    }
     static get IMAGE_WAITING_FILE_PATH() { 
         return process.env.IMAGE_WAITING_FILE_PATH || './resources/image_waiting.png';
     }
