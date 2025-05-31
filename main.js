@@ -254,6 +254,15 @@ checkDependencyServers().then(() => {
         }
     });
     
+
+    app.post('/getConfigInfo', (req, res) => {
+        res.json(Config.get_config_info());
+    });
+
+    app.post('/setConfig', (req, res) => {
+        Config.set_config(req.body.config);
+        res.json({ success: true });
+    });
     
 
     app.listen(Config.SERVER_PORT, () => {
