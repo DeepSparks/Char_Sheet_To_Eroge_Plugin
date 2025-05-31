@@ -9,10 +9,7 @@ class StatusModel extends BaseModel {
         this.girls = attributes.girls || '';
 
         this.time_period = this.time_period.charAt(0).toUpperCase() + this.time_period.slice(1);
-    }
-
-    toJsonDict() {
-        return { time_period: this.time_period, location: this.location, girls: this.girls };
+        this.attributes.time_period = this.time_period;
     }
 
     static getCheckAttributes() {
