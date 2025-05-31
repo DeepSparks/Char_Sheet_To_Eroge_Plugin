@@ -21,6 +21,7 @@ class VoiceGenerateInterface {
             return null;
         }
 
+        Utils.make_dir_if_not_exists(voiceModel.toDirPath());
         if(Config.IS_USE_GLOBAL_QUEUE) {
             GlobalQueueUtil.addRequest({
                 type: 'voice',

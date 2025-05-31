@@ -6,7 +6,7 @@ import Config from '../../config.js';
 
 class VoicePeakKeywordProcessor {
     static process(voiceModel) {
-        voiceModel.speaker_id = VoicePeakKeywordProcessor.getSpeakerId(voiceModel.name);
+        voiceModel.speaker_id = VoicePeakKeywordProcessor.getSpeakerId(voiceModel.name, voiceModel.resource_name);
 
         let createdEmotions = {};
         const keywordJoin = Config.VOICEPEAK_KEYWORD_JOIN;
@@ -24,8 +24,8 @@ class VoicePeakKeywordProcessor {
         voiceModel.emotions = createdEmotions;
     }
 
-    static getSpeakerId(name) {
-        const filePath = 'outputs/memories/voice_peak_speaker_id_map.json'
+    static getSpeakerId(name, resource_name) {
+        const filePath = `outputs/${resource_name}/memories/voice_peak_speaker_id_map.json`
         
         let nameMap = {};
         if (fs.existsSync(filePath)) {

@@ -5,11 +5,11 @@ import Config from '../../config.js';
 
 class VoiceVoxKeywordProcessor {
     static process(voiceModel) {
-        voiceModel.speaker_id = VoiceVoxKeywordProcessor.getSpeakerId(voiceModel.name);
+        voiceModel.speaker_id = VoiceVoxKeywordProcessor.getSpeakerId(voiceModel.name, voiceModel.resource_name);
     }
 
-    static getSpeakerId(name) {
-        const filePath = 'outputs/memories/voice_vox_speaker_id_map.json'
+    static getSpeakerId(name, resource_name) {
+        const filePath = `outputs/${resource_name}/memories/voice_vox_speaker_id_map.json`
         
         let nameMap = {};
         if (fs.existsSync(filePath)) {

@@ -5,6 +5,7 @@ import Config from '../config.js';
 
 class VoiceModel {
     constructor(req_body) {
+        this.resource_name = req_body.resource_name || '_default';
         this.name = req_body.name || '';
         this.text = VoiceModel.sanitizeText(req_body.text) || '';
         this.emotions = req_body.emotions || {};
@@ -28,8 +29,12 @@ class VoiceModel {
         return md5(this.toPromptString());
     }
 
+    toDirPath() {
+        return `outputs/${this.resource_name}/voices`;
+    }
+
     toFilePath() {
-        return `outputs/voices/${this.toMD5()}.wav`;
+        return `${this.toDirPath()}/${this.toMD5()}.wav`;
     }
 
     static sanitizeText(text) {
