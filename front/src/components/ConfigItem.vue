@@ -34,7 +34,6 @@
         :model-value="config.value"
         @update:model-value="handleUpdate"
         :items="config.config_options"
-        :label="config.config_alias"
         item-title="label"
         item-value="value"
         variant="outlined"
@@ -67,7 +66,6 @@
         v-if="isLongText"
         :model-value="config.value"
         @update:model-value="handleUpdate"
-        :label="config.config_alias"
         variant="outlined"
         density="comfortable"
         rows="3"
@@ -84,7 +82,6 @@
         v-else
         :model-value="config.value"
         @update:model-value="handleUpdate"
-        :label="config.config_alias"
         :type="isPasswordField ? 'password' : 'text'"
         variant="outlined"
         density="comfortable"
@@ -118,7 +115,6 @@
       <v-text-field
         :model-value="config.value"
         @update:model-value="handleNumberUpdate"
-        :label="config.config_alias"
         type="number"
         variant="outlined"
         density="comfortable"
