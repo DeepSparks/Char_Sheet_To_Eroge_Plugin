@@ -4,6 +4,7 @@ import Utils from '../utils.js';
 import { voiceProcessors } from '../processors/index.js';
 import Config from '../config.js';
 import BaseQueueUtil from './base_queue_util.js';
+import { VoiceMemoryInterface } from '../interfaces/index.js';
 
 class VoiceQueueUtil extends BaseQueueUtil {
     static requestQueue = []
@@ -21,6 +22,9 @@ class VoiceQueueUtil extends BaseQueueUtil {
             return;
     
         await voiceProcessors[Config.VOICE_GENERATION_MODE].process(voiceModel);
+
+        voiceModel.saved_file_path = voiceModel.toFilePath();
+        VoiceMemoryInterface.addVoice(voiceModel, voiceModel.resource_name);
     }
 }
 
