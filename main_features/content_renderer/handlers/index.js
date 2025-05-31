@@ -1,3 +1,4 @@
+import handleStartTag from './handle-start-tag.js';
 import handleCharacterTag from './handle-character-tag.js';
 import handleStyleTag from './handle-style-tag.js';
 import handleBackgroundTag from './handle-background-tag.js';
@@ -7,6 +8,7 @@ import handleEventOptionsTag from './handle-event-options-tag.js';
 import handleStatusTag from './handle-status-tag.js';
 
 export {
+    handleStartTag,
     handleCharacterTag,
     handleStyleTag,
     handleBackgroundTag,

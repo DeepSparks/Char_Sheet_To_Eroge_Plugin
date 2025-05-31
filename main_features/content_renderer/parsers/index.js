@@ -1,3 +1,4 @@
+import StartTagParser from './start-tag-parser.js';
 import CharacterTagParser from './character-tag-parser.js';
 import EventOptionsTagParser from './event-options-tag-perser.js';
 import ImageTagParser from './image-tag-parser.js';
@@ -7,6 +8,7 @@ import BackgroundTagParser from './background-tag-parser.js';
 import VoiceTagParser from './voice-tag-parser.js';
 
 export {
+    StartTagParser,
     CharacterTagParser,
     EventOptionsTagParser,
     ImageTagParser,

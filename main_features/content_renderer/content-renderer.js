@@ -1,6 +1,6 @@
 import FrontConfig from './front_config.js';
 import { ContentStatusModel } from './models/index.js';
-import { handleStatusTag, handleEventOptionsTag, handleCharacterTag, handleStyleTag, handleBackgroundTag, handleVoiceTag, handleImageTag } from './handlers/index.js';
+import { handleStartTag, handleStatusTag, handleEventOptionsTag, handleCharacterTag, handleStyleTag, handleBackgroundTag, handleVoiceTag, handleImageTag } from './handlers/index.js';
 import { VoiceCache, ImageCache } from './content_caches/index.js';
 import { restoreSceneTag } from './restorers/index.js';
 import { ProgressUIRenderer } from './renderers/index.js';
@@ -23,6 +23,10 @@ class ContentRenderer {
             if(content_status.start_of_content_index !== -1) {
                 content = content.slice(content_status.start_of_content_index);
             }
+
+            const start_tag_parse_info = handleStartTag(content);
+            content = start_tag_parse_info.content
+            const start_model = start_tag_parse_info.start_model
 
 
             let preview_check_key = md5(content_status.raw_content.slice(0, 1500));
@@ -53,28 +57,28 @@ class ContentRenderer {
     
             let processed_characters = []
             if(content_status.is_character_tag_included) {
-                const character_tag_parse_info = await handleCharacterTag(content);
+                const character_tag_parse_info = await handleCharacterTag(content, start_model);
                 content = character_tag_parse_info.content
                 processed_characters = character_tag_parse_info.processed_characters
             }
     
             let processed_styles = []
             if(content_status.is_style_tag_included) {
-                const style_tag_parse_info = await handleStyleTag(content);
+                const style_tag_parse_info = await handleStyleTag(content, start_model);
                 content = style_tag_parse_info.content
                 processed_styles = style_tag_parse_info.processed_styles
             }
 
             let processed_backgrounds = []
             if(content_status.is_background_tag_included) {
-                const background_tag_parse_info = await handleBackgroundTag(content);
+                const background_tag_parse_info = await handleBackgroundTag(content, start_model);
                 content = background_tag_parse_info.content
                 processed_backgrounds = background_tag_parse_info.processed_backgrounds
             }
     
     
             if(content_status.is_voice_tag_included) {
-                const voice_tag_parse_info = await handleVoiceTag(content, voiceCache, content_status.is_end_of_content, is_preview_loadding_triggered);
+                const voice_tag_parse_info = await handleVoiceTag(content, voiceCache, content_status.is_end_of_content, is_preview_loadding_triggered, start_model);
                 content = voice_tag_parse_info.result
 
                 if(content_status.is_end_of_content && voice_tag_parse_info.wait_until_voices_generated) {
@@ -86,7 +90,7 @@ class ContentRenderer {
     
             if(content_status.is_scene_tag_included) {
                 content = restoreSceneTag(content);
-                const image_tag_parse_info = await handleImageTag(content, front_contents, back_contents, imageCache, content_status.is_end_of_content);
+                const image_tag_parse_info = await handleImageTag(content, front_contents, back_contents, imageCache, content_status.is_end_of_content, start_model);
                 content = image_tag_parse_info.result
                 if(content_status.is_end_of_content && image_tag_parse_info.wait_until_images_generated) {
                     waiting_functions.push(async () => {
@@ -103,7 +107,7 @@ class ContentRenderer {
             }
     
             if(content_status.is_processing()) {
-                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds) + FrontConfig.ALL_STYLES;
+                return ProgressUIRenderer.renderContent(content_status, processed_characters, processed_styles, processed_backgrounds, start_model) + FrontConfig.ALL_STYLES;
             }
             
 

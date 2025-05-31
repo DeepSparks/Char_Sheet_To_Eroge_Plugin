@@ -31,18 +31,18 @@ class ContentStatusModel extends BaseModel {
         this.is_preview_loading_trigger = this.match_end_of_scenes || this.match_event_options;
     
         this.is_status_tag_included = this.match_status ? true : false;
-        this.is_character_tag_included = this.match_character ? true : false;
-
-        this.is_style_tag_included = this.match_style ? true : false;
         this.is_event_options_tag_included = this.match_event_options ? true : false;
+
+        this.is_character_tag_included = this.match_character ? true : false;
+        this.is_style_tag_included = this.match_style ? true : false;
         this.is_background_tag_included = this.match_background ? true : false;
-        
+
         this.is_scene_tag_included = this.match_scene ? true : false;
         this.is_voice_tag_included = this.match_voice ? true : false;
     }
 
     is_processing() {
-        return (!this.is_scene_tag_included) && (!this.is_voice_tag_included) && (this.is_status_tag_included || this.is_event_options_tag_included || this.is_character_tag_included || this.is_style_tag_included)
+        return (!this.is_scene_tag_included) && (!this.is_voice_tag_included) && (this.is_start_of_content || this.is_status_tag_included || this.is_event_options_tag_included || this.is_character_tag_included || this.is_style_tag_included || this.is_background_tag_included)
     }
 }
 
