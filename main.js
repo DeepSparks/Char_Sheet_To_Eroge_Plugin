@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 
 import {
-    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface, RenderedHTMLMemoryInterface,
+    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface, RenderedHTMLMemoryInterface, ImageMemoryInterface, VoiceMemoryInterface,
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
     CharacterModel, StyleModel, BackgroundModel, ImageModel,
     Utils, Config 
@@ -278,7 +278,27 @@ checkDependencyServers().then(() => {
         }
     })
 
+    app.post('/addImages', async (req, res) => {
+        try {
+            const imageModels = await ImageMemoryInterface.addImages(req.body.imageModels, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, imageModels });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
 
+    app.post('/getAllImages', (req, res) => {
+        try {
+            const imageModels = ImageMemoryInterface.getAllImages(req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, imageModels });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
+    
+    
     app.post('/generateVoices', async (req, res) => {
         try {
 
@@ -300,6 +320,26 @@ checkDependencyServers().then(() => {
             const completions = await VoiceGenerateInterface.checkVoiceCompletions(req.body.voiceModels);
             res.json({ completions });
 
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
+
+    app.post('/addVoices', async (req, res) => {
+        try {
+            const voiceModels = await VoiceMemoryInterface.addVoices(req.body.voiceModels, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, voiceModels });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
+
+    app.post('/getAllVoices', (req, res) => {
+        try {
+            const voiceModels = VoiceMemoryInterface.getAllVoices(req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, voiceModels });
         } catch (error) {
             Utils.logErrorToFile(error);
             res.json({ error: error.message, stack: error.stack });

@@ -9,15 +9,17 @@ class VoiceModel {
         this.name = req_body.name || '';
         this.text = VoiceModel.sanitizeText(req_body.text) || '';
         this.emotions = req_body.emotions || {};
-
+        this.saved_file_path = req_body.saved_file_path || '';
         keywordProcessors[Config.VOICE_GENERATION_MODE].process(this);
     }
     
     toJsonDict() {
         return {
+            resource_name: this.resource_name,
             name: this.name,
             text: this.text,
-            emotions: this.emotions
+            emotions: this.emotions,
+            saved_file_path: this.saved_file_path
         };
     }
 

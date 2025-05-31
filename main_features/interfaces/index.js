@@ -7,6 +7,8 @@ import TranslateInterface from './translate-interface.js';
 import RenderContentInterface from './render-content-interface.js';
 import ResourceInterface from './resource-interface.js';
 import RenderedHTMLMemoryInterface from './rendered-html-memory-interface.js';
+import ImageMemoryInterface from './image-memory-interface.js';
+import VoiceMemoryInterface from './voice-memory-interface.js';
 
 export {
     CharacterMemoryInterface,
@@ -17,5 +19,7 @@ export {
     TranslateInterface,
     RenderContentInterface,
     ResourceInterface,
-    RenderedHTMLMemoryInterface
+    RenderedHTMLMemoryInterface,
+    ImageMemoryInterface,
+    VoiceMemoryInterface
 }

@@ -1,4 +1,4 @@
-import { CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface, RenderedHTMLMemoryInterface } from './interfaces/index.js';
+import { CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface, RenderedHTMLMemoryInterface, ImageMemoryInterface, VoiceMemoryInterface } from './interfaces/index.js';
 import { GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil } from './queue_utils/index.js';
 import Utils from './utils.js';
 import { CharacterModel, StyleModel, BackgroundModel, ImageModel, VoiceModel, RenderedHTMLModel } from './models/index.js';
@@ -14,6 +14,8 @@ export {
     RenderContentInterface,
     ResourceInterface,
     RenderedHTMLMemoryInterface,
+    ImageMemoryInterface,
+    VoiceMemoryInterface,
     GlobalQueueUtil,
     ImageQueueUtil,
     VoiceQueueUtil,

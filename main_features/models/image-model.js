@@ -10,6 +10,7 @@ class ImageModel {
         this.name = req_body.name || '';
         this.style_id = req_body.style_id || '';
         this.background_id = req_body.background_id || '';
+        this.saved_file_path = req_body.saved_file_path || '';
 
         this.common_prompt = req_body.common_prompt || '';
         this.common_negative_prompt = req_body.common_negative_prompt || '';
@@ -74,7 +75,8 @@ class ImageModel {
             background_id: this.background_id,
             common_prompt: this.common_prompt,
             common_negative_prompt: this.common_negative_prompt,
-            character_prompt: this.character_prompt
+            character_prompt: this.character_prompt,
+            saved_file_path: this.saved_file_path
         };
     }
 
