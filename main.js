@@ -99,8 +99,8 @@ checkDependencyServers().then(() => {
                 await CharacterModel.translateReqBody(character);
             }
 
-            const characters = CharacterMemoryInterface.addCharacters(req.body.characters);
-            res.json({ characters });
+            const characters = CharacterMemoryInterface.addCharacters(req.body.characters, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, characters});
 
         } catch (error) {
             Utils.logErrorToFile(error);
@@ -271,14 +271,8 @@ checkDependencyServers().then(() => {
 
 
     Utils.make_dir_if_not_exists('./outputs');
-    Utils.make_dir_if_not_exists('./outputs/images');
-    Utils.make_dir_if_not_exists('./outputs/voices');
-    Utils.make_dir_if_not_exists('./outputs/memories');
 
-
-    app.use('/outputs/images', express.static('./outputs/images'));  
-    app.use('/outputs/voices', express.static('./outputs/voices'));
-    app.use('/outputs/memories', express.static('./outputs/memories'));
+    app.use('/outputs', express.static('./outputs'));  
     app.use('/resources', express.static('./resources'));
 
 

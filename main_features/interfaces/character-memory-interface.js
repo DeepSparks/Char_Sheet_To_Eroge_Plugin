@@ -3,94 +3,78 @@ import fs from 'fs';
 import { CharacterModel } from '../models/index.js';
 import Utils from '../utils.js';
 
-const characterMemoryFilePath = 'outputs/memories/character_memory.json'
-
 class CharacterMemoryInterface {
-    static characterMap = {};
-    static isUpdating = false;
-
-
-    static addCharacters(characters) {
+    static addCharacters(characters, resource_name) {
         const processedCharacters = [];
 
-        try{
-            CharacterMemoryInterface.isUpdating = true;
-            CharacterMemoryInterface.loadCharacterMap();
-
-            for(let character of characters) {
-                const characterModel = new CharacterModel(character);
-                CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
-                processedCharacters.push(CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
-            }
-            
-            CharacterMemoryInterface.saveCharacterMap();
-            CharacterMemoryInterface.isUpdating = false;
-        } catch (error) {
-            CharacterMemoryInterface.isUpdating = false;
-            throw error;
+        let characterMap = CharacterMemoryInterface.loadCharacterMap(resource_name);
+        for(let character of characters) {
+            const characterModel = new CharacterModel(character);
+            characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
+            processedCharacters.push(characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
         }
+        CharacterMemoryInterface.saveCharacterMap(characterMap, resource_name);
 
         return processedCharacters;
     }
 
-    static addCharacter(character) {
-        try{
-            CharacterMemoryInterface.isUpdating = true;
-            CharacterMemoryInterface.loadCharacterMap();
+    static addCharacter(character, resource_name) {
+        let characterMap = CharacterMemoryInterface.loadCharacterMap(resource_name);
 
-            const characterModel = new CharacterModel(character);
-            CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
+        const characterModel = new CharacterModel(character);
+        characterMap[CharacterMemoryInterface.getCharacterMapKey(character)] = characterModel.toJsonDict();
 
-            CharacterMemoryInterface.saveCharacterMap();
-            CharacterMemoryInterface.isUpdating = false;
-        } catch (error) {
-            CharacterMemoryInterface.isUpdating = false;
-            throw error;
-        }
+        CharacterMemoryInterface.saveCharacterMap(characterMap, resource_name);
 
-        return CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)];
+        return characterMap[CharacterMemoryInterface.getCharacterMapKey(character)];
     }
 
 
-    static getCharacters(characters) {
-        if(!CharacterMemoryInterface.isUpdating) {
-            CharacterMemoryInterface.loadCharacterMap();
-        }
+    static getCharacters(characters, resource_name) {
+        let characterMap = CharacterMemoryInterface.loadCharacterMap(resource_name);
 
         return characters.map(character => {
-            if(!CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]) return null;
-            return new CharacterModel(CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
+            if(!characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]) return null;
+            return new CharacterModel(characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
         }).filter(character => character !== null);
     }
 
-    static getCharacter(character) {
-        if(!CharacterMemoryInterface.isUpdating) {
-            CharacterMemoryInterface.loadCharacterMap();
-        }
+    static getCharacter(character, resource_name) {
+        let characterMap = CharacterMemoryInterface.loadCharacterMap(resource_name);
 
-        if(!CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]) return null;
-        return new CharacterModel(CharacterMemoryInterface.characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
+        if(!characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]) return null;
+        return new CharacterModel(characterMap[CharacterMemoryInterface.getCharacterMapKey(character)]);
     }
 
 
-    static loadCharacterMap() {
+    static loadCharacterMap(resource_name) {
         let characterMap = {};
-        if (fs.existsSync(characterMemoryFilePath)) {
+        if (fs.existsSync(CharacterMemoryInterface.getCharacterMemoryFilePath(resource_name))) {
             try {
-                characterMap = JSON.parse(fs.readFileSync(characterMemoryFilePath, 'utf8'));
+                characterMap = JSON.parse(fs.readFileSync(CharacterMemoryInterface.getCharacterMemoryFilePath(resource_name), 'utf8'));
             } catch (error) {
                 Utils.logToFile('Character memory file read error. New character memory file will be created. : ' + error, 'error');
             }
         }
-        CharacterMemoryInterface.characterMap = characterMap;
+        return characterMap;
     }
 
-    static saveCharacterMap() {
-        fs.writeFileSync(characterMemoryFilePath, JSON.stringify(CharacterMemoryInterface.characterMap, null, 2));
+    static saveCharacterMap(characterMap, resource_name) {
+        fs.writeFileSync(CharacterMemoryInterface.getCharacterMemoryFilePath(resource_name), JSON.stringify(characterMap, null, 2));
     }
+
 
     static getCharacterMapKey(character) {
         return character.name
+    }
+
+    static getCharacterMemoryFilePath(resource_name) {
+        if(!resource_name) resource_name = 'global';
+        const memory_file_dir = `outputs/${resource_name}/memories`
+        const memory_file_path = `${memory_file_dir}/character_memory.json`
+        
+        Utils.make_dir_if_not_exists(memory_file_dir);
+        return memory_file_path
     }
 }
 
