@@ -80,7 +80,7 @@ class ProgressUIRenderer {
 
 
         return `<div class="progress-container">
-<p class="progress-text">사용하는 리소스 폴더명: ${resource_name || 'global'}</p>
+<p class="progress-text">사용하는 리소스 폴더명: ${resource_name || '_global'}</p>
 <p class="progress-text">콘텐츠 처리 중... (현재 <span id="char-count">${charCount}</span>자 생성됨)</p>
 ${detailsHTML}
 </div>

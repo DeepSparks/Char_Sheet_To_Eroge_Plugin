@@ -111,8 +111,8 @@ checkDependencyServers().then(() => {
     app.post('/getCharacters', (req, res) => {
         try {
 
-            const characters = CharacterMemoryInterface.getCharacters(req.body.characters);
-            res.json({ characters });
+            const characters = CharacterMemoryInterface.getCharacters(req.body.characters, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, characters });
 
         } catch (error) {
             Utils.logErrorToFile(error);
@@ -128,8 +128,8 @@ checkDependencyServers().then(() => {
                 await StyleModel.translateReqBody(style);
             }
 
-            const styles = await StyleMemoryInterface.addStyles(req.body.styles);
-            res.json({ styles });
+            const styles = await StyleMemoryInterface.addStyles(req.body.styles, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, styles });
 
         } catch (error) {
             Utils.logErrorToFile(error);
@@ -140,8 +140,8 @@ checkDependencyServers().then(() => {
     app.post('/getStyles', (req, res) => {
         try {
 
-            const styles = StyleMemoryInterface.getStyles(req.body.styles);
-            res.json({ styles });
+            const styles = StyleMemoryInterface.getStyles(req.body.styles, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, styles });
 
         } catch (error) {
             Utils.logErrorToFile(error);
@@ -157,8 +157,8 @@ checkDependencyServers().then(() => {
                 await BackgroundModel.translateReqBody(background);
             }
 
-            const backgrounds = await BackgroundMemoryInterface.addBackgrounds(req.body.backgrounds);
-            res.json({ backgrounds });
+            const backgrounds = await BackgroundMemoryInterface.addBackgrounds(req.body.backgrounds, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, backgrounds });
             
         } catch (error) {
             Utils.logErrorToFile(error);
@@ -169,8 +169,8 @@ checkDependencyServers().then(() => {
     app.post('/getBackgrounds', (req, res) => {
         try {
 
-            const backgrounds = BackgroundMemoryInterface.getBackgrounds(req.body.backgrounds);
-            res.json({ backgrounds });
+            const backgrounds = BackgroundMemoryInterface.getBackgrounds(req.body.backgrounds, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, backgrounds });
 
         } catch (error) {
             Utils.logErrorToFile(error);
