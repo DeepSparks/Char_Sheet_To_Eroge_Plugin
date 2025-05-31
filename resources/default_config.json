@@ -65,7 +65,7 @@
                     "config_id": "additional_common_prompt",
                     "config_alias": "공통 프롬프트 추가",
                     "config_type": "string",
-                    "config_description": "이미지 생성 시 모드와 상관 없이 공통적으로 사용되는 프롬프트를 추가합니다.",
+                    "config_description": "이미지 생성 시 모드와 상관없이 공통으로 사용되는 프롬프트를 추가합니다.",
                     "is_advanced": true,
                     "value": ""
                 },
@@ -73,7 +73,7 @@
                     "config_id": "additional_common_negative_prompt",
                     "config_alias": "공통 네거티브 프롬프트 추가",
                     "config_type": "string",
-                    "config_description": "이미지 생성 시 모드와 상관 없이 공통적으로 사용되는 부정 프롬프트를 추가합니다.",
+                    "config_description": "이미지 생성 시 모드와 상관없이 공통으로 사용되는 부정 프롬프트를 추가합니다.",
                     "is_advanced": true,
                     "value": ""
                 },
@@ -81,7 +81,7 @@
                     "config_id": "additional_character_prompt",
                     "config_alias": "공통 캐릭터 프롬프트 추가",
                     "config_type": "string",
-                    "config_description": "이미지 생성 시 모드와 상관 없이 공통적으로 사용되는 캐릭터 프롬프트를 추가합니다.",
+                    "config_description": "이미지 생성 시 모드와 상관없이 공통으로 사용되는 캐릭터 프롬프트를 추가합니다.",
                     "is_advanced": true,
                     "value": ""
                 },
@@ -99,7 +99,7 @@
                     "config_id": "random_view_keywords",
                     "config_alias": "랜덤 동적 뷰 키워드",
                     "config_type": "string",
-                    "config_description": "랜덤한 뷰 선택시에 사용되는 키워드들을 입력합니다.",
+                    "config_description": "랜덤한 뷰 선택 시에 사용되는 키워드들을 입력합니다.",
                     "config_if_conditions": [
                         {
                             "config_id": "is_not_use_random_dynamic_view",
@@ -114,7 +114,7 @@
                     "config_id": "is_not_use_nsfw_prompt_map",
                     "config_alias": "NSFW 프롬프트 맵 사용 중지 여부",
                     "config_type": "boolean",
-                    "config_description": "기본적으로 AI가 생성한 첫번째 nsfw 키워드를 주어진 맵의 키워드들로 대체합니다. 해당 기능을 중지하고, AI가 전달한 키워드를 그대로 사용하도록 만들 수 있습니다.",
+                    "config_description": "기본적으로 AI가 생성한 첫 번째 nsfw 키워드를 주어진 맵의 키워드들로 대체합니다. 해당 기능을 중지하고, AI가 전달한 키워드를 그대로 사용하도록 만들 수 있습니다.",
                     "is_advanced": true,
                     "value": false
                 },
@@ -122,7 +122,7 @@
                     "config_id": "nsfw_prompt_map",
                     "config_alias": "NSFW 프롬프트 맵",
                     "config_type": "string",
-                    "config_description": "AI의 첫번째 NSFW 키워드를 대체시킬 NSFW 프롬프트 맵을 입력합니다.",
+                    "config_description": "AI의 첫 번째 NSFW 키워드를 대체시킬 NSFW 프롬프트 맵을 입력합니다.",
                     "config_if_conditions": [
                         {
                             "config_id": "is_not_use_nsfw_prompt_map",
@@ -325,7 +325,7 @@
                     "config_id": "is_translate_voice_script",
                     "config_alias": "음성 생성 번역 여부",
                     "config_type": "boolean",
-                    "config_description": "기본적으로 모든 텍스트는는 일본어로 번역되며, 해당 기능의 중지 여부를 설정합니다.",
+                    "config_description": "기본적으로 모든 텍스트는 일본어로 번역되며, 해당 기능의 중지 여부를 설정합니다.",
                     "is_advanced": true,
                     "value": true
                 },
@@ -451,14 +451,14 @@
                     "config_id": "retry_interval_seconds",
                     "config_alias": "재시도 간격",
                     "config_type": "number",
-                    "config_description": "이미지나 음성 생성이 실패했을 경우, 몇 초후에 재시도할지 설정합니다.",
+                    "config_description": "이미지나 음성 생성이 실패했을 경우, 몇 초 후에 재시도할지 설정합니다.",
                     "value": 3
                 },
                 {
                     "config_id": "next_queue_waiting_seconds",
                     "config_alias": "다음 큐 대기 시간",
                     "config_type": "number",
-                    "config_description": "이미지나 음성 생성을 완료했을 경우, 몇 초후에 다음 작업으로 넘어갈지 설정합니다.",
+                    "config_description": "이미지나 음성 생성을 완료했을 경우, 몇 초 후에 다음 작업으로 넘어갈지 설정합니다.",
                     "value": 0
                 },
                 {
@@ -472,7 +472,7 @@
                     "config_id": "is_use_global_queue",
                     "config_alias": "전역 큐 사용 여부",
                     "config_type": "boolean",
-                    "config_description": "이미지, 음성 생성 작업이 동일한 큐에서 처리될지 여부를 설정합니다.",
+                    "config_description": "이미지, 음성 생성 작업이 동일한 큐에서 처리될지 여부를 설정합니다. 사용 시 작업 안정성이 증가하나, 작업 속도가 현저히 떨어질 수 있습니다.",
                     "value": false
                 },
                 {
@@ -491,14 +491,14 @@
                     "config_id": "is_use_random_event_selection",
                     "config_alias": "랜덤 이벤트 선택 여부",
                     "config_type": "boolean",
-                    "config_description": "Event-Options 태그에서 제시되는 3가지 옵션중에서 하나를 선택해서 제시할지 여부를 설정합니다.",
+                    "config_description": "Event-Options 태그에서 제시되는 3가지 옵션 중에서 하나를 선택해서 제시할지 여부를 설정합니다.",
                     "value": false
                 },
                 {
                     "config_id": "is_allow_male_character",
                     "config_alias": "남자 캐릭터 사용 여부",
                     "config_type": "boolean",
-                    "config_description": "캐릭터 추가시에 girl이 아닌 경우에도 캐릭터 추가를 허용할지 여부를 설정합니다.",
+                    "config_description": "캐릭터 추가시에 girl이 아닌어도 캐릭터 추가를 허용할지 여부를 설정합니다.",
                     "value": false
                 },
                 {
