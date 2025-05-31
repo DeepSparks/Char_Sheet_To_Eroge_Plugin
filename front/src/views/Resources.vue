@@ -203,14 +203,16 @@
                   <h4 class="image-title">{{ image.name }}</h4>
                   <p class="image-detail">스타일: {{ image.style_id }}</p>
                   <p class="image-detail">배경: {{ image.background_id }}</p>
-                  <v-btn
-                    @click="showImageDetails(image)"
-                    variant="text"
-                    size="small"
-                    color="primary"
-                  >
-                    상세 정보
-                  </v-btn>
+                  <div class="image-actions">
+                    <v-btn
+                      @click="showImageDetails(image)"
+                      variant="text"
+                      size="small"
+                      color="primary"
+                    >
+                      상세 정보
+                    </v-btn>
+                  </div>
                 </v-card-text>
               </v-card>
             </div>
@@ -1169,6 +1171,7 @@ onMounted(() => {
 
 .image-info {
   padding: 16px 20px;
+  text-align: center;
 }
 
 .image-title {
@@ -1182,6 +1185,12 @@ onMounted(() => {
   font-size: 14px;
   color: #7f8c8d;
   margin: 4px 0;
+}
+
+.image-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
 }
 
 /* 음성 관리 */
