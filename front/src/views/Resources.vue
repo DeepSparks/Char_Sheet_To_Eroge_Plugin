@@ -669,7 +669,9 @@ async function downloadImage(image) {
     const response = await fetch(`http://127.0.0.1:3000/${image.saved_file_path}`)
     const blob = await response.blob()
     const link = document.createElement('a')
-    link.download = `${image.name}_${image.style_id}.png`
+    
+    const image_name = image.saved_file_path.split('/').pop().split('.')[0]
+    link.download = `${image_name}.png`
     link.href = URL.createObjectURL(blob)
     link.click()
   } catch (error) {
@@ -683,11 +685,13 @@ async function downloadAllImages() {
     
     const zip = new JSZip()
     
+    let image_index = 1
     for (const image of images.value) {
       try {
         const response = await fetch(`http://127.0.0.1:3000/${image.saved_file_path}`)
         const blob = await response.blob()
-        zip.file(`${image.name}_${image.style_id}.png`, blob)
+        zip.file(`${image_index}.png`, blob)
+        image_index += 1
       } catch (error) {
         console.error(`이미지 ${image.name} 다운로드 실패:`, error)
       }
