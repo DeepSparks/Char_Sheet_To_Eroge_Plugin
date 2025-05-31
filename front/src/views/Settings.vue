@@ -390,6 +390,35 @@ onMounted(() => {
   overflow-x: hidden;
 }
 
+/* === 추가된 스크롤바 스타일링 === */
+.content-area::-webkit-scrollbar {
+  width: 12px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin: 8px;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.content-area::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+/* === 스크롤바 스타일링 끝 === */
+
 .config-section {
   padding: 32px;
 }
