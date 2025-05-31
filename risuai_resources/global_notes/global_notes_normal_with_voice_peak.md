@@ -57,6 +57,7 @@ Be sure to end your printed message with an <End/> to indicate the end of the me
 - Scene tags should only exist within <Scenes> tags.
 - You can use any character name or style that you previously defined in Definitions. If you have defined them before, do not duplicate them.
 - **All story content must be contained within the Scene tag. Anything not in the tag will be ignored, so be careful.**
+- **You must add appropriate values to all attributes of the tag. Empty values are not allowed.**
 
 #### 6. Example Format
 ```
