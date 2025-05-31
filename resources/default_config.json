@@ -1,0 +1,514 @@
+{
+    "configs": [
+        {
+            "group_id": "image_generation",
+            "group_alias": "이미지 생성",
+            "configs": [
+                {
+                    "config_id": "is_use_image_generation",
+                    "config_alias": "이미지 생성 기능 사용 여부",
+                    "config_type": "boolean",
+                    "value": true
+                },
+                {
+                    "config_id": "image_generation_mode",
+                    "config_alias": "이미지 생성 처리 모드",
+                    "config_type": "dropdown",
+                    "config_options": [
+                        {
+                            "value": "novel-ai",
+                            "label": "NovelAI"
+                        },
+                        {
+                            "value": "stable-diffusion-web-ui",
+                            "label": "Stable Diffusion Web UI"
+                        }
+                    ],
+                    "value": "novel-ai"
+                },
+                {
+                    "config_id": "image_generation_server_url",
+                    "config_alias": "이미지 생성 서버 주소",
+                    "config_type": "string",
+                    "value": "https://image.novelai.net/ai/generate-image",
+                    "config_description": "NovelAI: 'https://image.novelai.net/ai/generate-image', Stable Diffusion Web UI: 'http://127.0.0.1:7860'"
+                },
+                {
+                    "config_id": "image_generation_api_key",
+                    "config_alias": "이미지 생성 API 키",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "novel-ai"
+                        }
+                    ],
+                    "value": ""
+                },
+
+                {
+                    "config_id": "image_waiting_file_path",
+                    "config_alias": "이미지 대기 이미지 경로",
+                    "config_type": "string",
+                    "is_advanced": true,
+                    "value": "./resources/image_waiting.png"
+                },
+                {
+                    "config_id": "add_default_nsfw_keyword",
+                    "config_alias": "기본 NSFW 키워드 추가 여부",
+                    "config_type": "boolean",
+                    "config_description": "AI가 nsfw를 none으로 설정해도 nsfw와 관련된 기본적인 키워드가 추가됩니다.",
+                    "is_advanced": true,
+                    "value": false
+                },
+                {
+                    "config_id": "additional_common_prompt",
+                    "config_alias": "공통 프롬프트 추가",
+                    "config_type": "string",
+                    "config_description": "이미지 생성 시 모드와 상관 없이 공통적으로 사용되는 프롬프트를 추가합니다.",
+                    "is_advanced": true,
+                    "value": ""
+                },
+                {
+                    "config_id": "additional_common_negative_prompt",
+                    "config_alias": "공통 네거티브 프롬프트 추가",
+                    "config_type": "string",
+                    "config_description": "이미지 생성 시 모드와 상관 없이 공통적으로 사용되는 부정 프롬프트를 추가합니다.",
+                    "is_advanced": true,
+                    "value": ""
+                },
+                {
+                    "config_id": "additional_character_prompt",
+                    "config_alias": "공통 캐릭터 프롬프트 추가",
+                    "config_type": "string",
+                    "config_description": "이미지 생성 시 모드와 상관 없이 공통적으로 사용되는 캐릭터 프롬프트를 추가합니다.",
+                    "is_advanced": true,
+                    "value": ""
+                },
+
+
+                {
+                    "config_id": "is_not_use_random_dynamic_view",
+                    "config_alias": "랜덤 동적 뷰 사용 중지 여부",
+                    "config_type": "boolean",
+                    "config_description": "기본적으로 다양성을 위해서 AI가 생성한 view 키워드를 무시하고, 랜덤한 뷰를 선택하도록 작동합니다. 해당 기능을 중지하고, AI가 전달한 view 키워드를 사용하도록 만들 수 있습니다.",
+                    "is_advanced": true,
+                    "value": false
+                },
+                {
+                    "config_id": "random_view_keywords",
+                    "config_alias": "랜덤 동적 뷰 키워드",
+                    "config_type": "string",
+                    "config_description": "랜덤한 뷰 선택시에 사용되는 키워드들을 입력합니다.",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "is_not_use_random_dynamic_view",
+                            "config_value": false
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "from behind,from side,from above,from below,top-down view,three quarter view,dutch angle,low angle"
+                },
+
+                {
+                    "config_id": "is_not_use_nsfw_prompt_map",
+                    "config_alias": "NSFW 프롬프트 맵 사용 중지 여부",
+                    "config_type": "boolean",
+                    "config_description": "기본적으로 AI가 생성한 첫번째 nsfw 키워드를 주어진 맵의 키워드들로 대체합니다. 해당 기능을 중지하고, AI가 전달한 키워드를 그대로 사용하도록 만들 수 있습니다.",
+                    "is_advanced": true,
+                    "value": false
+                },
+                {
+                    "config_id": "nsfw_prompt_map",
+                    "config_alias": "NSFW 프롬프트 맵",
+                    "config_type": "string",
+                    "config_description": "AI의 첫번째 NSFW 키워드를 대체시킬 NSFW 프롬프트 맵을 입력합니다.",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "is_not_use_nsfw_prompt_map",
+                            "config_value": false
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "{\"masturbation\":\"masturbation, female masturbation, pussy juice\",\"fellatio\":\"fellatio, invisible man, disembodied penis\",\"sex\":\"sex, vaginal, invisible man, disembodied penis\",\"anal\":\"anal, invisible man, disembodied penis\",\"etc\":\"invisible man\"}"
+                },
+                {
+                    "config_id": "default_nsfw_keywords",
+                    "config_alias": "기본 NSFW 키워드",
+                    "config_type": "string",
+                    "config_description": "NSFW가 관련 키워드가 있는 경우, 기본적으로 추가되는 NSFW 키워드를 입력합니다.",
+                    "is_advanced": true,
+                    "value": "nsfw,explicit,open clothes,uncensored"
+                },
+
+                {
+                    "config_id": "novelai_model",
+                    "config_alias": "NovelAI 모델",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "novel-ai"
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "nai-diffusion-4-5-full"
+                },
+                {
+                    "config_id": "novelai_quality_keywords",
+                    "config_alias": "NovelAI 퀄리티 키워드",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "novel-ai"
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "looking at viewer,location,detailed background,tsunako,masterpiece,best quality,amazing quality,very aesthetic,absurdres,game_cg,commission,official style,best illustration,photoshop (medium)"
+                },
+                {
+                    "config_id": "novelai_negative_keywords",
+                    "config_alias": "NovelAI 네거티브 키워드",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "novel-ai"
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "normal quality,bad quality,worst quality,displeasing,very displeasing,lowres,bad anatomy,bad perspective,bad proportions,bad face,bad arm,bad hands,bad leg,bad feet,bad reflection,bad link,bad source,wrong hand,wrong feet,missing,missing limb,missing eye,missing tooth,missing ear,missing finger,extra,extra faces,extra eyes,extra mouth,extra ears,extra breasts,extra arms,extra hands,extra legs,extra digits,fewer digits,cropped,cropped head,cropped torso,cropped arms,cropped legs,JPEG artifacts,signature,watermark,username,blurry,artist name,fat,duplicate,mutation,deformed,disfigured,long neck,unfinished,chromatic aberration,scan,scan artifacts,abstract,@_@,brown skin,glasses,vertical lines,vertical banding,multiple views,simple background,aged up,old"
+                },
+                {
+                    "config_id": "novelai_negative_keywords_for_character",
+                    "config_alias": "NovelAI 캐릭터 네거티브 키워드",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "novel-ai"
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "lowres,aliasing"
+                },
+
+                {
+                    "config_id": "local_ai_quality_keywords",
+                    "config_alias": "Local AI 퀄리티 키워드",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "stable-diffusion-web-ui"
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "looking at viewer,tsunako,masterpiece,best quality,high score,great score,absurdres,highres"
+                },
+                {
+                    "config_id": "local_ai_negative_keywords",
+                    "config_alias": "Local AI 네거티브 키워드",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "image_generation_mode",
+                            "config_value": "stable-diffusion-web-ui"
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "bad anatomy,bad feet,bad hands,bad proportions,bad perspective,wrong hand,wrong foot,ugly hands,ugly arms,missing finger,extra finger,fewer digits,extra digits,extra toes,missing toes,extra arms,extra faces,multiple heads,no pussy,error,artistic error,wardrobe error,text,signature,watermark,username,blurry,cropped,lowres,worst quality,low quality,low score,bad score,average score,censored,blank censor,afterimage,motion blur,speed lines,motion lines,futanari,aged up,old,wrinkled skin,1boy,2boys,3boys,multiple boys"
+                }
+            ]
+        },
+
+        {
+            "group_id": "translation",
+            "group_alias": "번역",
+            "configs": [
+                {
+                    "config_id": "translation_mode",
+                    "config_alias": "번역 모드",
+                    "config_type": "dropdown",
+                    "config_options": [
+                        {
+                            "value": "google",
+                            "label": "Google"
+                        },
+                        {
+                            "value": "deepl",
+                            "label": "DeepL"
+                        }
+                    ],
+                    "value": "google"
+                },
+                {
+                    "config_id": "translation_server_url",
+                    "config_alias": "번역 서버 주소",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "translation_mode",
+                            "config_value": "deepl"
+                        }
+                    ],
+                    "value": "https://api-free.deepl.com"
+                },
+                {
+                    "config_id": "translation_api_key",
+                    "config_alias": "번역 API 키",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "translation_mode",
+                            "config_value": "deepl"
+                        }
+                    ],
+                    "value": ""
+                }
+            ]
+        },
+
+        {
+            "group_id": "voice_generation",
+            "group_alias": "음성 생성",
+            "configs": [
+                {
+                    "config_id": "is_use_voice_generation",
+                    "config_alias": "음성 생성 기능 사용 여부",
+                    "config_type": "boolean",
+                    "value": false
+                },
+                {
+                    "config_id": "voice_generation_mode",
+                    "config_alias": "음성 생성 모드",
+                    "config_type": "dropdown",
+                    "config_options": [
+                        {
+                            "value": "voice-peak",
+                            "label": "Voicepeak"
+                        },
+                        {
+                            "value": "voice-vox",
+                            "label": "Voicevox"
+                        }
+                    ],
+                    "value": "voice-peak"
+                },
+                {
+                    "config_id": "voice_generation_server_url",
+                    "config_alias": "음성 생성 서버 주소",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "voice_generation_mode",
+                            "config_value": "voice-vox"
+                        }
+                    ],
+                    "value": "",
+                    "config_description": "Voicevox: 'http://127.0.0.1:50021'"
+                },
+                {
+                    "config_id": "voice_generation_program_path",
+                    "config_alias": "음성 생성 프로그램 경로",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "voice_generation_mode",
+                            "config_value": "voice-peak"
+                        }
+                    ],
+                    "value": "C:\\Program Files\\Voicepeak\\voicepeak.exe"
+                },
+                {
+                    "config_id": "is_translate_voice_script",
+                    "config_alias": "음성 생성 번역 여부",
+                    "config_type": "boolean",
+                    "config_description": "기본적으로 모든 텍스트는는 일본어로 번역되며, 해당 기능의 중지 여부를 설정합니다.",
+                    "is_advanced": true,
+                    "value": true
+                },
+                {
+                    "config_id": "translate_voice_script_from",
+                    "config_alias": "음성 생성 번역 원본 언어",
+                    "config_type": "dropdown",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "is_translate_voice_script",
+                            "config_value": true
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "auto"
+                },
+                {
+                    "config_id": "translate_voice_script_to",
+                    "config_alias": "음성 생성 번역 목적 언어",
+                    "config_type": "dropdown",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "is_translate_voice_script",
+                            "config_value": true
+                        }
+                    ],
+                    "is_advanced": true,
+                    "value": "ja"
+                },
+
+                {
+                    "config_id": "voicevox_speaker_ids",
+                    "config_alias": "Voicevox 스피커 ID 선택 목록",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "voice_generation_mode",
+                            "config_value": "voice-vox"
+                        }
+                    ],
+                    "config_description": "랜덤으로 선택하기 위한 Voicevox 스피커 ID를 입력합니다. 관련 ID는 VoiceVox API를 통해서 얻을 수 있습니다.",
+                    "value": "4,5,8,10,14,23,43,46,54,58,68"
+                },
+
+                {
+                    "config_id": "voicepeak_speaker_ids",
+                    "config_alias": "Voicepeak 스피커 ID 선택 목록",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "voice_generation_mode",
+                            "config_value": "voice-peak"
+                        }
+                    ],
+                    "config_description": "랜덤으로 선택하기 위한 Voicepeak 스피커 ID를 입력합니다. 관련 ID는 voicepeak 명령어를 통해서 얻을 수 있습니다.",
+                    "value": "Asumi Shuo,Tsurumaki Maki,Ooedo Chanko,Miyamai Moca,Zundamon,Asumi Ririse,Tohoku Zunko,Tohoku Kiritan,Koharu Rikka"
+                },
+                {
+                    "config_id": "voicepeak_keyword_join",
+                    "config_alias": "Voicepeak 키워드 조인",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "voice_generation_mode",
+                            "config_value": "voice-peak"
+                        }
+                    ],
+                    "config_description": "특정 스피커 ID에 대한 감정 키워드 매칭 정보를 입력합니다. 특정 스피커에 대한 감정 키워드들은 voicepeak 명령어를 통해서 얻을 수 있습니다.",
+                    "value": "{\"Asumi Shuo\":{\"happy\":\"happy\",\"fun\":\"fun\",\"angry\":\"angry\",\"sad\":\"sad\",\"crying\":\"crying\"},\"Tsurumaki Maki\":{\"happy\":\"happy\",\"fun\":\"tsukkomi\",\"angry\":\"sekkyou\",\"sad\":\"teary\",\"crying\":\"teary\"},\"Ooedo Chanko\":{\"happy\":\"hehehe\",\"fun\":\"akachan\",\"angry\":\"tsuntsun\",\"sad\":\"naki\",\"crying\":\"naki\"},\"Miyamai Moca\":{\"happy\":\"honwaka\",\"fun\":\"doyaru\",\"angry\":\"angry\",\"sad\":\"bosoboso\",\"crying\":\"teary\"},\"Zundamon\":{\"happy\":\"amaama\",\"fun\":\"live\",\"angry\":\"aori\",\"sad\":\"hisohiso\",\"crying\":\"hisohiso\"},\"Asumi Ririse\":{\"happy\":\"happy\",\"fun\":\"fun\",\"angry\":\"angry\",\"sad\":\"sad\",\"crying\":\"sad\"},\"Tohoku Zunko\":{\"happy\":\"live\",\"fun\":\"astonished\",\"angry\":\"firm\",\"sad\":\"sad\",\"crying\":\"sad\"},\"Tohoku Kiritan\":{\"happy\":\"dere\",\"fun\":\"bright\",\"angry\":\"angry\",\"sad\":\"dull\",\"crying\":\"teary\"},\"Koharu Rikka\":{\"happy\":\"hightension\",\"fun\":\"hightension\",\"angry\":\"livid\",\"sad\":\"lamenting\",\"crying\":\"lamenting\"}}"
+                },
+                {
+                    "config_id": "is_use_voice_type_matching",
+                    "config_alias": "음성 타입 매칭 사용 여부",
+                    "config_type": "boolean",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "voice_generation_mode",
+                            "config_value": "voice-peak"
+                        }
+                    ],
+                    "config_description": "캐릭터 성향에 따른 음성 타입 매칭 기능의 사용 여부를 설정합니다.",
+                    "value": false
+                },
+                {
+                    "config_id": "voice_type_matching_info",
+                    "config_alias": "음성 타입 매칭 정보",
+                    "config_type": "string",
+                    "config_if_conditions": [
+                        {
+                            "config_id": "is_use_voice_type_matching",
+                            "config_value": true
+                        }
+                    ],
+                    "config_description": "캐릭터 성향에 따라서 어떠한 스피커 ID들 목록에서 랜덤으로 선택할지에 대한 정보를 설정합니다.",
+                    "value": "{\"bright\":[\"Asumi Shuo\",\"Tsurumaki Maki\",\"Tohoku Zunko\"],\"cool\":[\"Miyamai Moca\",\"Asumi Ririse\",\"Tohoku Kiritan\",\"Koharu Rikka\"],\"playful\":[\"Zundamon\",\"Ooedo Chanko\"]}"
+                }
+            ]
+        },
+
+        {
+            "group_id": "detail_settings",
+            "group_alias": "상세 설정",
+            "configs": [
+                {
+                    "config_id": "log_locales",
+                    "config_alias": "로그 언어",
+                    "config_type": "string",
+                    "value": "ko-KR"
+                },
+                {
+                    "config_id": "log_timezone",
+                    "config_alias": "로그 시간대",
+                    "config_type": "string",
+                    "value": "Asia/Seoul"
+                },
+                {
+                    "config_id": "log_file_path",
+                    "config_alias": "로그 파일 경로",
+                    "config_type": "string",
+                    "value": "./logs.log"
+                },
+                {
+                    "config_id": "retry_interval_seconds",
+                    "config_alias": "재시도 간격",
+                    "config_type": "number",
+                    "config_description": "이미지나 음성 생성이 실패했을 경우, 몇 초후에 재시도할지 설정합니다.",
+                    "value": 3
+                },
+                {
+                    "config_id": "next_queue_waiting_seconds",
+                    "config_alias": "다음 큐 대기 시간",
+                    "config_type": "number",
+                    "config_description": "이미지나 음성 생성을 완료했을 경우, 몇 초후에 다음 작업으로 넘어갈지 설정합니다.",
+                    "value": 0
+                },
+                {
+                    "config_id": "is_clear_server_at_startup",
+                    "config_alias": "서버 시작 시 정리 여부",
+                    "config_type": "boolean",
+                    "config_description": "서버가 시작될 때, outputs, logs 파일을 제거할지 여부를 설정합니다.",
+                    "value": false
+                },
+                {
+                    "config_id": "is_use_global_queue",
+                    "config_alias": "전역 큐 사용 여부",
+                    "config_type": "boolean",
+                    "config_description": "이미지, 음성 생성 작업이 동일한 큐에서 처리될지 여부를 설정합니다.",
+                    "value": false
+                },
+                {
+                    "config_id": "server_host",
+                    "config_alias": "서버 호스트",
+                    "config_type": "string",
+                    "value": "127.0.0.1"
+                },
+                {
+                    "config_id": "server_port",
+                    "config_alias": "서버 포트",
+                    "config_type": "number",
+                    "value": 3000
+                },
+                {
+                    "config_id": "is_use_random_event_selection",
+                    "config_alias": "랜덤 이벤트 선택 여부",
+                    "config_type": "boolean",
+                    "config_description": "Event-Options 태그에서 제시되는 3가지 옵션중에서 하나를 선택해서 제시할지 여부를 설정합니다.",
+                    "value": false
+                },
+                {
+                    "config_id": "is_allow_male_character",
+                    "config_alias": "남자 캐릭터 사용 여부",
+                    "config_type": "boolean",
+                    "config_description": "캐릭터 추가시에 girl이 아닌 경우에도 캐릭터 추가를 허용할지 여부를 설정합니다.",
+                    "value": false
+                },
+                {
+                    "config_id": "is_always_expand_scene",
+                    "config_alias": "항상 장면 확장 여부",
+                    "config_type": "boolean",
+                    "config_description": "항상 Scene 태그의 이미지가 아래로 확장된 형태(미리보기 형태)로 표시될지 여부를 설정합니다.",
+                    "value": false
+                }
+            ]
+        }
+    ]
+}

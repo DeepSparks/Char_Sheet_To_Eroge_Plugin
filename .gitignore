@@ -5,3 +5,4 @@ voices
 memories
 .env
 .local
+config.json

@@ -1,5 +1,4 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import fs from 'fs';
 
 import {
@@ -8,14 +7,6 @@ import {
     CharacterModel, StyleModel, BackgroundModel, ImageModel,
     Utils, Config 
 } from './main_features/index.js';
-
-
-if(!fs.existsSync(".env")) {
-    Utils.logToFile("No .env file found. Please create one by using env_example folder files.", 'error');
-    process.exit(1);
-}
-
-dotenv.config();
 
 
 if(Config.IS_CLEAR_SERVER_AT_STARTUP) {
@@ -63,7 +54,7 @@ async function checkDependencyServers() {
     if(Config.IS_USE_VOICE_GENERATION) {
         voiceGenerationServerOk = await checkServerStatus(Config.VOICE_GENERATION_SERVER_URL, 'Voice Generation Server');
     }
-    if(Config.VOICE_GENERATION_PROGRAM_PATH) {
+    if(Config.IS_USE_VOICE_GENERATION && Config.VOICE_GENERATION_PROGRAM_PATH) {
         if(!fs.existsSync(Config.VOICE_GENERATION_PROGRAM_PATH)) {
             Utils.logToFile(`Voice Generation Program Path(${Config.VOICE_GENERATION_PROGRAM_PATH}) is not found.`, 'error');
             process.exit(1);
