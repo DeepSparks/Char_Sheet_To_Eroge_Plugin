@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 
 import {
-    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface,
+    CharacterMemoryInterface, StyleMemoryInterface, BackgroundMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, TranslateInterface, RenderContentInterface, ResourceInterface, RenderedHTMLMemoryInterface,
     GlobalQueueUtil, ImageQueueUtil, VoiceQueueUtil, 
     CharacterModel, StyleModel, BackgroundModel, ImageModel,
     Utils, Config 
@@ -123,6 +123,16 @@ checkDependencyServers().then(() => {
         }
     });
 
+    app.post('/getAllCharacters', (req, res) => {
+        try {
+            const characters = CharacterMemoryInterface.getAllCharacters(req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, characters });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
 
     app.post('/addStyles', async (req, res) => {
         try {
@@ -152,6 +162,16 @@ checkDependencyServers().then(() => {
         }
     });
 
+    app.post('/getAllStyles', (req, res) => {
+        try {
+            const styles = StyleMemoryInterface.getAllStyles(req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, styles });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
 
     app.post('/addBackgrounds', async (req, res) => {
         try {
@@ -175,6 +195,47 @@ checkDependencyServers().then(() => {
             const backgrounds = BackgroundMemoryInterface.getBackgrounds(req.body.backgrounds, req.body.resource_name);
             res.json({ resource_name: req.body.resource_name, backgrounds });
 
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
+    app.post('/getAllBackgrounds', (req, res) => {
+        try {
+            const backgrounds = BackgroundMemoryInterface.getAllBackgrounds(req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, backgrounds });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
+
+    app.post('/addRenderedHTMLs', async (req, res) => {
+        try {
+            const renderedHTMLs = await RenderedHTMLMemoryInterface.addRenderedHTMLs(req.body.renderedHTMLs, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, renderedHTMLs });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+
+    app.post('/getRenderedHTMLs', (req, res) => {
+        try {
+            const renderedHTMLs = RenderedHTMLMemoryInterface.getRenderedHTMLs(req.body.renderedHTMLs, req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, renderedHTMLs });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    });
+    
+    app.post('/getAllRenderedHTMLs', (req, res) => {
+        try {
+            const renderedHTMLs = RenderedHTMLMemoryInterface.getAllRenderedHTMLs(req.body.resource_name);
+            res.json({ resource_name: req.body.resource_name, renderedHTMLs });
         } catch (error) {
             Utils.logErrorToFile(error);
             res.json({ error: error.message, stack: error.stack });

@@ -6,6 +6,7 @@ import VoiceGenerateInterface from './voice-generate-interface.js';
 import TranslateInterface from './translate-interface.js';
 import RenderContentInterface from './render-content-interface.js';
 import ResourceInterface from './resource-interface.js';
+import RenderedHTMLMemoryInterface from './rendered-html-memory-interface.js';
 
 export {
     CharacterMemoryInterface,
@@ -15,5 +16,6 @@ export {
     VoiceGenerateInterface,
     TranslateInterface,
     RenderContentInterface,
-    ResourceInterface
+    ResourceInterface,
+    RenderedHTMLMemoryInterface
 }

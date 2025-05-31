@@ -30,6 +30,10 @@ class StyleMemoryInterface extends BaseMemoryInterface {
     static getStyle(style, resource_name) {
         return this.getItem(style, resource_name);
     }
+
+    static getAllStyles(resource_name) {
+        return this.getAllItems(resource_name);
+    }
 }
 
 export default StyleMemoryInterface;

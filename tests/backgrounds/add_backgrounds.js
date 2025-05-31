@@ -12,6 +12,16 @@ TestUtil.jsonRequest('http://127.0.0.1:3000/addBackgrounds', {
             weather: 'sunny',
             special_features: 'floor-to-ceiling windows, tropical plants, marble floors',
             etc: 'air conditioning, soft tropical music playing'
+        },
+        {
+            background_id: 'lbi_airport_night',
+            setting_type: 'indoor',
+            location: 'luxury tropical airport',
+            time_period: 'night',
+            season: 'summer',
+            weather: 'rainy',
+            special_features: 'floor-to-ceiling windows, tropical plants, marble floors',
+            etc: 'air conditioning, soft tropical music playing'
         }
     ]
 })

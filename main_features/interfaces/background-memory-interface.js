@@ -30,6 +30,10 @@ class BackgroundMemoryInterface extends BaseMemoryInterface {
     static getBackground(background, resource_name) {
         return this.getItem(background, resource_name);
     }
+
+    static getAllBackgrounds(resource_name) {
+        return this.getAllItems(resource_name);
+    }
 }
 
 export default BackgroundMemoryInterface;

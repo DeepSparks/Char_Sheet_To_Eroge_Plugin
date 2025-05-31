@@ -93,6 +93,13 @@ class BaseMemoryInterface {
         if (!memoryMap[key]) return null;
         return new ModelClass(memoryMap[key]);
     }
+
+    static getAllItems(resource_name) {
+        const ModelClass = this.getModelClass();
+        let memoryMap = this.loadMemoryMap(resource_name);
+
+        return Object.values(memoryMap).map(item => new ModelClass(item));
+    }
 }
 
 export default BaseMemoryInterface;

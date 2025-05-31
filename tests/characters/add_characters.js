@@ -14,6 +14,18 @@ TestUtil.jsonRequest('http://127.0.0.1:3000/addCharacters', {
             skin_color: 'pale',
             voice_type: 'bright',
             etc: 'bell collar'
+        },
+        {
+            name: 'Lilith',
+            gender: 'girl',
+            age: 'very young',
+            hair_style: 'long hair',
+            hair_color: 'black',
+            eye_color: 'blue',
+            breast_size: 'flat',
+            skin_color: 'pale',
+            voice_type: 'bright',
+            etc: 'bell collar'
         }
     ]
 })

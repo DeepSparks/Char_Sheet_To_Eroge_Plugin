@@ -12,6 +12,16 @@ TestUtil.jsonRequest('http://127.0.0.1:3000/addStyles', {
             panties: 'thong',
             panties_color: 'see-through',
             etc: 'barely covering, extremely revealing'
+        },
+        {
+            style_id: 'Sweater_and_Skirt',
+            clothes: 'sweater',
+            clothes_color: 'black',
+            bra: 'none',
+            bra_color: 'transparent',
+            panties: 'none',
+            panties_color: 'transparent',
+            etc: 'barely covering'
         }
     ]
 })

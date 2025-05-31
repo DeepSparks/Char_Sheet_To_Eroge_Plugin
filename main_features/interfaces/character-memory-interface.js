@@ -30,6 +30,10 @@ class CharacterMemoryInterface extends BaseMemoryInterface {
     static getCharacter(character, resource_name) {
         return this.getItem(character, resource_name);
     }
+
+    static getAllCharacters(resource_name) {
+        return this.getAllItems(resource_name);
+    }
 }
 
 export default CharacterMemoryInterface;
