@@ -20,11 +20,11 @@
       <v-col cols="9">
         <div class="pa-6">
           <div v-if="selectedGroup">
-            <h2 class="text-h5 mb-4">{{ selectedGroup.group_alias }}</h2>
+            <h2 class="mb-4">{{ selectedGroup.group_alias }}</h2>
             
             <!-- 기본 설정들 -->
             <div v-if="basicConfigs.length > 0">
-              <h3 class="text-h6 mb-3">기본 설정</h3>
+              <h3 class="mb-3">기본 설정</h3>
               <v-card variant="outlined" class="mb-6">
                 <v-card-text>
                   <div v-for="config in basicConfigs" :key="config.config_id" class="mb-4">
@@ -43,7 +43,7 @@
               <v-expansion-panels variant="accordion">
                 <v-expansion-panel>
                   <v-expansion-panel-title>
-                    <span class="text-h6">고급 설정</span>
+                    <span>고급 설정</span>
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <div v-for="config in advancedConfigs" :key="config.config_id" class="mb-4">
@@ -62,7 +62,7 @@
           <!-- 선택된 그룹이 없을 때 -->
           <div v-else class="text-center py-8">
             <v-icon size="64" color="grey">mdi-cog</v-icon>
-            <p class="text-h6 mt-4 text-grey">좌측에서 설정 그룹을 선택해주세요</p>
+            <p class="mt-4 text-grey">좌측에서 설정 그룹을 선택해주세요</p>
           </div>
         </div>
       </v-col>

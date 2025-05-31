@@ -55,3 +55,16 @@ const currentPageTitle = computed(() => {
   return item ? item.title : '캐릭터 시트 미연시화 플러그인'
 })
 </script>
+
+<style>
+@font-face {
+  font-family: 'bmdohyeon';
+  src: url('@/assets/fonts/BMDOHYEON_ttf.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: 'bmdohyeon', sans-serif;
+}
+</style>
