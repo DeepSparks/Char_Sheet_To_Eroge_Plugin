@@ -38,7 +38,22 @@ export class ApiService {
   }
 
   static async getAllRenderedHTMLs(resourceName) {
-    return await this.request('/getAllRenderedHTMLs', { resource_name: resourceName })
+    const renderedHTMLs = await this.request('/getAllRenderedHTMLs', { resource_name: resourceName })
+    
+    let processedRenderedHTMLs = []
+    for (const renderedHTML of renderedHTMLs.renderedHTMLs) {
+      processedRenderedHTMLs = processedRenderedHTMLs.concat(await this._preprocessRenderedHTML(renderedHTML))
+    }
+    
+    return {
+      resource_name: renderedHTMLs.resource_name,
+      renderedHTMLs: processedRenderedHTMLs
+    }
+  }
+
+  static _preprocessRenderedHTML(renderedHTML) {
+    console.log(renderedHTML)
+    return [renderedHTML]
   }
 
   static async getAllImages(resourceName) {

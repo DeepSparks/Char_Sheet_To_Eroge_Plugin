@@ -641,7 +641,7 @@ async function downloadScene(scene, index) {
     })
     
     const link = document.createElement('a')
-    link.download = `${scene.sequence_id}.png`
+    link.download = `${selectedResourceName.value}_${scene.sequence_id}.png`
     link.href = canvas.toDataURL()
     link.click()
   } catch (error) {
@@ -689,7 +689,6 @@ async function downloadAllScenes() {
 }
 
 function preprocessHtml(html) {
-  console.log(html)
   return html
 }
 
