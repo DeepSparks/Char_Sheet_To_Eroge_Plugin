@@ -485,15 +485,15 @@ const resourceMenus = computed(() => [
 
 // 테이블 헤더 정의
 const characterHeaders = [
-  { title: '이름', key: 'name' },
-  { title: '성별', key: 'gender' },
+  { title: '이름', key: 'name', width: '100px' },
+  { title: '성별', key: 'gender', width: '100px' },
   { title: '나이', key: 'age' },
   { title: '헤어 스타일', key: 'hair_style' },
   { title: '헤어 색상', key: 'hair_color' },
   { title: '눈 색상', key: 'eye_color' },
   { title: '가슴 크기', key: 'breast_size' },
   { title: '피부 색상', key: 'skin_color' },
-  { title: '음성 타입', key: 'voice_type' },
+  { title: '음성 타입', key: 'voice_type', width: '125px' },
   { title: '기타', key: 'etc' }
 ]
 
@@ -1273,6 +1273,7 @@ onMounted(() => {
   border: 1px solid rgba(255,255,255,0.4) !important;
   border-radius: 16px !important;
   overflow: hidden;
+  color: black;
 }
 
 /* 빈 상태 */
