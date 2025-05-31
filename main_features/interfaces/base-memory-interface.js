@@ -17,7 +17,7 @@ class BaseMemoryInterface {
 
     // 공통 유틸리티 메서드들
     static getMemoryFilePath(resource_name) {
-        if (!resource_name) resource_name = '_global';
+        if (!resource_name) resource_name = '_default';
         const memory_file_dir = `outputs/${resource_name}/memories`;
         const memory_file_path = `${memory_file_dir}/${this.getMemoryFileName()}`;
         

@@ -31,7 +31,7 @@ class BackendInterface {
     }
 
 
-    static async addStyles(rawStyleModels) {
+    static async addStyles(rawStyleModels, resource_name) {
         const requestBody = {
             styles: rawStyleModels.map(rawStyleModel => rawStyleModel.toJsonDict())
         }
@@ -40,10 +40,10 @@ class BackendInterface {
             await StyleModel.translateReqBody(style);
         }
 
-        return StyleMemoryInterface.addStyles(requestBody.styles);
+        return StyleMemoryInterface.addStyles(requestBody.styles, resource_name);
     }
 
-    static async addBackgrounds(rawBackgroundModels) {
+    static async addBackgrounds(rawBackgroundModels, resource_name) {
         const requestBody = {
             backgrounds: rawBackgroundModels.map(rawBackgroundModel => rawBackgroundModel.toJsonDict())
         }
@@ -52,7 +52,7 @@ class BackendInterface {
             await BackgroundModel.translateReqBody(background);
         }
 
-        return BackgroundMemoryInterface.addBackgrounds(requestBody.backgrounds);
+        return BackgroundMemoryInterface.addBackgrounds(requestBody.backgrounds, resource_name);
     }
 
 
