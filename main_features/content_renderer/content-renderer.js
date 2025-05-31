@@ -4,6 +4,8 @@ import { handleStartTag, handleStatusTag, handleEventOptionsTag, handleCharacter
 import { VoiceCache, ImageCache } from './content_caches/index.js';
 import { restoreSceneTag } from './restorers/index.js';
 import { ProgressUIRenderer } from './renderers/index.js';
+import { RenderedHTMLProcessor } from './processors/index.js';
+
 import Utils from '../utils.js';
 import md5 from 'md5';
 
@@ -129,7 +131,14 @@ class ContentRenderer {
 </div>` + FrontConfig.ALL_STYLES
             }
 
-            return content + FrontConfig.ALL_STYLES
+            const final_content = content + FrontConfig.ALL_STYLES
+
+
+            if(content_status.is_end_of_content) {
+                await RenderedHTMLProcessor.addContentToRenderedHTML(final_content, resource_name, start_model.sequence);
+            }
+
+            return final_content
     
         } catch (error) {
             Utils.logErrorToFile(error);

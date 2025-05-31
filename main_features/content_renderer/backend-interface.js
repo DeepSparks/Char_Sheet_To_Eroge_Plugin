@@ -1,4 +1,4 @@
-import { CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, BackgroundMemoryInterface } from '../interfaces/index.js';
+import { CharacterMemoryInterface, StyleMemoryInterface, ImageGenerateInterface, VoiceGenerateInterface, BackgroundMemoryInterface, RenderedHTMLMemoryInterface } from '../interfaces/index.js';
 import { CharacterModel, StyleModel, BackgroundModel, ImageModel } from '../models/index.js';
 
 class BackendInterface {
@@ -132,6 +132,15 @@ class BackendInterface {
 
         const completions = await VoiceGenerateInterface.checkVoiceCompletions(requestBody.voiceModels);
         return completions;
+    }
+
+
+    static async addRenderedHTMLs(rawRenderedHTMLModels, resource_name) {
+        const requestBody = {
+            renderedHTMLModels: rawRenderedHTMLModels.map(rawRenderedHTMLModel => rawRenderedHTMLModel.toJsonDict())
+        }
+
+        return RenderedHTMLMemoryInterface.addRenderedHTMLs(requestBody.renderedHTMLModels, resource_name);
     }
 }
 
