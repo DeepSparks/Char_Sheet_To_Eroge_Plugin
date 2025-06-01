@@ -80,7 +80,7 @@ const currentPageTitle = computed(() => {
 })
 
 const openGithub = () => {
-  window.open('https://github.com/DeepSparks/LBI_To_Eroge_Plugin', '_blank')
+  window.open('https://github.com/DeepSparks/Char_Sheet_To_Eroge_Plugin/releases', '_blank')
 }
 </script>
 
