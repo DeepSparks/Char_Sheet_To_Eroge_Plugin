@@ -381,6 +381,11 @@ checkDependencyServers().then(() => {
     app.post('/getResourceNames', (req, res) => {
         res.json({ resourceNames: ResourceInterface.getResourceNames() });
     });
+
+    app.post('/removeResources', (req, res) => {
+        ResourceInterface.removeResources(req.body.resourceNames);
+        res.json({ success: true });
+    });
     
 
     app.listen(Config.SERVER_PORT, () => {
