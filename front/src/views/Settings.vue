@@ -5,7 +5,6 @@
         <v-icon class="title-icon">mdi-cog</v-icon>
         시스템 설정
       </h1>
-      <p class="page-subtitle">플러그인 동작을 세밀하게 조정하세요</p>
     </div>
 
     <v-row no-gutters class="settings-content">

@@ -5,7 +5,6 @@
         <v-icon class="title-icon">mdi-database</v-icon>
         리소스 관리
       </h1>
-      <p class="page-subtitle">생성된 리소스들을 효율적으로 관리하고 다운로드하세요</p>
     </div>
 
     <!-- 리소스 선택 섹션 -->
@@ -126,7 +125,6 @@
             <div v-if="renderedHTMLs.length === 0" class="empty-state">
               <v-icon class="empty-icon" size="120">mdi-image-multiple</v-icon>
               <h3 class="empty-title">생성된 장면이 없습니다</h3>
-              <p class="empty-subtitle">이 리소스에는 아직 렌더링된 장면이 없습니다</p>
             </div>
 
             <div v-else class="scenes-grid">
@@ -175,7 +173,6 @@
             <div v-if="images.length === 0" class="empty-state">
               <v-icon class="empty-icon" size="120">mdi-image</v-icon>
               <h3 class="empty-title">생성된 이미지가 없습니다</h3>
-              <p class="empty-subtitle">이 리소스에는 아직 생성된 이미지가 없습니다</p>
             </div>
 
             <div v-else class="images-grid">
@@ -238,7 +235,6 @@
             <div v-if="voices.length === 0" class="empty-state">
               <v-icon class="empty-icon" size="120">mdi-music</v-icon>
               <h3 class="empty-title">생성된 음성이 없습니다</h3>
-              <p class="empty-subtitle">이 리소스에는 아직 생성된 음성이 없습니다</p>
             </div>
 
             <div v-else class="voices-list">
