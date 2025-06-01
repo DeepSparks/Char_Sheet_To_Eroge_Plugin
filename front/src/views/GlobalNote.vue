@@ -167,6 +167,7 @@ import {
   exampleImagePart,
   exampleVoicePart,
   exampleSceneEnd,
+  exampleImagePartSceneEnd,
   exampleEventPart,
   exampleEnd,
   exampleNoStatusPart,
@@ -262,6 +263,7 @@ function generatePrompt() {
     exampleParts.push(exampleNoStatusPart)
   }
   
+
   if (options.value.find(o => o.key === 'image' && o.enabled)) {
     exampleParts.push(exampleImagePart)
   }
@@ -272,7 +274,12 @@ function generatePrompt() {
   else {
     exampleParts.push(exampleNoVoicePart)
   }
+
+  if(options.value.find(o => o.key === 'image' && o.enabled)) {
+    exampleParts.push(exampleImagePartSceneEnd)
+  }
   
+
   // 씬 마무리 (항상 포함)
   if (options.value.find(o => o.key === 'image' && o.enabled)) {
     exampleParts.push(exampleSceneEnd)
@@ -287,7 +294,6 @@ function generatePrompt() {
   exampleParts.push(exampleEnd)
   
   sections.push(exampleParts.join('\n'))
-  sections.push('```')
   
   generatedPrompt.value = sections.join('\n\n')
 }

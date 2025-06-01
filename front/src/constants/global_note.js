@@ -2,13 +2,18 @@
 export const baseSection = `### Response Format Guidelines
 
 #### 1. Start Tag
-Start with <Start/> when you actually write the message, not when you're thinking about it.`
+Start with <Start/> when you actually write the message, not when you're thinking about it.
+\`\`\`
+<Start fixed_words="" sequence=""/>
+\`\`\`
+- fixed_words: If you have previously defined fixed_words, you must use the same values. If you are defining it for the first time, you must connect three random words with “_”.
+- sequence: Starting from 1, add 1 to the previously used sequence attribute and write it down.`
 
 // 상태 태그 섹션
 export const statusSection = `#### 2. Status Tags(Values must be in the user's preferred language, time_period must select one of the given keywords.)
 Begin your story with a status tags:
 \`\`\`
-<Status time_period="(dawn|morning|afternoon|evening|night|midnight)" location="Current scene location" girls="Names of nearby female characters"/>
+<Status time_period="(dawn|morning|afternoon|evening|night|midnight)" location="Current scene location"/>
 \`\`\``
 
 // 이미지 생성 태그 섹션
@@ -79,10 +84,10 @@ export const narrativeSection = `#### 7. Narrative Structure
 - **You must add appropriate values to all attributes of the tag. Empty values are not allowed.**`
 
 // 예시 섹션 - 상태 태그 포함
-export const exampleStatusPart = `<Start/>
-<Status time_period="afternoon" location="Secluded tropical beach cove" girls="Rily"/>`
+export const exampleStatusPart = `<Start fixed_words="apple_banana_orange" sequence="1"/>
+<Status time_period="afternoon" location="Secluded tropical beach cove"/>`
 
-export const exampleNoStatusPart = `<Start/>`
+export const exampleNoStatusPart = `<Start fixed_words="apple_banana_orange" sequence="1"/>`
 
 // 예시 섹션 - 이미지 생성 태그 포함
 export const exampleImagePart = `<Definitions>
@@ -110,6 +115,8 @@ export const exampleNoVoicePart = `"Look what I found! This shell is so pretty!"
 "Really? Thank you! Come play with me in the water! It's so warm and nice!" she calls out cheerfully, her crimson eyes sparkling with innocent joy.
 "That sounds wonderful! I'd love to join you."`
 
+export const exampleImagePartSceneEnd = `</Scene-Rily>`
+
 // 예시 섹션 - 씬 마무리
 export const exampleSceneEnd = `<Scene-Other>
 The {{user}} begins walking toward the water, feeling the warm sand between their toes.
@@ -120,4 +127,10 @@ The {{user}} begins walking toward the water, feeling the warm sand between thei
 export const exampleEventPart = `<Event-Options first="Build a sandcastle together on the beach" second="Explore the mysterious tide pools nearby" third="Share a tropical fruit snack under the palm trees"/>`
 
 // 예시 마무리
-export const exampleEnd = `<End/>`
+export const exampleEnd = `<End/>
+\`\`\`
+\`\`\`
+<Start fixed_words="apple_banana_orange" sequence="2"/>
+...
+\`\`\`
+`
