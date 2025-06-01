@@ -11,8 +11,21 @@
     <div class="resource-selector-section" v-if="!selectedResourceName">
       <v-card class="selector-card" elevation="0">
         <v-card-title class="selector-title">
-          <v-icon class="mr-2">mdi-folder-multiple</v-icon>
-          리소스 선택
+          <div class="selector-title-content">
+            <div class="selector-title-left">
+              <v-icon class="mr-2">mdi-folder-multiple</v-icon>
+              리소스 선택
+            </div>
+            <v-btn
+              @click="refreshResourceNames"
+              icon="mdi-refresh"
+              variant="text"
+              size="small"
+              class="refresh-btn"
+              :loading="isRefreshingResourceNames"
+              color="white"
+            />
+          </div>
         </v-card-title>
         <v-card-text class="selector-content">
           <v-alert
@@ -70,13 +83,24 @@
                 <p class="selected-resource-label">선택된 리소스</p>
               </div>
             </div>
-            <v-btn
-              @click="backToSelector"
-              icon="mdi-arrow-left"
-              variant="text"
-              size="small"
-              class="back-btn"
-            />
+            <div class="header-actions">
+              <v-btn
+                @click="refreshResourceData"
+                icon="mdi-refresh"
+                variant="text"
+                size="small"
+                class="refresh-btn"
+                :loading="isRefreshingResourceData"
+                color="white"
+              />
+              <v-btn
+                @click="backToSelector"
+                icon="mdi-arrow-left"
+                variant="text"
+                size="small"
+                class="back-btn"
+              />
+            </div>
           </div>
           
           <v-card-title class="menu-title">
@@ -232,6 +256,10 @@ const deleteDialog = ref(false)
 const resourceToDelete = ref('')
 const isDeleting = ref(false)
 
+// 새로고침 관련 상태
+const isRefreshingResourceNames = ref(false)
+const isRefreshingResourceData = ref(false)
+
 // 데이터
 const resourceNames = ref([])
 const renderedHTMLs = ref([])
@@ -288,6 +316,25 @@ async function loadResourceNames() {
     resourceNames.value = response.resourceNames || []
   } catch (error) {
     console.error('리소스 이름 로딩 실패:', error)
+  }
+}
+
+// 새로고침 메서드들
+async function refreshResourceNames() {
+  isRefreshingResourceNames.value = true
+  try {
+    await loadResourceNames()
+  } finally {
+    isRefreshingResourceNames.value = false
+  }
+}
+
+async function refreshResourceData() {
+  isRefreshingResourceData.value = true
+  try {
+    await loadAllResourceData()
+  } finally {
+    isRefreshingResourceData.value = false
   }
 }
 
@@ -475,6 +522,38 @@ onMounted(() => {
   font-size: 16px;
 }
 
+.selector-title-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.selector-title-left {
+  display: flex;
+  align-items: center;
+}
+
+.refresh-btn {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  transform: rotate(180deg) scale(1.1);
+}
+
+.refresh-btn:active {
+  transform: rotate(180deg) scale(0.95);
+}
+
 .selector-content {
   padding: 24px;
 }
@@ -610,6 +689,12 @@ onMounted(() => {
   font-size: 12px;
   margin: 0;
   opacity: 0.8;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .back-btn {
