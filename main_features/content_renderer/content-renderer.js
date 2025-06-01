@@ -2,7 +2,7 @@ import FrontConfig from './front_config.js';
 import { ContentStatusModel } from './models/index.js';
 import { handleStartTag, handleStatusTag, handleEventOptionsTag, handleCharacterTag, handleStyleTag, handleBackgroundTag, handleVoiceTag, handleImageTag } from './handlers/index.js';
 import { VoiceCache, ImageCache } from './content_caches/index.js';
-import { restoreSceneTag } from './restorers/index.js';
+import { restoreSceneTag, removeUnusedTag } from './restorers/index.js';
 import { ProgressUIRenderer } from './renderers/index.js';
 import { RenderedHTMLProcessor } from './processors/index.js';
 
@@ -125,6 +125,7 @@ class ContentRenderer {
             }
             
 
+            content = removeUnusedTag(content)
             if(is_preview_loadding_triggered) {
                 return content + `<div class="preview-loading-container">
 <p class="progress-text">미리보기가 로드되었습니다. 최종 결과까지는 시간이 걸리며, 재랜더링으로 재생이 끊길 수 있습니다.</p>
@@ -132,7 +133,6 @@ class ContentRenderer {
             }
 
             const final_content = content + FrontConfig.ALL_STYLES
-
 
             if(content_status.is_end_of_content) {
                 await RenderedHTMLProcessor.addContentToRenderedHTML(final_content, resource_name, start_model.sequence);
