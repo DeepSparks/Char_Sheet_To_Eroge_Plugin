@@ -61,6 +61,11 @@ const menuItems = [
     title: '리소스 관리',
     icon: 'mdi-database',
     to: '/resources'
+  },
+  {
+    title: '글로벌 노트 생성',
+    icon: 'mdi-note-edit-outline',
+    to: '/global-note'
   }
 ]
 

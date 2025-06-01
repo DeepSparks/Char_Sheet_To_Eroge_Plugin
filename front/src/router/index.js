@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Settings from '@/views/Settings.vue'
 import Resources from '@/views/Resources.vue'
+import GlobalNote from '@/views/GlobalNote.vue'
 
 const routes = [
   {
@@ -16,6 +17,11 @@ const routes = [
     path: '/resources',
     name: 'Resources',
     component: Resources
+  },
+  {
+    path: '/global-note',
+    name: 'GlobalNote',
+    component: GlobalNote
   }
 ]
 
