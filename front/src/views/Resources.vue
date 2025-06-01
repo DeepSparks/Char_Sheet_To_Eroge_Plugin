@@ -362,19 +362,6 @@
       </v-col>
     </v-row>
 
-    <!-- 로딩 오버레이 -->
-    <v-overlay v-model="loading" class="loading-overlay">
-      <div class="loading-content">
-        <v-progress-circular
-          color="primary"
-          indeterminate
-          size="64"
-          width="6"
-        />
-        <p class="loading-text">리소스를 처리 중입니다...</p>
-      </div>
-    </v-overlay>
-
     <!-- 이미지 상세 정보 다이얼로그 -->
     <v-dialog v-model="imageDetailDialog" max-width="800">
       <v-card v-if="selectedImageDetail">
@@ -422,7 +409,6 @@ import html2canvas from 'html2canvas'
 import JSZip from 'jszip'
 
 // 상태 관리
-const loading = ref(false)
 const downloadingAll = ref(false)
 const downloadingScenes = ref([])
 const selectedResourceName = ref(null)
@@ -523,13 +509,11 @@ const backgroundHeaders = [
 // 메서드들
 async function loadResourceNames() {
   try {
-    loading.value = true
     const response = await ApiService.getResourceNames()
     resourceNames.value = response.resourceNames || []
   } catch (error) {
     console.error('리소스 이름 로딩 실패:', error)
   } finally {
-    loading.value = false
   }
 }
 
@@ -560,8 +544,6 @@ async function loadResourceData() {
   if (!selectedResourceName.value || !selectedMenuId.value) return
 
   try {
-    loading.value = true
-    
     switch (selectedMenuId.value) {
       case 'scenes':
         const htmlResponse = await ApiService.getAllRenderedHTMLs(selectedResourceName.value)
@@ -597,7 +579,6 @@ async function loadResourceData() {
   } catch (error) {
     console.error('리소스 데이터 로딩 실패:', error)
   } finally {
-    loading.value = false
   }
 }
 

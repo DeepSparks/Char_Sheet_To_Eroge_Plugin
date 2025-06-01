@@ -119,19 +119,6 @@
         </div>
       </v-col>
     </v-row>
-
-    <!-- 로딩 오버레이 -->
-    <v-overlay v-model="loading" class="loading-overlay">
-      <div class="loading-content">
-        <v-progress-circular
-          color="primary"
-          indeterminate
-          size="64"
-          width="6"
-        />
-        <p class="loading-text">설정을 처리 중입니다...</p>
-      </div>
-    </v-overlay>
   </v-container>
 </template>
 
@@ -141,7 +128,6 @@ import { ApiService } from '@/utils/api'
 import ConfigItem from '@/components/ConfigItem.vue'
 
 // 상태 관리
-const loading = ref(false)
 const configData = ref(null)
 const selectedGroupId = ref(null)
 
@@ -214,7 +200,6 @@ async function updateConfig(configId, newValue) {
 
 async function loadConfig() {
   try {
-    loading.value = true
     const response = await ApiService.getConfigInfo()
     configData.value = response
     
@@ -226,7 +211,6 @@ async function loadConfig() {
     console.error('설정 로딩 실패:', error)
     // TODO: 에러 토스트 메시지 표시
   } finally {
-    loading.value = false
   }
 }
 
