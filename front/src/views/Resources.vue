@@ -256,7 +256,6 @@
                       <v-chip
                         v-for="(value, emotion) in (voice.emotions || {})"
                         :key="emotion"
-                        v-if="value > 0"
                         size="small"
                         color="secondary"
                         variant="tonal"
