@@ -107,245 +107,46 @@
       <v-col cols="9" class="content-column">
         <div class="content-area">
           <!-- 장면 관리 -->
-          <div v-if="selectedMenuId === 'scenes'" class="management-section">
-            <div class="section-header">
-              <h2 class="section-title">장면 관리</h2>
-              <v-btn
-                v-if="renderedHTMLs.length > 0"
-                @click="downloadAllScenes"
-                color="primary"
-                variant="elevated"
-                :loading="downloadingAll"
-              >
-                <v-icon start>mdi-download</v-icon>
-                모든 장면 다운로드
-              </v-btn>
-            </div>
-            
-            <div v-if="renderedHTMLs.length === 0" class="empty-state">
-              <v-icon class="empty-icon" size="120">mdi-image-multiple</v-icon>
-              <h3 class="empty-title">생성된 장면이 없습니다</h3>
-            </div>
-
-            <div v-else class="scenes-grid">
-              <v-card
-                v-for="(scene, index) in renderedHTMLs"
-                :key="scene.sequence_id"
-                class="scene-card"
-                elevation="0"
-              >
-                <div class="scene-header">
-                  <h4 class="scene-title">장면 {{ scene.sequence_id }}</h4>
-                  <v-btn
-                    @click="downloadScene(scene, index)"
-                    icon="mdi-download"
-                    variant="text"
-                    size="small"
-                    :loading="downloadingScenes[index]"
-                    style="color: black;"
-                  />
-                </div>
-                <div 
-                  :ref="el => sceneRefs[index] = el"
-                  class="scene-content"
-                  v-html="preprocessHtml(scene.renderedHTML)"
-                />
-              </v-card>
-            </div>
-          </div>
+          <SceneManagement
+            v-if="selectedMenuId === 'scenes'"
+            :selectedResourceName="selectedResourceName"
+            :renderedHTMLs="renderedHTMLs"
+          />
 
           <!-- 이미지 관리 -->
-          <div v-else-if="selectedMenuId === 'images'" class="management-section">
-            <div class="section-header">
-              <h2 class="section-title">이미지 관리</h2>
-              <v-btn
-                v-if="images.length > 0"
-                @click="downloadAllImages"
-                color="primary"
-                variant="elevated"
-                :loading="downloadingAll"
-              >
-                <v-icon start>mdi-download</v-icon>
-                모든 이미지 다운로드
-              </v-btn>
-            </div>
-
-            <div v-if="images.length === 0" class="empty-state">
-              <v-icon class="empty-icon" size="120">mdi-image</v-icon>
-              <h3 class="empty-title">생성된 이미지가 없습니다</h3>
-            </div>
-
-            <div v-else class="images-grid">
-              <v-card
-                v-for="(image, index) in images"
-                :key="index"
-                class="image-card"
-                elevation="0"
-              >
-                <div class="image-container">
-                  <img 
-                    :src="`http://127.0.0.1:3000/${image.saved_file_path}`"
-                    :alt="image.name"
-                    class="image-preview"
-                    @error="handleImageError"
-                  />
-                  <v-btn
-                    @click="downloadImage(image)"
-                    icon="mdi-download"
-                    class="download-overlay-btn"
-                    variant="elevated"
-                    size="small"
-                  />
-                </div>
-                <v-card-text class="image-info">
-                  <h4 class="image-title">{{ image.name }}</h4>
-                  <p class="image-detail">스타일: {{ image.style_id }}</p>
-                  <p class="image-detail">배경: {{ image.background_id }}</p>
-                  <div class="image-actions">
-                    <v-btn
-                      @click="showImageDetails(image)"
-                      variant="text"
-                      size="small"
-                      color="primary"
-                    >
-                      상세 정보
-                    </v-btn>
-                  </div>
-                </v-card-text>
-              </v-card>
-            </div>
-          </div>
+          <ImageManagement
+            v-else-if="selectedMenuId === 'images'"
+            :selectedResourceName="selectedResourceName"
+            :images="images"
+          />
 
           <!-- 음성 관리 -->
-          <div v-else-if="selectedMenuId === 'voices'" class="management-section">
-            <div class="section-header">
-              <h2 class="section-title">음성 관리</h2>
-              <v-btn
-                v-if="voices.length > 0"
-                @click="downloadAllVoices"
-                color="primary"
-                variant="elevated"
-                :loading="downloadingAll"
-              >
-                <v-icon start>mdi-download</v-icon>
-                모든 음성 다운로드
-              </v-btn>
-            </div>
-
-            <div v-if="voices.length === 0" class="empty-state">
-              <v-icon class="empty-icon" size="120">mdi-music</v-icon>
-              <h3 class="empty-title">생성된 음성이 없습니다</h3>
-            </div>
-
-            <div v-else class="voices-list">
-              <v-card
-                v-for="(voice, index) in voices"
-                :key="index"
-                class="voice-card"
-                elevation="0"
-              >
-                <v-card-text class="voice-content">
-                  <div class="voice-info">
-                    <h4 class="voice-title">{{ voice.name }}</h4>
-                    <p class="voice-text">"{{ voice.text }}"</p>
-                    <div class="voice-emotions">
-                      <v-chip
-                        v-for="(value, emotion) in (voice.emotions || {})"
-                        :key="emotion"
-                        size="small"
-                        color="secondary"
-                        variant="tonal"
-                        class="emotion-chip"
-                      >
-                        {{ emotion }}: {{ value }}
-                      </v-chip>
-                    </div>
-                  </div>
-                  <div class="voice-controls">
-                    <audio 
-                      :ref="el => audioRefs[index] = el"
-                      :src="`http://127.0.0.1:3000/${voice.saved_file_path}`"
-                      @loadedmetadata="updateAudioDuration(index)"
-                    />
-                    <v-btn
-                      @click="toggleAudio(index)"
-                      :icon="playingAudio === index ? 'mdi-pause' : 'mdi-play'"
-                      variant="elevated"
-                      color="primary"
-                      size="large"
-                    />
-                    <v-btn
-                      @click="downloadVoice(voice)"
-                      icon="mdi-download"
-                      variant="text"
-                      size="small"
-                      style="color: black;"
-                    />
-                  </div>
-                </v-card-text>
-              </v-card>
-            </div>
-          </div>
+          <VoiceManagement
+            v-else-if="selectedMenuId === 'voices'"
+            :selectedResourceName="selectedResourceName"
+            :voices="voices"
+          />
 
           <!-- 캐릭터 관리 -->
-          <div v-else-if="selectedMenuId === 'characters'" class="management-section">
-            <div class="section-header">
-              <h2 class="section-title">캐릭터 관리</h2>
-            </div>
-            
-            <div v-if="characters.length === 0" class="empty-state">
-              <v-icon class="empty-icon" size="120">mdi-account-group</v-icon>
-              <h3 class="empty-title">생성된 캐릭터가 없습니다</h3>
-            </div>
-
-            <v-data-table
-              v-else
-              :headers="characterHeaders"
-              :items="characters"
-              class="data-table"
-              density="comfortable"
-            />
-          </div>
+          <CharacterManagement
+            v-else-if="selectedMenuId === 'characters'"
+            :selectedResourceName="selectedResourceName"
+            :characters="characters"
+          />
 
           <!-- 스타일 관리 -->
-          <div v-else-if="selectedMenuId === 'styles'" class="management-section">
-            <div class="section-header">
-              <h2 class="section-title">스타일 관리</h2>
-            </div>
-            
-            <div v-if="styles.length === 0" class="empty-state">
-              <v-icon class="empty-icon" size="120">mdi-palette</v-icon>
-              <h3 class="empty-title">생성된 스타일이 없습니다</h3>
-            </div>
-
-            <v-data-table
-              v-else
-              :headers="styleHeaders"
-              :items="styles"
-              class="data-table"
-              density="comfortable"
-            />
-          </div>
+          <StyleManagement
+            v-else-if="selectedMenuId === 'styles'"
+            :selectedResourceName="selectedResourceName"
+            :styles="styles"
+          />
 
           <!-- 배경 관리 -->
-          <div v-else-if="selectedMenuId === 'backgrounds'" class="management-section">
-            <div class="section-header">
-              <h2 class="section-title">배경 관리</h2>
-            </div>
-            
-            <div v-if="backgrounds.length === 0" class="empty-state">
-              <v-icon class="empty-icon" size="120">mdi-image-frame</v-icon>
-              <h3 class="empty-title">생성된 배경이 없습니다</h3>
-            </div>
-
-            <v-data-table
-              v-else
-              :headers="backgroundHeaders"
-              :items="backgrounds"
-              class="data-table"
-              density="comfortable"
-            />
-          </div>
+          <BackgroundManagement
+            v-else-if="selectedMenuId === 'backgrounds'"
+            :selectedResourceName="selectedResourceName"
+            :backgrounds="backgrounds"
+          />
 
           <!-- 기본 상태 -->
           <div v-else class="empty-state">
@@ -356,61 +157,22 @@
         </div>
       </v-col>
     </v-row>
-
-    <!-- 이미지 상세 정보 다이얼로그 -->
-    <v-dialog v-model="imageDetailDialog" max-width="800">
-      <v-card v-if="selectedImageDetail">
-        <v-card-title>이미지 상세 정보</v-card-title>
-        <v-card-text>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <strong>이름:</strong> {{ selectedImageDetail.name }}
-            </div>
-            <div class="detail-item">
-              <strong>스타일 ID:</strong> {{ selectedImageDetail.style_id }}
-            </div>
-            <div class="detail-item">
-              <strong>배경 ID:</strong> {{ selectedImageDetail.background_id }}
-            </div>
-            <div class="detail-item">
-              <strong>성별:</strong> {{ selectedImageDetail.gender }}
-            </div>
-            <div class="detail-item">
-              <strong>파일 경로:</strong> {{ selectedImageDetail.saved_file_path }}
-            </div>
-            <div class="detail-item full-width">
-              <strong>프롬프트:</strong>
-              <p class="prompt-text">{{ selectedImageDetail.prompt }}</p>
-            </div>
-            <div class="detail-item full-width">
-              <strong>네거티브 프롬프트:</strong>
-              <p class="prompt-text">{{ selectedImageDetail.negative_prompt }}</p>
-            </div>
-          </div>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn @click="imageDetailDialog = false">닫기</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ApiService } from '@/utils/api'
-import html2canvas from 'html2canvas'
-import JSZip from 'jszip'
+import SceneManagement from '@/components/resources/SceneManagement.vue'
+import ImageManagement from '@/components/resources/ImageManagement.vue'
+import VoiceManagement from '@/components/resources/VoiceManagement.vue'
+import CharacterManagement from '@/components/resources/CharacterManagement.vue'
+import StyleManagement from '@/components/resources/StyleManagement.vue'
+import BackgroundManagement from '@/components/resources/BackgroundManagement.vue'
 
 // 상태 관리
-const downloadingAll = ref(false)
-const downloadingScenes = ref([])
 const selectedResourceName = ref(null)
 const selectedMenuId = ref(null)
-const playingAudio = ref(null)
-const imageDetailDialog = ref(false)
-const selectedImageDetail = ref(null)
 
 // 데이터
 const resourceNames = ref([])
@@ -420,10 +182,6 @@ const voices = ref([])
 const characters = ref([])
 const styles = ref([])
 const backgrounds = ref([])
-
-// 참조
-const sceneRefs = ref([])
-const audioRefs = ref([])
 
 // 리소스 메뉴 정의
 const resourceMenus = computed(() => [
@@ -465,42 +223,6 @@ const resourceMenus = computed(() => [
   }
 ])
 
-// 테이블 헤더 정의
-const characterHeaders = [
-  { title: '이름', key: 'name', width: '100px' },
-  { title: '성별', key: 'gender', width: '100px' },
-  { title: '나이', key: 'age' },
-  { title: '헤어 스타일', key: 'hair_style' },
-  { title: '헤어 색상', key: 'hair_color' },
-  { title: '눈 색상', key: 'eye_color' },
-  { title: '가슴 크기', key: 'breast_size' },
-  { title: '피부 색상', key: 'skin_color' },
-  { title: '음성 타입', key: 'voice_type', width: '125px' },
-  { title: '기타', key: 'etc' }
-]
-
-const styleHeaders = [
-  { title: '스타일 ID', key: 'style_id' },
-  { title: '의상', key: 'clothes' },
-  { title: '의상 색상', key: 'clothes_color' },
-  { title: '브래지어', key: 'bra' },
-  { title: '브래지어 색상', key: 'bra_color' },
-  { title: '팬티', key: 'panties' },
-  { title: '팬티 색상', key: 'panties_color' },
-  { title: '기타', key: 'etc' }
-]
-
-const backgroundHeaders = [
-  { title: '배경 ID', key: 'background_id' },
-  { title: '설정 타입', key: 'setting_type' },
-  { title: '위치', key: 'location' },
-  { title: '시간대', key: 'time_period' },
-  { title: '계절', key: 'season' },
-  { title: '날씨', key: 'weather' },
-  { title: '특별 기능', key: 'special_features' },
-  { title: '기타', key: 'etc' }
-]
-
 // 메서드들
 async function loadResourceNames() {
   try {
@@ -508,7 +230,6 @@ async function loadResourceNames() {
     resourceNames.value = response.resourceNames || []
   } catch (error) {
     console.error('리소스 이름 로딩 실패:', error)
-  } finally {
   }
 }
 
@@ -543,7 +264,6 @@ async function loadResourceData() {
       case 'scenes':
         const htmlResponse = await ApiService.getAllRenderedHTMLs(selectedResourceName.value)
         renderedHTMLs.value = htmlResponse.renderedHTMLs || []
-        downloadingScenes.value = new Array(renderedHTMLs.value.length).fill(false)
         break
         
       case 'images':
@@ -573,226 +293,32 @@ async function loadResourceData() {
     }
   } catch (error) {
     console.error('리소스 데이터 로딩 실패:', error)
-  } finally {
   }
 }
 
 async function loadAllResourceData() {
-  if (!selectedResourceName.value || !selectedMenuId.value) return
+  if (!selectedResourceName.value) return
 
-  const htmlResponse = await ApiService.getAllRenderedHTMLs(selectedResourceName.value)
-  renderedHTMLs.value = htmlResponse.renderedHTMLs || []
-  downloadingScenes.value = new Array(renderedHTMLs.value.length).fill(false)
-
-  const imageResponse = await ApiService.getAllImages(selectedResourceName.value)
-  images.value = imageResponse.imageModels || []
-
-  const voiceResponse = await ApiService.getAllVoices(selectedResourceName.value)
-  voices.value = voiceResponse.voiceModels || []
-
-  const characterResponse = await ApiService.getAllCharacters(selectedResourceName.value)
-  characters.value = characterResponse.characters || []
-
-  const styleResponse = await ApiService.getAllStyles(selectedResourceName.value)
-  styles.value = styleResponse.styles || []
-
-  const backgroundResponse = await ApiService.getAllBackgrounds(selectedResourceName.value)
-  backgrounds.value = backgroundResponse.backgrounds || []
-}
-
-// 장면 다운로드 관련
-async function downloadScene(scene, index) {
   try {
-    downloadingScenes.value[index] = true
-    
-    await nextTick() // DOM 업데이트 대기
-    
-    const element = sceneRefs.value[index]
-    if (!element) return
-    
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true
-    })
-    
-    const link = document.createElement('a')
-    link.download = `${selectedResourceName.value}_${scene.sequence_id}.png`
-    link.href = canvas.toDataURL()
-    link.click()
+    // 모든 리소스 데이터를 병렬로 로드
+    const [htmlResponse, imageResponse, voiceResponse, characterResponse, styleResponse, backgroundResponse] = await Promise.all([
+      ApiService.getAllRenderedHTMLs(selectedResourceName.value),
+      ApiService.getAllImages(selectedResourceName.value),
+      ApiService.getAllVoices(selectedResourceName.value),
+      ApiService.getAllCharacters(selectedResourceName.value),
+      ApiService.getAllStyles(selectedResourceName.value),
+      ApiService.getAllBackgrounds(selectedResourceName.value)
+    ])
+
+    renderedHTMLs.value = htmlResponse.renderedHTMLs || []
+    images.value = imageResponse.imageModels || []
+    voices.value = voiceResponse.voiceModels || []
+    characters.value = characterResponse.characters || []
+    styles.value = styleResponse.styles || []
+    backgrounds.value = backgroundResponse.backgrounds || []
   } catch (error) {
-    console.error('장면 다운로드 실패:', error)
-  } finally {
-    downloadingScenes.value[index] = false
+    console.error('모든 리소스 데이터 로딩 실패:', error)
   }
-}
-
-async function downloadAllScenes() {
-  try {
-    downloadingAll.value = true
-    
-    const zip = new JSZip()
-    
-    await nextTick() // DOM 업데이트 대기
-    
-    for (let i = 0; i < renderedHTMLs.value.length; i++) {
-      const scene = renderedHTMLs.value[i]
-      const element = sceneRefs.value[i]
-      
-      if (element) {
-        const canvas = await html2canvas(element, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true
-        })
-        
-        const dataUrl = canvas.toDataURL()
-        const base64Data = dataUrl.split(',')[1]
-        zip.file(`${scene.sequence_id}.png`, base64Data, { base64: true })
-      }
-    }
-    
-    const content = await zip.generateAsync({ type: 'blob' })
-    const link = document.createElement('a')
-    link.download = `${selectedResourceName.value}_scenes.zip`
-    link.href = URL.createObjectURL(content)
-    link.click()
-  } catch (error) {
-    console.error('모든 장면 다운로드 실패:', error)
-  } finally {
-    downloadingAll.value = false
-  }
-}
-
-function preprocessHtml(html) {
-  return html
-}
-
-// 이미지 다운로드 관련
-async function downloadImage(image) {
-  try {
-    const response = await fetch(`http://127.0.0.1:3000/${image.saved_file_path}`)
-    const blob = await response.blob()
-    const link = document.createElement('a')
-    
-    const image_name = image.saved_file_path.split('/').pop().split('.')[0]
-    link.download = `${image_name}.png`
-    link.href = URL.createObjectURL(blob)
-    link.click()
-  } catch (error) {
-    console.error('이미지 다운로드 실패:', error)
-  }
-}
-
-async function downloadAllImages() {
-  try {
-    downloadingAll.value = true
-    
-    const zip = new JSZip()
-    
-    let image_index = 1
-    for (const image of images.value) {
-      try {
-        const response = await fetch(`http://127.0.0.1:3000/${image.saved_file_path}`)
-        const blob = await response.blob()
-        zip.file(`${image_index}.png`, blob)
-        image_index += 1
-      } catch (error) {
-        console.error(`이미지 ${image.name} 다운로드 실패:`, error)
-      }
-    }
-    
-    const content = await zip.generateAsync({ type: 'blob' })
-    const link = document.createElement('a')
-    link.download = `${selectedResourceName.value}_images.zip`
-    link.href = URL.createObjectURL(content)
-    link.click()
-  } catch (error) {
-    console.error('모든 이미지 다운로드 실패:', error)
-  } finally {
-    downloadingAll.value = false
-  }
-}
-
-function showImageDetails(image) {
-  selectedImageDetail.value = image
-  imageDetailDialog.value = true
-}
-
-function handleImageError(event) {
-  event.target.style.display = 'none'
-}
-
-// 음성 재생 관련
-function toggleAudio(index) {
-  const audio = audioRefs.value[index]
-  if (!audio) return
-  
-  if (playingAudio.value === index) {
-    audio.pause()
-    playingAudio.value = null
-  } else {
-    // 다른 오디오 중지
-    if (playingAudio.value !== null && audioRefs.value[playingAudio.value]) {
-      audioRefs.value[playingAudio.value].pause()
-    }
-    
-    audio.play()
-    playingAudio.value = index
-    
-    audio.onended = () => {
-      playingAudio.value = null
-    }
-  }
-}
-
-async function downloadVoice(voice) {
-  try {
-    const response = await fetch(`http://127.0.0.1:3000/${voice.saved_file_path}`)
-    const blob = await response.blob()
-    const link = document.createElement('a')
-
-    const voice_name = voice.saved_file_path.split('/').pop().split('.')[0]
-    link.download = `${voice_name}.wav`
-    link.href = URL.createObjectURL(blob)
-    link.click()
-  } catch (error) {
-    console.error('음성 다운로드 실패:', error)
-  }
-}
-
-async function downloadAllVoices() {
-  try {
-    downloadingAll.value = true
-    
-    const zip = new JSZip()
-    
-    let voice_index = 1
-    for (const voice of voices.value) {
-      try {
-        const response = await fetch(`http://127.0.0.1:3000/${voice.saved_file_path}`)
-        const blob = await response.blob()
-        zip.file(`${voice_index}.wav`, blob)
-        voice_index += 1
-      } catch (error) {
-        console.error(`음성 ${voice.name} 다운로드 실패:`, error)
-      }
-    }
-    
-    const content = await zip.generateAsync({ type: 'blob' })
-    const link = document.createElement('a')
-    link.download = `${selectedResourceName.value}_voices.zip`
-    link.href = URL.createObjectURL(content)
-    link.click()
-  } catch (error) {
-    console.error('모든 음성 다운로드 실패:', error)
-  } finally {
-    downloadingAll.value = false
-  }
-}
-
-function updateAudioDuration(index) {
-  // 오디오 메타데이터 로드 완료 처리
 }
 
 // 컴포넌트 마운트 시 리소스 이름 로드
@@ -832,13 +358,6 @@ onMounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.page-subtitle {
-  font-size: 16px;
-  color: #7f8c8d;
-  margin: 0;
-  opacity: 0.8;
 }
 
 /* 리소스 선택 섹션 */
@@ -1067,231 +586,15 @@ onMounted(() => {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* 관리 섹션 공통 */
-.management-section {
-  padding: 32px;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid rgba(102, 126, 234, 0.1);
-}
-
-.section-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-/* 장면 관리 */
-.scenes-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.scene-card {
-  background: rgba(255,255,255,0.8) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.4);
-  border-radius: 16px !important;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  width: 1260px;
-}
-
-.scene-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.scene-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: rgba(102, 126, 234, 0.1);
-  border-bottom: 1px solid rgba(255,255,255,0.3);
-}
-
-.scene-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.scene-content {
-  padding: 20px;
-  overflow-y: auto;
-  border-radius: 0 0 16px 16px;
-}
-
-/* 이미지 관리 */
-.images-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.image-card {
-  background: rgba(255,255,255,0.8) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.4);
-  border-radius: 16px !important;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.image-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.image-container {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
-
-.image-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.image-card:hover .image-preview {
-  transform: scale(1.05);
-}
-
-.download-overlay-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.image-card:hover .download-overlay-btn {
-  opacity: 1;
-}
-
-.image-info {
-  padding: 16px 20px;
-  text-align: center;
-}
-
-.image-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0 0 8px 0;
-}
-
-.image-detail {
-  font-size: 14px;
-  color: #7f8c8d;
-  margin: 4px 0;
-}
-
-.image-actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-}
-
-/* 음성 관리 */
-.voices-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.voice-card {
-  background: rgba(255,255,255,0.8) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.4);
-  border-radius: 16px !important;
-  transition: all 0.3s ease;
-}
-
-.voice-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.voice-content {
-  padding: 20px;
-}
-
-.voice-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.voice-info {
-  flex: 1;
-}
-
-.voice-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0 0 8px 0;
-}
-
-.voice-text {
-  font-size: 14px;
-  color: #34495e;
-  margin: 0 0 12px 0;
-  font-style: italic;
-}
-
-.voice-emotions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.emotion-chip {
-  font-size: 12px;
-}
-
-.voice-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* 데이터 테이블 */
-.data-table {
-  background: rgba(255,255,255,0.8) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.4) !important;
-  border-radius: 16px !important;
-  overflow: hidden;
-  color: black;
-}
-
 /* 빈 상태 */
 .empty-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 400px;
   padding: 64px;
   text-align: center;
-}
-
-.empty-content {
-  max-width: 400px;
 }
 
 .empty-icon {
@@ -1312,120 +615,6 @@ onMounted(() => {
   color: #7f8c8d;
   margin: 0;
   line-height: 1.5;
-}
-
-/* 로딩 오버레이 */
-.loading-overlay {
-  background: rgba(255,255,255,0.9) !important;
-  backdrop-filter: blur(10px);
-}
-
-.loading-content {
-  text-align: center;
-}
-
-.loading-text {
-  margin: 16px 0 0 0;
-  font-size: 16px;
-  color: #2c3e50;
-  font-weight: 500;
-}
-
-/* 상세 정보 다이얼로그 */
-.v-dialog .v-card {
-  background: rgba(255,255,255,0.9) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 16px !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 8px 32px rgba(102, 126, 234, 0.2) !important;
-  overflow: hidden;
-  color: black;
-}
-
-.v-dialog .v-card-title {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px 24px;
-  font-weight: 600;
-  font-size: 18px;
-  margin: 0;
-}
-
-.v-dialog .v-card-text {
-  padding: 24px;
-  background: transparent;
-}
-
-.v-dialog .v-card-actions {
-  background: rgba(102, 126, 234, 0.05);
-  padding: 16px 24px;
-  border-top: 1px solid rgba(255,255,255,0.3);
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-}
-
-.detail-item {
-  padding: 16px;
-  background: rgba(102, 126, 234, 0.08);
-  border: 1px solid rgba(255,255,255,0.4);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.detail-item:hover {
-  background: rgba(102, 126, 234, 0.12);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-}
-
-.detail-item strong {
-  color: #2c3e50;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.detail-item.full-width {
-  grid-column: 1 / -1;
-}
-
-.prompt-text {
-  margin-top: 12px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #34495e;
-  background: rgba(255,255,255,0.8);
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.5);
-  backdrop-filter: blur(10px);
-  max-height: 200px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.prompt-text::-webkit-scrollbar {
-  width: 8px;
-}
-
-.prompt-text::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-
-.prompt-text::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.prompt-text::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
 }
 
 /* 애니메이션 */
@@ -1459,10 +648,6 @@ onMounted(() => {
     flex: 1 1 auto !important;
     max-width: 100% !important;
   }
-  
-  .management-section {
-    padding: 16px;
-  }
 
   .menu-card {
     margin-bottom: 16px;
@@ -1471,14 +656,6 @@ onMounted(() => {
   .resource-grid {
     grid-template-columns: 1fr;
   }
-
-  .scenes-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .images-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
 }
 
 @media (max-width: 600px) {
@@ -1486,20 +663,8 @@ onMounted(() => {
     font-size: 24px;
   }
 
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .images-grid {
+  .resource-grid {
     grid-template-columns: 1fr;
   }
-
-  .voice-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
 }
-</style> 
+</style>
