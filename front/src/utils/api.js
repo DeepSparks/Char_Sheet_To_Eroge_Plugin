@@ -72,4 +72,8 @@ export class ApiService {
   static async getAllBackgrounds(resourceName) {
     return await this.request('/getAllBackgrounds', { resource_name: resourceName })
   }
+
+  static async removeResources(resourceNames) {
+    return await this.request('/removeResources', { resourceNames })
+  }
 } 

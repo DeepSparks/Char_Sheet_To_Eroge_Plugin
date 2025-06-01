@@ -27,9 +27,16 @@
               v-for="resourceName in resourceNames"
               :key="resourceName"
               class="resource-item"
-              @click="selectResource(resourceName)"
               elevation="0"
             >
+              <v-btn
+                color="error"
+                variant="text"
+                size="x-small"
+                icon="mdi-delete"
+                class="delete-btn-corner"
+                @click.stop="showDeleteDialog(resourceName)"
+              />
               <v-card-text class="resource-item-content">
                 <v-icon class="resource-icon">mdi-folder</v-icon>
                 <h3 class="resource-name">{{ resourceName }}</h3>
@@ -38,6 +45,7 @@
                   variant="elevated"
                   size="small"
                   class="select-btn"
+                  @click="selectResource(resourceName)"
                 >
                   선택
                 </v-btn>
@@ -157,6 +165,51 @@
         </div>
       </v-col>
     </v-row>
+
+    <!-- 삭제 확인 다이얼로그 -->
+    <v-dialog
+      v-model="deleteDialog"
+      max-width="400"
+      persistent
+    >
+      <v-card class="delete-dialog-card">
+        <v-card-title class="delete-dialog-title">
+          <v-icon class="mr-2" color="error">mdi-alert-circle</v-icon>
+          리소스 삭제 확인
+        </v-card-title>
+        <v-card-text class="delete-dialog-text">
+          <p class="mb-3">
+            <strong>"{{ resourceToDelete }}"</strong> 리소스를 삭제하시겠습니까?
+          </p>
+          <v-alert
+            type="warning"
+            variant="tonal"
+            class="mb-0"
+          >
+            이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구적으로 삭제됩니다.
+          </v-alert>
+        </v-card-text>
+        <v-card-actions class="delete-dialog-actions">
+          <v-spacer />
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="closeDeleteDialog"
+            :disabled="isDeleting"
+          >
+            취소
+          </v-btn>
+          <v-btn
+            color="error"
+            variant="elevated"
+            @click="confirmDelete"
+            :loading="isDeleting"
+          >
+            삭제
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -173,6 +226,11 @@ import BackgroundManagement from '@/components/resources/BackgroundManagement.vu
 // 상태 관리
 const selectedResourceName = ref(null)
 const selectedMenuId = ref(null)
+
+// 삭제 관련 상태
+const deleteDialog = ref(false)
+const resourceToDelete = ref('')
+const isDeleting = ref(false)
 
 // 데이터
 const resourceNames = ref([])
@@ -321,6 +379,42 @@ async function loadAllResourceData() {
   }
 }
 
+// 삭제 관련 메서드들
+function showDeleteDialog(resourceName) {
+  resourceToDelete.value = resourceName
+  deleteDialog.value = true
+}
+
+function closeDeleteDialog() {
+  deleteDialog.value = false
+  isDeleting.value = false
+}
+
+async function confirmDelete() {
+  if (!resourceToDelete.value) return
+  
+  isDeleting.value = true
+  
+  try {
+    await ApiService.removeResources([resourceToDelete.value])
+    
+    // 성공 시 목록에서 제거
+    resourceNames.value = resourceNames.value.filter(name => name !== resourceToDelete.value)
+    
+    // 현재 선택된 리소스가 삭제된 경우 선택 해제
+    if (selectedResourceName.value === resourceToDelete.value) {
+      backToSelector()
+    }
+    
+    closeDeleteDialog()
+  } catch (error) {
+    console.error('리소스 삭제 실패:', error)
+    // 에러 처리 - 사용자에게 알림을 보여줄 수 있습니다
+  } finally {
+    isDeleting.value = false
+  }
+}
+
 // 컴포넌트 마운트 시 리소스 이름 로드
 onMounted(() => {
   loadResourceNames()
@@ -399,12 +493,38 @@ onMounted(() => {
   border-radius: 16px !important;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .resource-item:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
   border-color: rgba(102, 126, 234, 0.4);
+}
+
+.delete-btn-corner {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  background: rgba(244, 67, 54, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 50% !important;
+  z-index: 2;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.resource-item:hover .delete-btn-corner {
+  opacity: 1;
+}
+
+.delete-btn-corner:hover {
+  background: rgba(244, 67, 54, 0.2) !important;
+  color: #f44336 !important;
+  transform: scale(1.1);
 }
 
 .resource-item-content {
@@ -428,6 +548,7 @@ onMounted(() => {
 .select-btn {
   border-radius: 12px;
   font-weight: 600;
+  width: 100%;
 }
 
 /* 메인 리소스 관리 인터페이스 */
@@ -666,5 +787,88 @@ onMounted(() => {
   .resource-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* 삭제 다이얼로그 스타일 */
+.delete-dialog-card {
+  border-radius: 20px !important;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(244, 67, 54, 0.2);
+  box-shadow: 0 20px 40px rgba(244, 67, 54, 0.15), 
+              0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.delete-dialog-title {
+  background: linear-gradient(135deg, 
+    rgba(244, 67, 54, 0.1) 0%, 
+    rgba(255, 87, 34, 0.1) 100%);
+  color: #d32f2f;
+  padding: 24px;
+  font-weight: 600;
+  font-size: 18px;
+  border-bottom: 1px solid rgba(244, 67, 54, 0.15);
+  position: relative;
+}
+
+.delete-dialog-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #f44336 0%, #ff5722 100%);
+}
+
+.delete-dialog-text {
+  padding: 24px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #424242;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.delete-dialog-text p {
+  color: #2c3e50;
+  margin-bottom: 16px;
+}
+
+.delete-dialog-text strong {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.delete-dialog-actions {
+  padding: 16px 24px 24px 24px;
+  background: rgba(250, 250, 250, 0.8);
+  border-top: 1px solid rgba(244, 67, 54, 0.1);
+}
+
+.delete-dialog-actions .v-btn {
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 0 20px;
+  height: 40px;
+}
+
+.delete-dialog-actions .v-btn[variant="text"] {
+  color: #666;
+}
+
+.delete-dialog-actions .v-btn[variant="text"]:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.delete-dialog-actions .v-btn[color="error"] {
+  background: linear-gradient(135deg, #f44336 0%, #ff5722 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.delete-dialog-actions .v-btn[color="error"]:hover {
+  box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4);
+  transform: translateY(-1px);
 }
 </style>
