@@ -63,9 +63,14 @@ const menuItems = [
     to: '/resources'
   },
   {
-    title: '글로벌 노트 생성',
-    icon: 'mdi-note-edit-outline',
+    title: '글로벌 노트 생성기',
+    icon: 'mdi-note-edit',
     to: '/global-note'
+  },
+  {
+    title: "변수 저장소",
+    icon: "mdi-book-open-page-variant",
+    to: "/variable-storage"
   }
 ]
 

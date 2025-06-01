@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Settings from '@/views/Settings.vue'
 import Resources from '@/views/Resources.vue'
 import GlobalNote from '@/views/GlobalNote.vue'
+import VariableStorage from '@/views/VariableStorage.vue'
 
 const routes = [
   {
@@ -22,6 +23,11 @@ const routes = [
     path: '/global-note',
     name: 'GlobalNote',
     component: GlobalNote
+  },
+  {
+    path: '/variable-storage',
+    name: 'VariableStorage',
+    component: VariableStorage
   }
 ]
 
