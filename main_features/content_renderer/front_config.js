@@ -231,12 +231,12 @@ class FrontConfig {
 }
 
 .audio-player::-webkit-media-controls-panel {
-    background-color: : rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
 }
 
 .audio-player::-webkit-media-controls-play-button {
-    background-color:: rgb(255, 255, 255);
-    border-radius: 50%;
+    background-color: rgb(255, 255, 255);
+    border-radius: 25%;
 }
 
 .audio-generating-container {

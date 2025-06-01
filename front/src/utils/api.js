@@ -52,8 +52,40 @@ export class ApiService {
   }
 
   static _preprocessRenderedHTML(renderedHTML) {
-    console.log(renderedHTML)
-    return [renderedHTML]
+    const styleTagMatches = [...renderedHTML.renderedHTML.matchAll(new RegExp(`<style>[^<]+<\/style>`, 'g'))];
+    const styleTags = styleTagMatches.map(match => match[0]);
+
+    const sceneTagMatches = [...renderedHTML.renderedHTML.matchAll(new RegExp(`<div class="root-container"\\s*[^>]+>[\\s\\S]+?<div class="content-container">([\\s\\S]+?)<\/div><\/div><\/div>`, 'g'))];
+    const sceneTags = sceneTagMatches.map(match => match[0]);
+    
+    let results = []
+    let sceneIndex = 1
+    for (const sceneTag of sceneTags) {
+      const audioTagMatches = [...sceneTag.matchAll(new RegExp(`<span class="audio-container"\\s*[^>]+>[\\s\\S]+?<\/span>`, 'g'))];
+      const audioTags = audioTagMatches.map(match => match[0]);
+      
+      let sceneHTML = sceneTag
+      for (const audioTag of audioTags) {
+        sceneHTML = sceneHTML.replace(audioTag, "")
+      }
+
+      const result = {
+        renderedHTML: sceneHTML + styleTags.join("\n") + `
+<style>
+.root-container{
+  width: 1216px;
+}
+</style>
+`,
+        sequence_id: renderedHTML.sequence_id + "-" + String(sceneIndex),
+      }
+
+      results.push(result)
+      sceneIndex++
+    }
+
+
+    return results
   }
 
   static async getAllImages(resourceName) {

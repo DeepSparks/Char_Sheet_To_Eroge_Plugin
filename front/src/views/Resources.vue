@@ -1114,8 +1114,8 @@ onMounted(() => {
 
 /* 장면 관리 */
 .scenes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 
@@ -1126,6 +1126,7 @@ onMounted(() => {
   border-radius: 16px !important;
   transition: all 0.3s ease;
   overflow: hidden;
+  width: 1260px;
 }
 
 .scene-card:hover {
