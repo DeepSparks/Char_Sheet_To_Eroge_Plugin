@@ -49,7 +49,7 @@ class ImageModel {
         else if(this.gender == 'boy')
             this.person_prompt = "1boy, solo";
 
-
+        ImageModel.removeDuplicatedAttributes(this);
         keywordProcessors[Config.IMAGE_GENERATION_MODE].process(this)
     }
 
@@ -64,6 +64,16 @@ class ImageModel {
                 }
             }
             reqBody[key] = translatedParts.join(', ').toLowerCase();
+        }
+    }
+
+    static removeDuplicatedAttributes(reqBody) {
+        for(let key of ['common_prompt', 'common_negative_prompt', 'character_prompt']) {
+            let keywordSet = new Set();
+            for(let part of reqBody[key].split(',')) {
+                keywordSet.add(part.trim());
+            }
+            reqBody[key] = Array.from(keywordSet).join(', ');
         }
     }
 

@@ -150,6 +150,7 @@
             v-else-if="selectedMenuId === 'images'"
             :selectedResourceName="selectedResourceName"
             :images="images"
+            @reload-images="reloadImages"
           />
 
           <!-- 음성 관리 -->
@@ -459,6 +460,17 @@ async function confirmDelete() {
     // 에러 처리 - 사용자에게 알림을 보여줄 수 있습니다
   } finally {
     isDeleting.value = false
+  }
+}
+
+async function reloadImages() {
+  if (!selectedResourceName.value) return
+  
+  try {
+    const imageResponse = await ApiService.getAllImages(selectedResourceName.value)
+    images.value = imageResponse.imageModels || []
+  } catch (error) {
+    console.error('이미지 데이터 재로드 실패:', error)
   }
 }
 

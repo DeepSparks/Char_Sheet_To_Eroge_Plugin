@@ -2,16 +2,27 @@
   <div class="management-section">
     <div class="section-header">
       <h2 class="section-title">이미지 관리</h2>
-      <v-btn
-        v-if="images.length > 0"
-        @click="downloadAllImages"
-        color="primary"
-        variant="elevated"
-        :loading="downloadingAll"
-      >
-        <v-icon start>mdi-download</v-icon>
-        모든 이미지 다운로드
-      </v-btn>
+      <div class="header-actions" v-if="images.length > 0">
+        <v-btn
+          @click="regenerateAllImages"
+          color="secondary"
+          variant="elevated"
+          :loading="regeneratingAll"
+          class="mr-3"
+        >
+          <v-icon start>mdi-refresh</v-icon>
+          모든 이미지 재생성
+        </v-btn>
+        <v-btn
+          @click="downloadAllImages"
+          color="primary"
+          variant="elevated"
+          :loading="downloadingAll"
+        >
+          <v-icon start>mdi-download</v-icon>
+          모든 이미지 다운로드
+        </v-btn>
+      </div>
     </div>
 
     <div v-if="images.length === 0" class="empty-state">
@@ -33,13 +44,24 @@
             class="image-preview"
             @error="handleImageError"
           />
-          <v-btn
-            @click="downloadImage(image)"
-            icon="mdi-download"
-            class="download-overlay-btn"
-            variant="elevated"
-            size="small"
-          />
+          <div class="overlay-buttons">
+            <v-btn
+              @click="regenerateImage(image)"
+              icon="mdi-refresh"
+              class="overlay-btn regenerate-btn"
+              variant="elevated"
+              size="small"
+              color="secondary"
+              :loading="regeneratingImages[index]"
+            />
+            <v-btn
+              @click="downloadImage(image)"
+              icon="mdi-download"
+              class="overlay-btn download-btn"
+              variant="elevated"
+              size="small"
+            />
+          </div>
         </div>
         <v-card-text class="image-info">
           <h4 class="image-title">{{ image.name }}</h4>
@@ -102,6 +124,7 @@
 <script setup>
 import { ref } from 'vue'
 import JSZip from 'jszip'
+import { ApiService } from '@/utils/api'
 
 // Props
 const props = defineProps({
@@ -115,8 +138,13 @@ const props = defineProps({
   }
 })
 
+// Emits
+const emit = defineEmits(['reload-images'])
+
 // 상태 관리
 const downloadingAll = ref(false)
+const regeneratingAll = ref(false)
+const regeneratingImages = ref({})
 const imageDetailDialog = ref(false)
 const selectedImageDetail = ref(null)
 
@@ -173,6 +201,37 @@ function showImageDetails(image) {
 
 function handleImageError(event) {
   event.target.style.display = 'none'
+}
+
+async function regenerateImage(image) {
+  const index = props.images.indexOf(image)
+  try {
+    regeneratingImages.value[index] = true
+    
+    await ApiService.reGenerateImages(props.selectedResourceName, [image])
+    
+    // 재생성 완료 후 이미지 목록 재로드 요청
+    emit('reload-images')
+  } catch (error) {
+    console.error('이미지 재생성 실패:', error)
+  } finally {
+    regeneratingImages.value[index] = false
+  }
+}
+
+async function regenerateAllImages() {
+  try {
+    regeneratingAll.value = true
+    
+    await ApiService.reGenerateImages(props.selectedResourceName, props.images)
+    
+    // 재생성 완료 후 이미지 목록 재로드 요청
+    emit('reload-images')
+  } catch (error) {
+    console.error('모든 이미지 재생성 실패:', error)
+  } finally {
+    regeneratingAll.value = false
+  }
 }
 </script>
 
@@ -234,16 +293,43 @@ function handleImageError(event) {
   transform: scale(1.05);
 }
 
-.download-overlay-btn {
+.overlay-buttons {
   position: absolute;
   top: 8px;
   right: 8px;
+  display: flex;
+  gap: 8px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.image-card:hover .download-overlay-btn {
+.image-card:hover .overlay-buttons {
   opacity: 1;
+}
+
+.overlay-btn {
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.regenerate-btn {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important;
+  color: white !important;
+}
+
+.regenerate-btn:hover {
+  background: linear-gradient(135deg, #f57c00 0%, #e65100 100%) !important;
+  transform: scale(1.05);
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
+  color: white !important;
+}
+
+.download-btn:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  transform: scale(1.05);
 }
 
 .image-info {
@@ -388,6 +474,12 @@ function handleImageError(event) {
 
 .prompt-text::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 @keyframes float {

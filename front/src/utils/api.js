@@ -54,11 +54,19 @@ export class ApiService {
   }
 
   static async getAllImages(resourceName) {
-    return await this.request('/getAllImages', { resource_name: resourceName })
+    const images = await this.request('/getAllImages', { resource_name: resourceName })
+    images.imageModels.forEach(image => {
+      image.saved_file_path = image.saved_file_path + '?timestamp=' + Date.now()
+    })
+    return images
   }
 
   static async getAllVoices(resourceName) {
-    return await this.request('/getAllVoices', { resource_name: resourceName })
+    const voices = await this.request('/getAllVoices', { resource_name: resourceName })
+    voices.voiceModels.forEach(voice => {
+      voice.saved_file_path = voice.saved_file_path + '?timestamp=' + Date.now()
+    })
+    return voices
   }
 
   static async getAllCharacters(resourceName) {
@@ -75,5 +83,15 @@ export class ApiService {
 
   static async removeResources(resourceNames) {
     return await this.request('/removeResources', { resourceNames })
+  }
+
+  static async reGenerateImages(resourceName, imageModels) {
+    return await this.request('/reGenerateImages', {
+      isWaitUntilImagesGenerated: true,
+      imageModels: imageModels.map(image => ({
+        resource_name: resourceName,
+        saved_file_path: image.saved_file_path.split('?')[0]
+      }))
+    })
   }
 } 
