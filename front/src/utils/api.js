@@ -69,10 +69,11 @@ export class ApiService {
         sceneHTML = sceneHTML.replace(audioTag, "")
       }
 
+      sceneHTML = sceneHTML.replace(`class="image-container"`, `class="image-container-in-progress"`)
       const result = {
         renderedHTML: sceneHTML + styleTags.join("\n") + `
 <style>
-.root-container{
+.image-container-in-progress{
   width: 1216px;
 }
 </style>
