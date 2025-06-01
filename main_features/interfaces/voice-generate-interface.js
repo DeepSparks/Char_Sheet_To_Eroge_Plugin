@@ -6,16 +6,16 @@ import Config from '../config.js';
 import Utils from '../utils.js';
 
 class VoiceGenerateInterface {
-    static async generateVoices(voiceModels) {
+    static async generateVoices(voiceModels, is_ignore_cache=false) {
         const urls = [];
         for (const voiceModel of voiceModels) {
-            const url = await this.generateVoice(new VoiceModel(voiceModel));
+            const url = await this.generateVoice(new VoiceModel(voiceModel), is_ignore_cache);
             urls.push(url);
         }
         return urls;
     }
     
-    static async generateVoice(voiceModel) {
+    static async generateVoice(voiceModel, is_ignore_cache=false) {
         if(!Config.VOICE_GENERATION_SERVER_URL && !Config.VOICE_GENERATION_PROGRAM_PATH) {
             Utils.logToFile('Voice Generation Server url or program path is not set. Please set it in the config.js file.', 'error');
             return null;
@@ -25,12 +25,14 @@ class VoiceGenerateInterface {
         if(Config.IS_USE_GLOBAL_QUEUE) {
             GlobalQueueUtil.addRequest({
                 type: 'voice',
-                data: voiceModel
+                data: voiceModel,
+                is_ignore_cache: is_ignore_cache
             });
         } else {
             VoiceQueueUtil.addRequest({
                 type: 'voice',
-                data: voiceModel
+                data: voiceModel,
+                is_ignore_cache: is_ignore_cache
             });
         }
 

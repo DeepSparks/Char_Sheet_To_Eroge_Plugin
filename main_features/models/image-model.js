@@ -93,7 +93,7 @@ class ImageModel {
     }
 
     toFilePath() {
-        return `${this.toDirPath()}/${this.toMD5()}.png`;
+        return this.saved_file_path || `${this.toDirPath()}/${this.toMD5()}.png`;
     }
 }
 

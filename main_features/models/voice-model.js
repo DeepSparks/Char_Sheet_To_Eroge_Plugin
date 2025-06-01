@@ -36,7 +36,7 @@ class VoiceModel {
     }
 
     toFilePath() {
-        return `${this.toDirPath()}/${this.toMD5()}.wav`;
+        return this.saved_file_path || `${this.toDirPath()}/${this.toMD5()}.wav`;
     }
 
     static sanitizeText(text) {

@@ -48,10 +48,11 @@ class BaseQueueUtil {
             throw new Error('requestQueue must be defined in subclass');
         }
 
-        if(this.alreadyWorkIds.has(request.data.toMD5()))
-            return;
-        this.alreadyWorkIds.add(request.data.toMD5());
-        
+        if(!request.is_ignore_cache) {
+            if(this.alreadyWorkIds.has(request.data.toMD5()))
+                return;
+            this.alreadyWorkIds.add(request.data.toMD5());
+        }
         this.requestQueue.push(request);
     }
 }

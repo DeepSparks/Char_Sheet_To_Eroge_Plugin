@@ -3,19 +3,20 @@ import fs from 'fs';
 import { GlobalQueueUtil, ImageQueueUtil } from '../queue_utils/index.js';
 import Utils from '../utils.js';
 import { ImageModel } from '../models/index.js';
+import { ImageMemoryInterface } from '../interfaces/index.js';
 import Config from '../config.js';
 
 class ImageGenerateInterface {
-    static async generateImages(imageModels) {
+    static async generateImages(imageModels, is_ignore_cache=false) {
         const urls = [];
         for (const imageModel of imageModels) {
-            const url = await this.generateImage(new ImageModel(imageModel));
+            const url = await this.generateImage(new ImageModel(imageModel), is_ignore_cache);
             urls.push(url);
         }
         return urls;
     }
     
-    static async generateImage(imageModel) {
+    static async generateImage(imageModel, is_ignore_cache=false) {
         if(!Config.IMAGE_GENERATION_SERVER_URL) {
             Utils.logToFile('Image Generation Server url is not set. Please set it in the config.js file.', 'error');
             return null;
@@ -29,12 +30,14 @@ class ImageGenerateInterface {
         if(Config.IS_USE_GLOBAL_QUEUE) {
             GlobalQueueUtil.addRequest({
                 type: 'image',
-                data: imageModel
+                data: imageModel,
+                is_ignore_cache: is_ignore_cache
             });
         } else {
             ImageQueueUtil.addRequest({
                 type: 'image',
-                data: imageModel
+                data: imageModel,
+                is_ignore_cache: is_ignore_cache
             });
         }
 
@@ -67,6 +70,18 @@ class ImageGenerateInterface {
 
     static isImageCompleted(filePath) {
         return fs.existsSync(filePath) && !Utils.is_image_waiting(filePath);
+    }
+
+    static async reGenerateImages(imageModels) {
+        const loadedImageModels = []
+        for (const imageModel of imageModels) {
+            const loadedImageModel = ImageMemoryInterface.getImage(imageModel, imageModel.resource_name);
+            fs.rmSync(loadedImageModel.toFilePath());
+            loadedImageModels.push(loadedImageModel.toJsonDict());
+        }
+
+        const urls = await this.generateImages(loadedImageModels, true);
+        return {urls, imageModels: loadedImageModels};
     }
 }
 

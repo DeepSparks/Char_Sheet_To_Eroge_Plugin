@@ -297,6 +297,20 @@ checkDependencyServers().then(() => {
             res.json({ error: error.message, stack: error.stack });
         }
     })
+
+    app.post('/reGenerateImages', async (req, res) => {
+        try {
+            let {urls, imageModels} = await ImageGenerateInterface.reGenerateImages(req.body.imageModels);
+            if(req.body.isWaitUntilImagesGenerated) {
+                urls = await ImageGenerateInterface.waitUntilImagesGenerated(imageModels);
+            }
+
+            res.json({ urls });
+        } catch (error) {
+            Utils.logErrorToFile(error);
+            res.json({ error: error.message, stack: error.stack });
+        }
+    })
     
     
     app.post('/generateVoices', async (req, res) => {
