@@ -34,10 +34,10 @@ class RenderedHtmlHelper {
           for (const sentence of contentSentences) {
             let processedSentence = sentence
             if(processedSentence.includes(`"`)) {
-              processedSentence = processedSentence.replace(new RegExp(`"([^"]*)"`, 'g'), `<span class="chat-mark-1">$1</span>`)
+              processedSentence = processedSentence.replace(new RegExp(`"([^"]*)"`, 'g'), `<span class="chat-mark-1">"$1"</span>`)
             }
             if(processedSentence.includes(`'`)) {
-              processedSentence = processedSentence.replace(new RegExp(`'([^']*)'`, 'g'), `<span class="chat-mark-2">$1</span>`)
+              processedSentence = processedSentence.replace(new RegExp(`'([^']*)'`, 'g'), `<span class="chat-mark-2">'$1'</span>`)
             }
     
             sceneHTML = sceneHTML.replace(sentence, `<span class="chat">${processedSentence}</span><br><br>`)
