@@ -19,8 +19,36 @@ class Utils {
         } else {
             console.log('\x1b[32m%s\x1b[0m', logMessage); 
         }
+        Utils._manageLogFileSize();
         
         fs.appendFileSync(Config.LOG_FILE_PATH, `${logMessage}\n`);
+    }
+
+    static _manageLogFileSize() {
+        try {
+            if (!fs.existsSync(Config.LOG_FILE_PATH)) {
+                return;
+            }
+
+            const stats = fs.statSync(Config.LOG_FILE_PATH);
+            const maxSize = 10 * 1024 * 1024; // 기본값: 10MB
+            
+            if (stats.size > maxSize) {
+                const content = fs.readFileSync(Config.LOG_FILE_PATH, 'utf8');
+                const lines = content.split('\n');
+                
+                const keepLines = Math.floor(lines.length / 2);
+                const newContent = lines.slice(-keepLines).join('\n');
+                
+                fs.writeFileSync(Config.LOG_FILE_PATH, newContent);
+                
+                const koreanDate = new Date().toLocaleString(Config.LOG_LOCALES, { timeZone: Config.LOG_TIMEZONE });
+                const cleanupMessage = `[${koreanDate}] [INFO] Log file size management: ${lines.length - keepLines} lines deleted\n`;
+                fs.appendFileSync(Config.LOG_FILE_PATH, cleanupMessage);
+            }
+        } catch (error) {
+            console.error('Log file size management error:', error.message);
+        }
     }
 
     static is_image_waiting(filePath) {
