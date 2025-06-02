@@ -25,8 +25,9 @@ class RenderedHtmlHelper {
     
 
           sceneHTML = sceneHTML.replace(`class="image-container"`, `class="image-container-in-progress"`)
-          sceneHTML = sceneHTML.replace(new RegExp(`Time_period:\\s*(.*)\nLocation:\\s*(.*)`), ` <div class="wrapper"> ✦ $1 <br> ✦ $2</div><br>`)
-          sceneHTML = sceneHTML.replace(new RegExp(`## Select Next Possible Event Options\\n1\\.\\s*(.*)\\n2\\.\\s*(.*)\\n3\\.\\s*(.*)`), `<div class="wrapper">[1] $1 <br>[2] $2 <br>[3] $3</div>`)
+          sceneHTML = sceneHTML.replace(new RegExp(`Time_period:\\s*(.*)\\n*Location:\\s*(.*)`), ` <div class="wrapper"> ✦ $1 <br> ✦ $2</div><br>`)
+          sceneHTML = sceneHTML.replace(new RegExp(`## Select Next Possible Event Options\\n*1\\.\\s*(.*)\\n*2\\.\\s*(.*)\\n*3\\.\\s*(.*)`), `<div class="wrapper">[1] $1 <br>[2] $2 <br>[3] $3</div>`)
+          sceneHTML = sceneHTML.replace(new RegExp(`## Random Event Selection\\n*NEXT EVENT:\\s*(.*)`), `<div class="wrapper">[NEXT EVENT] $1</body>`)
           
 
           const contentSentences = contentHTML.split("\n").filter(sentence => sentence.trim() !== "")

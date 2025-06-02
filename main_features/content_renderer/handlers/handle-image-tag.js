@@ -33,7 +33,8 @@ export default async function handleImageTag(content, front_contents, back_conte
     let result = "";
     for(let tagIndex = 0; tagIndex < Object.keys(fullTagModelsMap).length; tagIndex++) {
         const currentFullTag = Object.keys(fullTagModelsMap)[tagIndex];
-        const currentSlideContext = processedFullTagInnerTexts[currentFullTag].text;
+        let currentSlideContext = processedFullTagInnerTexts[currentFullTag].text;
+        currentSlideContext = currentSlideContext.split("\n").filter(sentence => sentence.trim() !== "").join("\n\n");
 
         const currentUrl = ImageRenderer.createImageUrl(urls[tagIndex], randomSeeds[tagIndex]);
         const renderedSlide = ImageRenderer.createSlideContext(currentUrl, currentSlideContext, is_end_of_content);
