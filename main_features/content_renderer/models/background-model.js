@@ -12,7 +12,7 @@ class BackgroundModel extends BaseModel {
         this.special_features = attributes.special_features || '';
         this.etc = attributes.etc || '';
 
-        if(this.time_period === "afternoon") this.time_period = "morning, blue sky";
+        if(this.time_period === "afternoon") this.time_period = "morning";
         if(this.time_period === "evening") this.time_period = "dusk";
         if(this.time_period === "midnight") this.time_period = "night";
     }
