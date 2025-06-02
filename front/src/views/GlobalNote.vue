@@ -77,6 +77,65 @@
               </div>
             </div>
 
+            <!-- 추가 지시 요소 -->
+            <div class="option-group">
+              <div class="group-header">
+                <v-icon class="group-header-icon">mdi-cog-outline</v-icon>
+                <h3 class="group-header-title">추가 지시 요소</h3>
+                <div class="group-header-line"></div>
+              </div>
+              
+              <div class="option-items">
+                <div 
+                  v-for="option in additionalOptions" 
+                  :key="option.key" 
+                  class="option-item"
+                >
+                  <div class="option-toggle">
+                    <v-switch
+                      v-model="option.enabled"
+                      :color="option.color"
+                      class="option-switch"
+                      hide-details
+                      density="compact"
+                      @change="generatePrompt"
+                    />
+                    <div class="option-info">
+                      <h4 class="option-title">{{ option.title }}</h4>
+                      <p class="option-description">{{ option.description }}</p>
+                      <!-- 캐릭터 수 제한 설정 -->
+                      <div v-if="option.key === 'charLimit' && option.enabled" class="char-limit-control">
+                        <v-text-field
+                          v-model.number="characterLimit"
+                          type="number"
+                          min="1"
+                          max="10"
+                          variant="outlined"
+                          density="compact"
+                          hide-details
+                          class="char-limit-input"
+                          @input="generatePrompt"
+                        >
+                          <template #prepend-inner>
+                            <span class="input-label" style="width: 30px;">최대</span>
+                          </template>
+                          <template #append-inner>
+                            <span class="input-label">명</span>
+                          </template>
+                        </v-text-field>
+                      </div>
+                    </div>
+                  </div>
+                  <v-icon 
+                    :class="['option-icon', { 'active': option.enabled }]"
+                    :color="option.enabled ? option.color : 'grey-lighten-1'"
+                  >
+                    {{ option.icon }}
+                  </v-icon>
+                </div>
+              </div>
+            </div>
+
             <!-- 액션 버튼들 -->
             <div class="action-buttons">
               <v-btn
@@ -171,7 +230,8 @@ import {
   exampleEventPart,
   exampleEnd,
   exampleNoStatusPart,
-  exampleNoVoicePart
+  exampleNoVoicePart,
+  important_char_count_limit
 } from '@/constants/global_note'
 
 // 옵션 설정
@@ -210,9 +270,22 @@ const options = ref([
   }
 ])
 
+// 추가 지시 요소 옵션
+const additionalOptions = ref([
+  {
+    key: 'charLimit',
+    title: '캐릭터 수 제한 설정',
+    description: '스토리에 등장할 수 있는 최대 캐릭터 수를 제한해서 과도한 캐릭터 생성을 방지합니다.',
+    icon: 'mdi-account-multiple-outline',
+    color: 'red',
+    enabled: false
+  }
+])
+
 // 상태 관리
 const generatedPrompt = ref('')
 const copySuccess = ref(false)
+const characterLimit = ref(3) // 기본값 3
 
 // 계산된 속성
 const selectedCount = computed(() => {
@@ -263,15 +336,13 @@ function generatePrompt() {
     exampleParts.push(exampleNoStatusPart)
   }
   
-
   if (options.value.find(o => o.key === 'image' && o.enabled)) {
     exampleParts.push(exampleImagePart)
   }
   
   if (options.value.find(o => o.key === 'voice' && o.enabled)) {
     exampleParts.push(exampleVoicePart)
-  }
-  else {
+  } else {
     exampleParts.push(exampleNoVoicePart)
   }
 
@@ -279,7 +350,6 @@ function generatePrompt() {
     exampleParts.push(exampleImagePartSceneEnd)
   }
   
-
   // 씬 마무리 (항상 포함)
   if (options.value.find(o => o.key === 'image' && o.enabled)) {
     exampleParts.push(exampleSceneEnd)
@@ -295,6 +365,12 @@ function generatePrompt() {
   
   sections.push(exampleParts.join('\n'))
   
+  // 9. Important 섹션 (가장 마지막에 추가)
+  if (additionalOptions.value.find(o => o.key === 'charLimit' && o.enabled)) {
+    const charLimitSection = important_char_count_limit.replace(/{NUMBER}/g, characterLimit.value)
+    sections.push(charLimitSection)
+  }
+  
   generatedPrompt.value = sections.join('\n\n')
 }
 
@@ -302,11 +378,18 @@ function resetToDefaults() {
   options.value.forEach(option => {
     option.enabled = option.key === 'image' // 이미지 생성 태그만 기본 활성화
   })
+  additionalOptions.value.forEach(option => {
+    option.enabled = false // 추가 지시 요소는 모두 비활성화
+  })
+  characterLimit.value = 3 // 기본값으로 리셋
   generatePrompt()
 }
 
 function selectAll() {
   options.value.forEach(option => {
+    option.enabled = true
+  })
+  additionalOptions.value.forEach(option => {
     option.enabled = true
   })
   generatePrompt()
@@ -617,5 +700,26 @@ onMounted(() => {
   .action-buttons {
     flex-direction: column;
   }
+}
+
+.char-limit-control {
+  margin-top: 12px;
+  width: 140px;
+}
+
+.char-limit-input {
+  font-size: 14px;
+  color: black;
+}
+
+.char-limit-input :deep(.v-field__field) {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+}
+
+.input-label {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-weight: 500;
 }
 </style> 

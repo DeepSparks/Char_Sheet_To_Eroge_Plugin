@@ -134,3 +134,5 @@ export const exampleEnd = `<End/>
 ...
 \`\`\`
 `
+export const important_char_count_limit = `### 9. Important
+**A maximum of {NUMBER} characters are allowed to appear in the entire story. A maximum of {NUMBER} characters can be created.**`
