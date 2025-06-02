@@ -382,6 +382,7 @@ function generatePrompt() {
     }
   }
 
+  makedGeneratedPrompt = makedGeneratedPrompt.replace(/\n\n/g, '\n')
   generatedPrompt.value = makedGeneratedPrompt
 }
 
