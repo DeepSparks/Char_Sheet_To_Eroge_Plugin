@@ -232,7 +232,13 @@ import {
   exampleNoStatusPart,
   exampleNoVoicePart,
   important_char_count_limit,
-  voice_type_related_keywords
+  voice_type_related_keywords,
+  exampleStatusPart_kr,
+  exampleImagePart_kr,
+  exampleVoicePart_kr,
+  exampleNoVoicePart_kr,
+  exampleSceneEnd_kr,
+  exampleEventPart_kr
 } from '@/constants/global_note'
 
 // 옵션 설정
@@ -280,6 +286,14 @@ const additionalOptions = ref([
     icon: 'mdi-account-multiple-outline',
     color: 'red',
     enabled: false
+  },
+  {
+    key: 'koreanExample',
+    title: '예시 한글화',
+    description: '예시 부분을 한글로 표시하여 한글과 영어 사용 사례를 명확히 구분합니다.',
+    icon: 'mdi-translate',
+    color: 'blue',
+    enabled: false
   }
 ])
 
@@ -297,6 +311,9 @@ const selectedCount = computed(() => {
 function generatePrompt() {
   let sections = []
   let exampleParts = []
+  
+  // 한글 예시 사용 여부 확인
+  const useKoreanExample = additionalOptions.value.find(o => o.key === 'koreanExample' && o.enabled)
   
   // 1. Start Tag (항상 포함)
   sections.push(baseSection)
@@ -330,21 +347,21 @@ function generatePrompt() {
   // 8. Example Format 시작
   sections.push('\n#### 8. Example Format\n```')
   
-  // 예시 부분 추가
+  // 예시 부분 추가 - 한글화 옵션 적용
   if (options.value.find(o => o.key === 'status' && o.enabled)) {
-    exampleParts.push(exampleStatusPart)
+    exampleParts.push(useKoreanExample ? exampleStatusPart_kr : exampleStatusPart)
   } else {
     exampleParts.push(exampleNoStatusPart)
   }
   
   if (options.value.find(o => o.key === 'image' && o.enabled)) {
-    exampleParts.push(exampleImagePart)
+    exampleParts.push(useKoreanExample ? exampleImagePart_kr : exampleImagePart)
   }
   
   if (options.value.find(o => o.key === 'voice' && o.enabled)) {
-    exampleParts.push(exampleVoicePart)
+    exampleParts.push(useKoreanExample ? exampleVoicePart_kr : exampleVoicePart)
   } else {
-    exampleParts.push(exampleNoVoicePart)
+    exampleParts.push(useKoreanExample ? exampleNoVoicePart_kr : exampleNoVoicePart)
   }
 
   if(options.value.find(o => o.key === 'image' && o.enabled)) {
@@ -353,13 +370,13 @@ function generatePrompt() {
   
   // 씬 마무리 (항상 포함)
   if (options.value.find(o => o.key === 'image' && o.enabled)) {
-    exampleParts.push(exampleSceneEnd)
+    exampleParts.push(useKoreanExample ? exampleSceneEnd_kr : exampleSceneEnd)
   } else {
     exampleParts.push('\n<Definitions>\n...\n</Definitions>\n\n<Scenes>\n...\n</Scenes>')
   }
   
   if (options.value.find(o => o.key === 'event' && o.enabled)) {
-    exampleParts.push(exampleEventPart)
+    exampleParts.push(useKoreanExample ? exampleEventPart_kr : exampleEventPart)
   }
   
   exampleParts.push(exampleEnd)
@@ -373,7 +390,6 @@ function generatePrompt() {
   }
 
   let makedGeneratedPrompt = sections.join('\n\n')
-
 
   // Voice 태그가 없을 경우에는 voice_type 관련 키워드 제거
   if (!options.value.find(o => o.key === 'voice' && o.enabled)) {
