@@ -1,5 +1,5 @@
 //@name char_sheet_to_eroge_plugin
-//@display-name Char Sheet to Eroge Plugin v5.0.0
+//@display-name Char Sheet to Eroge Plugin v5.0.1
 
 const CONFIG = {
     BACKEND_URL: "http://127.0.0.1:3000",
