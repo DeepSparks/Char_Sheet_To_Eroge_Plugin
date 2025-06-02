@@ -37,7 +37,7 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
 **Image Generation** (Use when describing scenes, The first element of nsfw must be selected from the elements listed by you):
 \`\`\`
-<Scene-(name) name="" style_id="" background_id="" view="" pose="" expression="" nsfw="(none|masturbation|fellatio|sex|anal|etc), Detailed explanation" etc_char="Other properties for character" etc_other="Other properties that aren't about characters"/>
+<Scene-(name) name="" style_id="" background_id="" view="" pose="" expression="" nsfw="(none|masturbation|fellatio|sex|anal|cunnilingus|etc), Detailed explanation" etc_char="Other properties for character" etc_other="Other properties that aren't about characters"/>
 (Describe interactions and conversations for this specific character)
 (Avoid mentioning other characters within this scene tag)
 </Scene-(name)>
