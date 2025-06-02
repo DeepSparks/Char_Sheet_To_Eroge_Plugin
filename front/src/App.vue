@@ -10,7 +10,7 @@
         <div class="header-content">
           <v-icon size="32" color="white" class="mb-2">mdi-gamepad-variant</v-icon>
           <h3 class="header-title">미연시화 플러그인</h3>
-          <p class="header-subtitle">v5.0.1</p>
+          <p class="header-subtitle">v5.0.2</p>
         </div>
       </div>
       
