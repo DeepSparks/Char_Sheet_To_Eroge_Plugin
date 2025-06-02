@@ -247,7 +247,7 @@ const options = ref([
     key: 'status',
     title: '상태 태그 포함',
     description: '시간, 위치 정보를 포함하는 상태 태그',
-    icon: 'mdi-map-marker-time',
+    icon: 'mdi-calendar-clock',
     color: 'indigo',
     enabled: false
   },
