@@ -136,3 +136,9 @@ export const exampleEnd = `<End/>
 `
 export const important_char_count_limit = `### 9. Important
 **A maximum of {NUMBER} characters are allowed to appear in the entire story. A maximum of {NUMBER} characters can be created.**`
+
+export const voice_type_related_keywords = [
+    `, voice_type must be selected as one of the given values`,
+    `voice_type="(bright|cool|playful)" `,
+    `voice_type="bright" `
+]

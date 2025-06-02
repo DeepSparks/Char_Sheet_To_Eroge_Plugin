@@ -231,7 +231,8 @@ import {
   exampleEnd,
   exampleNoStatusPart,
   exampleNoVoicePart,
-  important_char_count_limit
+  important_char_count_limit,
+  voice_type_related_keywords
 } from '@/constants/global_note'
 
 // 옵션 설정
@@ -370,8 +371,18 @@ function generatePrompt() {
     const charLimitSection = important_char_count_limit.replace(/{NUMBER}/g, characterLimit.value)
     sections.push(charLimitSection)
   }
-  
-  generatedPrompt.value = sections.join('\n\n')
+
+  let makedGeneratedPrompt = sections.join('\n\n')
+
+
+  // Voice 태그가 없을 경우에는 voice_type 관련 키워드 제거
+  if (!options.value.find(o => o.key === 'voice' && o.enabled)) {
+    for(let i = 0; i < voice_type_related_keywords.length; i++) {
+      makedGeneratedPrompt = makedGeneratedPrompt.replace(voice_type_related_keywords[i], '')
+    }
+  }
+
+  generatedPrompt.value = makedGeneratedPrompt
 }
 
 function resetToDefaults() {
