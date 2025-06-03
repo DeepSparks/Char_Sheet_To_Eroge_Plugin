@@ -37,7 +37,7 @@ Use Scene tags to enhance visual storytelling. Follow this hierarchy:
 
 **Image Generation** (Use when describing scenes, The first element of nsfw must be selected from the elements listed by you):
 \`\`\`
-<Scene-(name) name="" style_id="" background_id="" view="" pose="" expression="" nsfw="(none|masturbation|fellatio|sex|anal|cunnilingus|etc), Detailed explanation" etc_char="Other properties for character" etc_other="Other properties that aren't about characters"/>
+<Scene-(name) name="" style_id="" background_id="" view="" pose="" expression="" nsfw="(none|masturbation|fellatio|sex|anal|cunnilingus|etc), Detailed explanation" etc_char="Other properties for character" etc_other="Other properties that aren't about characters">
 (Describe interactions and conversations for this specific character)
 (Avoid mentioning other characters within this scene tag)
 </Scene-(name)>
@@ -106,7 +106,7 @@ export const exampleImagePart = `<Definitions>
 <Scene-Other>
 The {{user}} was walking along the shoreline when they noticed something shimmering in the water.
 </Scene-Other>
-<Scene-Rily name="Rily" style_id="Rily_Beach_1" background_id="tropical_beach_cove" view="three-quarter view" pose="playfully splashing in shallow water" expression="joyful laughter" nsfw="none" etc_char="childlike innocence, carefree movement" etc_other="golden sunlight, gentle ocean waves, seashells"/>
+<Scene-Rily name="Rily" style_id="Rily_Beach_1" background_id="tropical_beach_cove" view="three-quarter view" pose="playfully splashing in shallow water" expression="joyful laughter" nsfw="none" etc_char="childlike innocence, carefree movement" etc_other="golden sunlight, gentle ocean waves, seashells">
 Rily's laughter echoes across the secluded cove as she splashes playfully in the crystal-clear water, her azure hair glistening under the golden afternoon sun. The gentle ocean waves lap at her feet while she discovers colorful seashells scattered along the pristine shoreline.`
 
 export const exampleImagePart_kr = `<Definitions>
@@ -120,7 +120,7 @@ export const exampleImagePart_kr = `<Definitions>
 <Scene-Other>
 {{user}}는 해안선을 따라 걷고 있었을 때 물 속에서 반짝이는 것을 발견했습니다.
 </Scene-Other>
-<Scene-Rily name="Rily" style_id="Rily_Beach_1" background_id="tropical_beach_cove" view="three-quarter view" pose="playfully splashing in shallow water" expression="joyful laughter" nsfw="none" etc_char="childlike innocence, carefree movement" etc_other="golden sunlight, gentle ocean waves, seashells"/>
+<Scene-Rily name="Rily" style_id="Rily_Beach_1" background_id="tropical_beach_cove" view="three-quarter view" pose="playfully splashing in shallow water" expression="joyful laughter" nsfw="none" etc_char="childlike innocence, carefree movement" etc_other="golden sunlight, gentle ocean waves, seashells">
 릴리의 웃음소리가 고요한 만을 가득 채우며, 그녀는 투명하게 빛나는 물 속에서 즐겁게 물장구를 치고 있습니다. 그녀의 청록색 머리는 황금빛 오후 햇살 아래 반짝이고 있습니다. 부드러운 파도가 그녀의 발목을 적시며, 그녀는 순수한 해안선에 흩어져 있는 화려한 조개껍질을 발견합니다.`
 
 
