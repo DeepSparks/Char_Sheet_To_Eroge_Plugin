@@ -34,7 +34,9 @@ class ImageRenderer extends BaseRenderer {
 
 <div class="root-container" id="${containerId}"><div class="${imageContainerClass}" style="background-image: url(${imageUrl});">
 <div class="content-container">
+
 ${content}
+
 </div></div></div>`;
     }
 }
