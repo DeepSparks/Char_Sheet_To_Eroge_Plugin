@@ -179,6 +179,17 @@
           </v-card-title>
           
           <v-card-text class="preview-content">
+            <!-- 온도 파라미터 안내문 추가 -->
+            <div class="temperature-notice">
+              <div class="notice-header">
+                <v-icon class="notice-icon">mdi-thermometer-low</v-icon>
+                <h4 class="notice-title">권장 사항</h4>
+              </div>
+              <p class="notice-description">
+                제공된 문법을 완벽히 지키는 것을 보장하기 위해서 온도 파라미터를 0.3 이하로 맞추는 것을 권장합니다.
+              </p>
+            </div>
+            
             <div class="preview-area">
               <div class="preview-wrapper">
                 <v-textarea
@@ -687,6 +698,43 @@ onMounted(() => {
   font-weight: 600;
   text-transform: none;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* 온도 파라미터 안내문 스타일 */
+.temperature-notice {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.notice-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.notice-icon {
+  color: #ff9800;
+  font-size: 20px;
+}
+
+.notice-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e65100;
+  margin: 0;
+}
+
+.notice-description {
+  font-size: 13px;
+  color: #5d4037;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 500;
 }
 
 /* 스크롤바 스타일링 */
