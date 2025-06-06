@@ -1,4 +1,5 @@
 import { TranslateInterface } from '../interfaces/index.js';
+import Config from '../config.js';
 
 class StyleModel {
     constructor(req_body) {
@@ -24,6 +25,10 @@ class StyleModel {
         if(["none panties", "no panties", ""].includes(this.panties)) {
             this.panties = "no panties";
             this.panties_color = "";
+        }
+
+        for(let [key, value] of Object.entries(Config.TAG_VALUE_OVERRIDE_MAP)) {
+            if(this[key]) this[key] = value;
         }
     }
 

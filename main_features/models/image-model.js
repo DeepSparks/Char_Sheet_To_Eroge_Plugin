@@ -51,6 +51,10 @@ class ImageModel {
 
         ImageModel.removeDuplicatedAttributes(this);
         keywordProcessors[Config.IMAGE_GENERATION_MODE].process(this)
+
+        for(let [key, value] of Object.entries(Config.TAG_VALUE_OVERRIDE_MAP)) {
+            if(this[key]) this[key] = value;
+        }
     }
 
     static async translateReqBody(reqBody) {

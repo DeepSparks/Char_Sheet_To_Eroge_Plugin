@@ -219,6 +219,14 @@
                     ],
                     "is_advanced": true,
                     "value": "bad anatomy,bad feet,bad hands,bad proportions,bad perspective,wrong hand,wrong foot,ugly hands,ugly arms,missing finger,extra finger,fewer digits,extra digits,extra toes,missing toes,extra arms,extra faces,multiple heads,no pussy,error,artistic error,wardrobe error,text,signature,watermark,username,blurry,cropped,lowres,worst quality,low quality,low score,bad score,average score,censored,blank censor,afterimage,motion blur,speed lines,motion lines,futanari,aged up,old,wrinkled skin,1boy,2boys,3boys,multiple boys"
+                },
+                {
+                    "config_id": "tag_value_override_map",
+                    "config_alias": "태그 값 오버라이드 맵",
+                    "config_type": "string",
+                    "config_description": "특정 태크의 속성값을 해당 값으로 고정시킵니다. 예를 들어서, {\"eye_color\":\"black\"} 이라면, 모든 캐릭터의 눈 색은 검정색으로 고정됩니다. 캐릭터, 스타일, 배경, 이미지 태그의 모든 속성에 적용할 수 있습니다.",
+                    "is_advanced": true,
+                    "value": "{}"
                 }
             ]
         },

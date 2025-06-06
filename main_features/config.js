@@ -124,6 +124,11 @@ class Config {
         return this._config.local_ai_negative_keywords.split(',').map(keyword => keyword.trim());
     }
 
+    static get TAG_VALUE_OVERRIDE_MAP() {
+        this._initConfig();
+        return JSON.parse(this._config.tag_value_override_map);
+    }
+
 
     static get TRANSLATION_MODE() {
         this._initConfig();

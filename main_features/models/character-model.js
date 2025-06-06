@@ -1,4 +1,5 @@
 import { TranslateInterface } from '../interfaces/index.js';
+import Config from '../config.js';
 
 class CharacterModel {
     constructor(req_body) {
@@ -29,6 +30,10 @@ class CharacterModel {
             else if(age <= 30) this.age = "adult";
             else if(age <= 40) this.age = "middle-aged";
             else this.age = "old";
+        }
+
+        for(let [key, value] of Object.entries(Config.TAG_VALUE_OVERRIDE_MAP)) {
+            if(this[key]) this[key] = value;
         }
     }
 

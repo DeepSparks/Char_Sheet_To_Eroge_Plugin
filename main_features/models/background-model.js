@@ -1,4 +1,5 @@
 import { TranslateInterface } from '../interfaces/index.js';
+import Config from '../config.js';
 
 class BackgroundModel {
     constructor(req_body) {
@@ -10,6 +11,10 @@ class BackgroundModel {
         this.weather = req_body.weather || '';
         this.special_features = req_body.special_features || '';
         this.etc = req_body.etc || '';
+
+        for(let [key, value] of Object.entries(Config.TAG_VALUE_OVERRIDE_MAP)) {
+            if(this[key]) this[key] = value;
+        }
     }
 
     static async translateReqBody(reqBody) {
