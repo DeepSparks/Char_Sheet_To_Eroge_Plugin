@@ -11,7 +11,7 @@ class ImageTagParser extends TagParserBase {
         const fullTagModelsMap = {};
         let fullTagInnerTexts= [];
 
-        const TAG_REGEX = new RegExp(`<${FrontConfig.TAG_NAMES.SCENE}\-([^\\s>]+)(?:\\s+([^>]*))?>(([^<]|<(?!\\/Scene\\-\\1>))*?)<\\/${FrontConfig.TAG_NAMES.SCENE}\\-\\1>`, 'g')
+        const TAG_REGEX = new RegExp(`<${FrontConfig.TAG_NAMES.SCENE}\\-([^\\s>]+)(?:\\s+([^>]*))?>(([^<]|<(?!\\/Scene\\-\\1>))*?)<\\/${FrontConfig.TAG_NAMES.SCENE}\\-[^\\s>]+>`, 'g')
         const matches = [...content.matchAll(TAG_REGEX)];
 
         let names_to_check = []
