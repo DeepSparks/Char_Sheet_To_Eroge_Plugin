@@ -41,7 +41,18 @@ class ImageModel {
 
         const characterInfo = CharacterMemoryInterface.getCharacter({name: this.name}, this.resource_name);
         const styleInfo = StyleMemoryInterface.getStyle({style_id: this.style_id}, this.resource_name);
-        this.concat_character_prompt = [characterInfo.toPrompt(), styleInfo.toPrompt(), this.character_prompt].filter(attr => attr).join(', ');
+
+        let style_info_prompt = styleInfo.toPrompt();
+        if(!this.common_prompt.includes("nsfw")) {
+            let none_nsfw_keywords = []
+            for(let keyword of style_info_prompt.split(',')) {
+                if(!keyword.includes("bra") && !keyword.includes("panties")) {
+                    none_nsfw_keywords.push(keyword.trim());
+                }
+            }
+            style_info_prompt = none_nsfw_keywords.join(', ');
+        }
+        this.concat_character_prompt = [characterInfo.toPrompt(), style_info_prompt, this.character_prompt].filter(attr => attr).join(', ');
         
         this.gender = characterInfo.gender;
         if(this.gender == 'girl')
